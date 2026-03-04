@@ -76,21 +76,21 @@ body{font-family:'Arakom',Arial,sans-serif;background:linear-gradient(135deg,#0f
 .split-label{text-align:center;font-size:22px;color:rgba(255,255,255,0.6);margin-bottom:8px;font-family:Arial,sans-serif}
 
 /* WHACK-A-MOLE */
-.mole-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:600px;margin:0 auto}
-.mole-hole{position:relative;height:140px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
-.mole-dirt{width:90%;height:38px;background:radial-gradient(ellipse,#5d4037,#3e2723);border-radius:50%;position:absolute;bottom:0;z-index:2}
-.mole-body{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#a1887f,#6d4c41);position:absolute;bottom:-90px;z-index:1;transition:bottom .2s ease-out;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-direction:column}
+.mole-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:660px;margin:0 auto}
+.mole-hole{position:relative;height:180px;display:flex;align-items:flex-end;justify-content:center}
+.mole-clip{position:absolute;bottom:0;width:100%;height:130px;overflow:hidden}
+.mole-dirt{width:92%;height:36px;background:radial-gradient(ellipse,#5d4037,#3e2723);border-radius:50%;position:absolute;bottom:0;z-index:2;left:4%}
+.mole-body{width:100px;height:100px;border-radius:50% 50% 45% 45%;background:radial-gradient(circle at 35% 35%,#a1887f,#6d4c41);position:absolute;bottom:-110px;left:50%;transform:translateX(-50%);z-index:1;transition:bottom .25s ease-out;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-direction:column}
 .mole-body.up{bottom:28px}
 .mole-body.hit{bottom:28px;animation:moleHit .3s ease}
-.mole-eyes{display:flex;gap:12px;margin-bottom:2px}
-.mole-eye{width:13px;height:15px;background:#fff;border-radius:50%;position:relative}
-.mole-eye::after{content:'';position:absolute;width:6px;height:6px;background:#333;border-radius:50%;top:4px;left:3px}
-.mole-word{position:absolute;top:-32px;font-size:22px;color:#fff;background:rgba(0,0,0,0.7);padding:4px 14px;border-radius:10px;white-space:nowrap;z-index:3;direction:rtl}
-.mole-body.hit .mole-eyes{display:none}
-.mole-body.hit::after{content:'\\00D7';font-size:40px;color:#ef233c}
+.mole-emoji{font-size:36px;line-height:1;margin-bottom:2px;pointer-events:none}
+.mole-body.hit .mole-emoji{display:none}
+.mole-body.hit::after{content:'\\2718';font-size:44px;color:#ef233c}
 .mole-body.correct-hit{animation:moleCorrect .3s ease}
-.mole-body.correct-hit::after{content:'\\2714';font-size:32px;color:#06d6a0}
-.mole-body.correct-hit .mole-eyes{display:none}
+.mole-body.correct-hit .mole-emoji{display:none}
+.mole-body.correct-hit::after{content:'\\2714';font-size:44px;color:#06d6a0}
+.mole-word{position:absolute;top:0;left:50%;transform:translateX(-50%);font-size:24px;color:#fff;background:rgba(0,0,0,0.75);padding:6px 16px;border-radius:12px;white-space:nowrap;z-index:10;direction:rtl;pointer-events:none;opacity:0;transition:opacity .15s}
+.mole-word.visible{opacity:1}
 
 /* BALLOON */
 .balloon-area{position:relative;width:100%;height:480px;overflow:hidden;border-radius:14px;background:rgba(0,0,0,0.2);margin:0 auto;max-width:700px}
@@ -110,7 +110,8 @@ body{font-family:'Arakom',Arial,sans-serif;background:linear-gradient(135deg,#0f
 .snake-board{display:grid;background:rgba(0,0,0,0.3);border-radius:10px;margin:0 auto;border:2px solid rgba(255,255,255,0.1);position:relative}
 .snake-cell{border:1px solid rgba(255,255,255,0.03)}
 .snake-seg{border-radius:4px;position:absolute;transition:left 0.08s linear,top 0.08s linear}
-.snake-token{position:absolute;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:16px;font-weight:bold;text-align:center;color:#fff;direction:rtl;cursor:default;z-index:5;line-height:1.1;padding:3px;overflow:hidden}
+.snake-token{position:absolute;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:13px;font-weight:bold;text-align:center;color:#fff;direction:rtl;cursor:default;z-index:5;line-height:1.1;padding:2px;overflow:hidden;flex-direction:column}
+.snake-token-emoji{font-size:20px;line-height:1}
 .snake-controls{display:flex;justify-content:center;margin-top:14px;gap:8px}
 .snake-dpad{display:grid;grid-template-columns:repeat(3,64px);grid-template-rows:repeat(3,64px);gap:4px;direction:ltr}
 .snake-dpad button{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:28px;border-radius:12px;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center}
@@ -182,11 +183,13 @@ body{font-family:'Arakom',Arial,sans-serif;background:linear-gradient(135deg,#0f
 /* LANDSCAPE OPTIMIZED */
 @media(min-width:1024px){
   .screen{padding:16px 40px}
-  .mole-grid{max-width:700px;gap:20px}
-  .mole-hole{height:160px}
-  .mole-body{width:100px;height:100px}
+  .mole-grid{max-width:780px;gap:20px}
+  .mole-hole{height:200px}
+  .mole-clip{height:150px}
+  .mole-body{width:110px;height:110px}
   .mole-body.up{bottom:32px}
-  .mole-word{font-size:26px;padding:6px 16px}
+  .mole-emoji{font-size:42px}
+  .mole-word{font-size:28px;padding:8px 18px}
   .balloon-area{max-width:900px;height:500px}
   .penalty-field{max-width:700px;height:360px}
   .penalty-goal{width:420px;height:200px}
@@ -199,10 +202,12 @@ body{font-family:'Arakom',Arial,sans-serif;background:linear-gradient(135deg,#0f
 /* RESPONSIVE */
 @media(max-width:700px){
   .split-container{flex-direction:column}
-  .mole-grid{max-width:360px}
-  .mole-hole{height:100px}
-  .mole-body{width:70px;height:70px}
-  .mole-body.up{bottom:20px}
+  .mole-grid{max-width:400px}
+  .mole-hole{height:140px}
+  .mole-clip{height:100px}
+  .mole-body{width:80px;height:80px}
+  .mole-body.up{bottom:22px}
+  .mole-emoji{font-size:30px}
   .mole-word{font-size:18px}
   .balloon-area{height:380px}
   .balloon-body{width:64px;height:80px}
@@ -214,9 +219,11 @@ body{font-family:'Arakom',Arial,sans-serif;background:linear-gradient(135deg,#0f
 }
 @media(max-width:400px){
   .games-grid{grid-template-columns:1fr}
-  .mole-grid{max-width:280px}
-  .mole-hole{height:80px}
-  .mole-body{width:60px;height:60px}
+  .mole-grid{max-width:300px}
+  .mole-hole{height:120px}
+  .mole-clip{height:90px}
+  .mole-body{width:68px;height:68px}
+  .mole-emoji{font-size:26px}
   .mole-word{font-size:15px}
   .balloon-body{width:56px;height:72px}
   .balloon-text{font-size:14px}
@@ -480,9 +487,9 @@ function initWhackAMole(){
   document.querySelectorAll('.game-over-overlay').forEach(el=>el.remove());
 
   const rounds=[
-    {cat:'foods',prompt:'!\u0627\u0636\u0631\u0628 \u0627\u0644\u0637\u0639\u0627\u0645 \u0641\u0642\u0637',dur:35,vis:2500},
-    {cat:'verbs',prompt:'!\u0627\u0636\u0631\u0628 \u0627\u0644\u0623\u0641\u0639\u0627\u0644 \u0641\u0642\u0637',dur:35,vis:2000},
-    {cat:'mixed',prompt:'!\u0627\u0636\u0631\u0628 \u0627\u0644\u0637\u0639\u0627\u0645 \u0648\u0627\u0644\u0623\u0641\u0639\u0627\u0644',dur:35,vis:1500}
+    {cat:'foods',prompt:'!\u0627\u0636\u0631\u0628 \u0627\u0644\u0637\u0639\u0627\u0645 \u0641\u0642\u0637',dur:40,vis:3500},
+    {cat:'verbs',prompt:'!\u0627\u0636\u0631\u0628 \u0627\u0644\u0623\u0641\u0639\u0627\u0644 \u0641\u0642\u0637',dur:40,vis:3000},
+    {cat:'mixed',prompt:'!\u0627\u0636\u0631\u0628 \u0627\u0644\u0637\u0639\u0627\u0645 \u0648\u0627\u0644\u0623\u0641\u0639\u0627\u0644',dur:40,vis:2500}
   ];
 
   const is2P=(playerCount===2);
@@ -502,19 +509,21 @@ function initWhackAMole(){
     for(let i=0;i<9;i++){
       const hole=document.createElement('div');
       hole.className='mole-hole';
+      const wordEl=document.createElement('div');
+      wordEl.className='mole-word';
+      const clip=document.createElement('div');
+      clip.className='mole-clip';
       const dirt=document.createElement('div');
       dirt.className='mole-dirt';
       const body=document.createElement('div');
       body.className='mole-body';
-      body.innerHTML='<div class="mole-eyes"><div class="mole-eye"></div><div class="mole-eye"></div></div>';
-      const wordEl=document.createElement('div');
-      wordEl.className='mole-word';
-      wordEl.style.display='none';
+      body.innerHTML='<div class="mole-emoji"></div>';
+      clip.appendChild(body);
+      clip.appendChild(dirt);
       hole.appendChild(wordEl);
-      hole.appendChild(body);
-      hole.appendChild(dirt);
+      hole.appendChild(clip);
       g.appendChild(hole);
-      holes.push({el:hole,body:body,wordEl:wordEl,word:null,active:false,timeout:null});
+      holes.push({el:hole,body:body,wordEl:wordEl,emojiEl:body.querySelector('.mole-emoji'),word:null,active:false,timeout:null});
     }
     document.getElementById(containerId).appendChild(g);
     return holes;
@@ -568,15 +577,18 @@ function initWhackAMole(){
       hole.word=w;
       hole.active=true;
       hole.wordEl.textContent=w.e+' '+w.ar;
-      hole.wordEl.style.display='block';
+      hole.wordEl.classList.add('visible');
       hole.body.classList.add('up');
       hole.body.classList.remove('hit','correct-hit');
-      hole.body.innerHTML='<div class="mole-eyes"><div class="mole-eye"></div><div class="mole-eye"></div></div>';
+      hole.emojiEl=hole.body.querySelector('.mole-emoji');
+      if(!hole.emojiEl){hole.body.innerHTML='<div class="mole-emoji"></div>';hole.emojiEl=hole.body.querySelector('.mole-emoji');}
+      hole.emojiEl.textContent=w.e;
+      hole.emojiEl.style.display='';
 
       const visDur=r.vis-rd*200;
       hole.timeout=safeTimeout(()=>{
         hole.body.classList.remove('up');
-        hole.wordEl.style.display='none';
+        hole.wordEl.classList.remove('visible');
         hole.active=false;
         hole.word=null;
       },visDur);
@@ -606,15 +618,15 @@ function initWhackAMole(){
         updateHud();
         safeTimeout(()=>{
           hole.body.classList.remove('hit','correct-hit');
-          hole.body.innerHTML='<div class="mole-eyes"><div class="mole-eye"></div><div class="mole-eye"></div></div>';
-          hole.wordEl.style.display='none';
+          hole.body.innerHTML='<div class="mole-emoji"></div>';
+          hole.wordEl.classList.remove('visible');
           hole.word=null;
-        },400);
+        },500);
       };
     }
 
     grids.forEach(g=>{
-      safeInterval(()=>popMole(g), 800);
+      safeInterval(()=>popMole(g), 1200);
     });
 
     const timerInt=safeInterval(()=>{
@@ -840,7 +852,7 @@ function initSnake(){
   clearAllTimers();
   document.querySelectorAll('.game-over-overlay').forEach(el=>el.remove());
 
-  const COLS=20, ROWS=14, CELL=30;
+  const COLS=16, ROWS=10, CELL=38;
   const is2P=(playerCount===2);
 
   const rounds=[
@@ -967,14 +979,13 @@ function initSnake(){
         }while(!valid && tries<50);
         const el=document.createElement('div');
         el.className='snake-token';
-        const tc=isTargetSnake(w,r.cat)?'rgba(6,214,160,0.7)':'rgba(239,35,60,0.5)';
-        el.style.background=tc;
+        el.style.background='rgba(255,255,255,0.12)';
+        el.style.border='2px solid rgba(255,255,255,0.25)';
         el.style.width=(CELL-2)+'px';
         el.style.height=(CELL-2)+'px';
         el.style.left=(x*CELL+1)+'px';
         el.style.top=(y*CELL+1)+'px';
-        el.style.fontSize='9px';
-        el.textContent=w.ar;
+        el.innerHTML='<span class="snake-token-emoji">'+w.e+'</span>';
         board.appendChild(el);
         tokens.push({x,y,word:w,el});
       }
@@ -1065,7 +1076,7 @@ function initSnake(){
     placeTokens();
     renderSnakes();
 
-    let moveInterval=200;
+    let moveInterval=280;
     let moveTimer=safeInterval(()=>{
       snakes.forEach(s=>moveSnake(s));
       renderSnakes();
