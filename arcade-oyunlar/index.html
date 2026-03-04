@@ -111,7 +111,7 @@ body{font-family:'Arakom',Arial,sans-serif;background:linear-gradient(135deg,#0f
 .falling-letter:hover{transform:scale(1.15)}
 .falling-letter.grabbed{animation:letterGrab 0.3s ease forwards;pointer-events:none}
 .falling-letter.wrong-letter{animation:shake 0.4s ease;border-color:#ef233c;background:rgba(239,35,60,0.2)}
-.word-builder{display:flex;flex-direction:row-reverse;justify-content:center;gap:6px;margin:12px auto;max-width:700px;flex-wrap:wrap}
+.word-builder{display:flex;justify-content:center;gap:6px;margin:12px auto;max-width:700px;flex-wrap:wrap;direction:rtl}
 .letter-slot{width:48px;height:56px;border:2px dashed rgba(255,255,255,0.25);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:30px;color:#fff;font-weight:bold;transition:all 0.2s}
 .letter-slot.filled{border:2px solid #06d6a0;background:rgba(6,214,160,0.15)}
 .letter-slot.next{border-color:#ffd60a;background:rgba(255,214,10,0.08);box-shadow:0 0 12px rgba(255,214,10,0.3)}
@@ -658,6 +658,20 @@ function initMasterChef(){
   const is2P=(playerCount===2);
   const state={round:0,p1:{score:0},p2:{score:0}};
 
+  /* Themed recipe sets — ingredients that go together */
+  const RECIPE_SETS=[
+    {name:'🍳 Kahvaltı Tabağı', items:['خُبْز','جُبْن','بَيْض','عَسَل','زُبْدَة','زَيْتون','شاي','حَلِيب']},
+    {name:'🥩 Et Yemeği', items:['لَحْم','أُرُز','حَساء','زَيْتون','خُبْز','عَصِير']},
+    {name:'🍗 Tavuk Yemeği', items:['دَجاج','أُرُز','حَساء','خُبْز','زَيْتون','عَصِير']},
+    {name:'🐟 Balık Tabağı', items:['سَمَك','أُرُز','زَيْتون','حَساء','خُبْز','عَصِير']},
+    {name:'🧆 Köfte Tabağı', items:['كُفْتَة','أُرُز','خُبْز','حَساء','زَيْتون','عَصِير']},
+    {name:'🍎 Meyve & İçecek', items:['تُفَّاح','مَوْز','عَصِير','حَلِيب','عَسَل','قَهْوَة']},
+    {name:'🧀 Peynir Tabağı', items:['جُبْن','خُبْز','زَيْتون','شاي','عَسَل','زُبْدَة']},
+    {name:'🍲 Çorba Sofrası', items:['حَساء','خُبْز','زَيْتون','لَحْم','شاي','زُبْدَة']}
+  ];
+
+  function findWord(ar){ return VOCAB.foods.find(f=>f.ar===ar); }
+
   function buildChefUI(containerId,ps,label){
     const wrap=document.createElement('div');
     wrap.id=containerId;
@@ -731,11 +745,21 @@ function initMasterChef(){
 
     function loadRecipe(p){
       p.found=0;
-      const foods=shuffle(VOCAB.foods);
-      const needed=foods.slice(0,r.needed);
-      const extras=foods.slice(r.needed,r.total);
+      /* Pick a themed recipe set */
+      const recipe=pick(RECIPE_SETS.filter(rs=>rs.items.length>=r.needed));
+      const setItems=shuffle(recipe.items).map(ar=>findWord(ar)).filter(Boolean);
+      const needed=setItems.slice(0,r.needed);
+      /* Distractors: foods NOT in this recipe set */
+      const distractorPool=shuffle(VOCAB.foods.filter(f=>!recipe.items.includes(f.ar)));
+      const extras=distractorPool.slice(0,r.total-r.needed);
       const allChoices=shuffle([...needed,...extras]);
       p.recipe=needed;
+      /* Update recipe card title */
+      const cardEl=document.getElementById(p.id+'Recipe');
+      if(cardEl){
+        const titleEl=cardEl.querySelector('.recipe-title');
+        if(titleEl) titleEl.textContent=recipe.name;
+      }
 
       const itemsEl=document.getElementById(p.id+'Items');
       if(itemsEl){
