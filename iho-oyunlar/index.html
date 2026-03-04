@@ -8,57 +8,84 @@
 @font-face{font-family:'Arakom';src:url('Arakom-Regular.ttf') format('truetype');font-weight:normal}
 @font-face{font-family:'Arakom';src:url('Arakom-Bold.ttf') format('truetype');font-weight:bold}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui,sans-serif;background:linear-gradient(135deg,#0f0c29,#1a1035,#0f1323);min-height:100vh;color:#fff;overflow-x:hidden}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,#0f0c29 0%,#1a1035 40%,#0f1323 100%);min-height:100vh;color:#fff;overflow-x:hidden}
 
 /* ── HEADER ── */
-.hub-header{text-align:center;padding:40px 20px 20px}
-.hub-badge{display:inline-block;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);padding:5px 18px;border-radius:100px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:18px}
-.hub-title{font-size:clamp(22px,4vw,40px);font-weight:800;letter-spacing:-0.02em;line-height:1.1;margin-bottom:8px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hub-subtitle{font-family:'Arakom',sans-serif;color:rgba(255,255,255,0.55);font-size:15px;margin-bottom:4px;direction:rtl}
-.hub-count{color:rgba(255,255,255,0.35);font-size:12px;margin-top:6px}
+.hub-header{text-align:center;padding:48px 24px 28px}
+.hub-badge{display:inline-block;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);padding:8px 24px;border-radius:100px;font-size:15px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+.hub-title{font-size:clamp(28px,5vw,52px);font-weight:800;letter-spacing:-0.02em;line-height:1.1;margin-bottom:10px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hub-subtitle{font-family:'Arakom',sans-serif;color:rgba(255,255,255,0.5);font-size:clamp(16px,2.5vw,22px);margin-bottom:6px;direction:rtl}
+.hub-count{color:rgba(255,255,255,0.3);font-size:15px;margin-top:8px}
 
 /* ── SECTION LABELS ── */
-.section-label{max-width:1100px;margin:24px auto 8px;padding:0 16px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);display:flex;align-items:center;gap:10px}
-.section-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.1)}
+.section-label{max-width:1300px;margin:32px auto 14px;padding:0 24px;font-size:clamp(13px,1.8vw,16px);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:12px}
+.section-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.08)}
 
 /* ── GAME GRID ── */
-.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;max-width:1100px;margin:0 auto;padding:0 16px 40px}
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;max-width:1300px;margin:0 auto;padding:0 24px 20px}
 
 /* ── GAME CARD ── */
-.game-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-.game-card:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.25);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.4)}
-.game-card .card-icon{font-size:2.4em;margin-bottom:10px;display:block;line-height:1}
-.game-card .card-name{font-family:'Arakom',sans-serif;font-size:1.05em;font-weight:bold;margin-bottom:5px;direction:rtl;color:#fff;line-height:1.3}
-.game-card .card-tr{font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:6px;line-height:1.4}
-.game-card .card-badge{display:inline-block;font-size:10px;padding:2px 10px;border-radius:100px;font-weight:600;letter-spacing:.04em}
-.badge-solo{background:rgba(99,102,241,0.2);color:#818cf8}
-.badge-duo{background:rgba(239,68,68,0.2);color:#f87171}
+.game-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px 18px 20px;text-align:center;cursor:pointer;transition:all .3s cubic-bezier(.25,.8,.25,1);position:relative;overflow:hidden}
+.game-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:18px 18px 0 0;transition:opacity .3s;opacity:0.7}
+.game-card:hover{background:rgba(255,255,255,0.1);transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,0.5)}
+.game-card:hover::before{opacity:1}
+.game-card:active{transform:translateY(-2px)}
+.card-icon{font-size:2.8em;margin-bottom:12px;display:block;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3))}
+.card-name{font-family:'Arakom',sans-serif;font-size:clamp(1.1em,2vw,1.35em);font-weight:bold;margin-bottom:6px;direction:rtl;color:#fff;line-height:1.3}
+.card-tr{font-size:clamp(12px,1.4vw,14px);color:rgba(255,255,255,0.45);margin-bottom:10px;line-height:1.5;min-height:2.4em;display:flex;align-items:center;justify-content:center}
+.card-badge{display:inline-block;font-size:12px;padding:4px 14px;border-radius:100px;font-weight:600;letter-spacing:.04em}
 
-/* color accent per group */
-.group-ka .game-card{border-top:2px solid rgba(99,102,241,0.5)}
-.group-ka .game-card:hover{border-top-color:#818cf8}
-.group-hf .game-card{border-top:2px solid rgba(16,185,129,0.5)}
-.group-hf .game-card:hover{border-top-color:#34d399}
-.group-sa .game-card{border-top:2px solid rgba(239,68,68,0.5)}
-.group-sa .game-card:hover{border-top-color:#f87171}
-.group-ar .game-card{border-top:2px solid rgba(245,158,11,0.5)}
-.group-ar .game-card:hover{border-top-color:#fbbf24}
+/* Badge types */
+.badge-solo{background:rgba(99,102,241,0.15);color:#a5b4fc;border:1px solid rgba(99,102,241,0.2)}
+.badge-duo{background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid rgba(239,68,68,0.2)}
+.badge-both{background:rgba(245,158,11,0.15);color:#fcd34d;border:1px solid rgba(245,158,11,0.2)}
+
+/* Color accent per group */
+.group-ka .game-card::before{background:linear-gradient(90deg,#6366f1,#818cf8)}
+.group-ka .game-card{border-color:rgba(99,102,241,0.15)}
+.group-ka .game-card:hover{border-color:rgba(99,102,241,0.35)}
+
+.group-hf .game-card::before{background:linear-gradient(90deg,#10b981,#34d399)}
+.group-hf .game-card{border-color:rgba(16,185,129,0.15)}
+.group-hf .game-card:hover{border-color:rgba(16,185,129,0.35)}
+
+.group-sa .game-card::before{background:linear-gradient(90deg,#ef4444,#f87171)}
+.group-sa .game-card{border-color:rgba(239,68,68,0.15)}
+.group-sa .game-card:hover{border-color:rgba(239,68,68,0.35)}
+
+.group-ar .game-card::before{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.group-ar .game-card{border-color:rgba(245,158,11,0.15)}
+.group-ar .game-card:hover{border-color:rgba(245,158,11,0.35)}
+
+/* ── FOOTER ── */
+.hub-footer{text-align:center;padding:32px 20px 48px;color:rgba(255,255,255,0.2);font-size:13px}
 
 /* ── GAME OVERLAY ── */
 #overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:#000;flex-direction:column}
 #overlay.active{display:flex}
-.overlay-bar{height:50px;background:#111;display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;border-bottom:1px solid #222}
-.overlay-back{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;transition:background .2s;white-space:nowrap}
-.overlay-back:hover{background:rgba(255,255,255,0.2)}
-.overlay-game-name{font-size:13px;color:rgba(255,255,255,0.55);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.overlay-bar{height:54px;background:linear-gradient(180deg,#111,#0a0a0a);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;border-bottom:1px solid #222}
+.overlay-back{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:9px 20px;border-radius:10px;cursor:pointer;font-size:15px;font-family:inherit;transition:all .2s;white-space:nowrap}
+.overlay-back:hover{background:rgba(255,255,255,0.18)}
+.overlay-game-name{font-family:'Arakom',sans-serif;font-size:16px;color:rgba(255,255,255,0.5);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;direction:rtl;text-align:right}
 #gameFrame{flex:1;border:none;width:100%;background:#1a1a2e}
+
+/* ── LANDSCAPE (1024+) ── */
+@media(min-width:1024px){
+  .games-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+  .card-icon{font-size:3.2em}
+  .card-name{font-size:1.4em}
+  .card-tr{font-size:15px}
+  .card-badge{font-size:13px;padding:5px 16px}
+}
 
 /* ── RESPONSIVE ── */
 @media(max-width:600px){
-  .games-grid{grid-template-columns:repeat(2,1fr);gap:8px;padding:0 10px 30px}
-  .game-card{padding:14px 10px}
-  .game-card .card-icon{font-size:2em}
-  .game-card .card-name{font-size:.95em}
+  .hub-header{padding:32px 16px 20px}
+  .games-grid{grid-template-columns:repeat(2,1fr);gap:10px;padding:0 12px 20px}
+  .game-card{padding:18px 12px 16px}
+  .card-icon{font-size:2.2em}
+  .card-name{font-size:1em}
+  .card-tr{font-size:11px;min-height:2em}
 }
 @media(max-width:360px){
   .games-grid{grid-template-columns:1fr}
@@ -69,182 +96,185 @@ body{font-family:'Inter',system-ui,sans-serif;background:linear-gradient(135deg,
 
 <!-- HEADER -->
 <div class="hub-header">
-  <div class="hub-badge">İHO · Arapça · 7. Sınıf</div>
-  <div class="hub-title">İHO 7. Sınıf 1. Ünite Oyunlar</div>
-  <div class="hub-subtitle">ألعاب اللغة العربية — الوحدة الأولى — الصف السابع</div>
-  <div class="hub-count">21 benzersiz oyun</div>
+  <div class="hub-badge">İHO &middot; Arapça &middot; 7. Sınıf &middot; 1. Ünite</div>
+  <div class="hub-title">ماذا فعلت اليوم؟</div>
+  <div class="hub-subtitle">ألعاب اللغة العربية &mdash; الوحدة الأولى &mdash; الصف السابع</div>
+  <div class="hub-count">4 kategori &middot; 21 oyun</div>
 </div>
 
-<!-- SECTION 1: KELİME AVCISI -->
-<div class="section-label">Kelime Avcısı · Alıştırma Oyunları</div>
+<!-- ══════════ SECTION 1: KELİME AVCISI ══════════ -->
+<div class="section-label">🎯 Kelime Avcısı &middot; Alıştırma Oyunları</div>
 <div class="games-grid group-ka">
 
   <div class="game-card" onclick="openGame('../kelime-avcisi/index.html#g1','لعبة المفردات')">
     <span class="card-icon">🎯</span>
     <div class="card-name">لعبة المفردات</div>
-    <div class="card-tr">Kelime-resim eşleştirme</div>
+    <div class="card-tr">Arapça kelimeyi doğru resimle eşleştir</div>
     <span class="card-badge badge-solo">Bireysel</span>
   </div>
 
   <div class="game-card" onclick="openGame('../kelime-avcisi/index.html#g2','رتّب يومك')">
     <span class="card-icon">📋</span>
     <div class="card-name">رتّب يومك</div>
-    <div class="card-tr">Günlük aktiviteleri sırala</div>
+    <div class="card-tr">Günlük aktiviteleri doğru sıraya koy</div>
     <span class="card-badge badge-solo">Bireysel</span>
   </div>
 
   <div class="game-card" onclick="openGame('../kelime-avcisi/index.html#g3','كم الساعة؟')">
     <span class="card-icon">🕐</span>
     <div class="card-name">كم الساعة؟</div>
-    <div class="card-tr">Saati oku</div>
+    <div class="card-tr">Arapça saat ifadelerini öğren ve oku</div>
     <span class="card-badge badge-solo">Bireysel</span>
   </div>
 
   <div class="game-card" onclick="openGame('../kelime-avcisi/index.html#g4','اختر الفعل الصحيح')">
     <span class="card-icon">📝</span>
     <div class="card-name">اختر الفعل الصحيح</div>
-    <div class="card-tr">Doğru fiili seç</div>
+    <div class="card-tr">Cümleye uygun doğru fiili seç</div>
     <span class="card-badge badge-solo">Bireysel</span>
   </div>
 
   <div class="game-card" onclick="openGame('../kelime-avcisi/index.html#g5','أكمل الحوار')">
     <span class="card-icon">💬</span>
     <div class="card-name">أكمل الحوار</div>
-    <div class="card-tr">Diyalogu tamamla</div>
+    <div class="card-tr">Eksik yeri tamamlayarak diyalog kur</div>
     <span class="card-badge badge-solo">Bireysel</span>
   </div>
 
   <div class="game-card" onclick="openGame('../kelime-avcisi/index.html#g6','لعبة الذاكرة')">
     <span class="card-icon">🧠</span>
     <div class="card-name">لعبة الذاكرة</div>
-    <div class="card-tr">Hafıza kartları</div>
+    <div class="card-tr">Kartları çevir, kelime çiftlerini bul</div>
     <span class="card-badge badge-solo">Bireysel</span>
   </div>
 
 </div>
 
-<!-- SECTION 2: HARF FIRTINASI -->
-<div class="section-label">Harf Fırtınası · Kelime &amp; Cümle Oyunları</div>
+<!-- ══════════ SECTION 2: HARF FIRTINASI ══════════ -->
+<div class="section-label">🌪️ Harf Fırtınası &middot; Kelime &amp; Cümle Oyunları</div>
 <div class="games-grid group-hf">
 
   <div class="game-card" onclick="openGame('../harf-firtinasi/index.html#g1','كلمات مقلوبة')">
     <span class="card-icon">🔤</span>
     <div class="card-name">كلمات مقلوبة</div>
-    <div class="card-tr">Harfleri sırala, kelime bul</div>
+    <div class="card-tr">Karışık harfleri sırala, kelimeyi bul</div>
     <span class="card-badge badge-solo">Bireysel</span>
   </div>
 
   <div class="game-card" onclick="openGame('../harf-firtinasi/index.html#g2','صنِّف الطعام')">
     <span class="card-icon">📂</span>
     <div class="card-name">صنِّف الطعام</div>
-    <div class="card-tr">Yiyecekleri öğüne sınıfla</div>
+    <div class="card-tr">Yiyecekleri doğru öğüne sınıflandır</div>
     <span class="card-badge badge-solo">Bireysel</span>
   </div>
 
   <div class="game-card" onclick="openGame('../harf-firtinasi/index.html#g3','ابنِ الجملة')">
     <span class="card-icon">🏗️</span>
     <div class="card-name">ابنِ الجملة</div>
-    <div class="card-tr">Kelimelerden cümle kur</div>
+    <div class="card-tr">Kelimelerden anlamlı cümle oluştur</div>
     <span class="card-badge badge-solo">Bireysel</span>
   </div>
 
   <div class="game-card" onclick="openGame('../harf-firtinasi/index.html#g4','اقصف الخطأ')">
-    <span class="card-icon">🎯</span>
+    <span class="card-icon">💥</span>
     <div class="card-name">اقصف الخطأ</div>
-    <div class="card-tr">Gruba uymayan kelimeyi bul</div>
+    <div class="card-tr">Gruba uymayan kelimeyi tespit et</div>
     <span class="card-badge badge-solo">Bireysel</span>
   </div>
 
   <div class="game-card" onclick="openGame('../harf-firtinasi/index.html#g5','الوقت يضغط')">
     <span class="card-icon">⏱️</span>
     <div class="card-name">الوقت يضغط</div>
-    <div class="card-tr">Hızlı cevap ver, puan kazan</div>
+    <div class="card-tr">Süre dolmadan hızlıca cevap ver</div>
     <span class="card-badge badge-solo">Bireysel</span>
   </div>
 
   <div class="game-card" onclick="openGame('../harf-firtinasi/index.html#g6','رحلة اليوم')">
     <span class="card-icon">🗺️</span>
     <div class="card-name">رحلة اليوم</div>
-    <div class="card-tr">Fatih'in günü — soru-cevap</div>
+    <div class="card-tr">Fatih'in günlük hikayesini takip et</div>
     <span class="card-badge badge-solo">Bireysel</span>
   </div>
 
 </div>
 
-<!-- SECTION 3: SINIF ARENASı -->
-<div class="section-label">Sınıf Arenası · 2 Oyunculu Yarışma</div>
+<!-- ══════════ SECTION 3: SINIF ARENASI ══════════ -->
+<div class="section-label">⚔️ Sınıf Arenası &middot; 2 Kişilik Yarışma</div>
 <div class="games-grid group-sa">
 
   <div class="game-card" onclick="openGame('../sinif-arenasi/index.html#g0','سباق الإجابة')">
     <span class="card-icon">🏎️</span>
     <div class="card-name">سباق الإجابة</div>
-    <div class="card-tr">Çoktan seçmeli yarış</div>
+    <div class="card-tr">Çoktan seçmeli hız yarışması</div>
     <span class="card-badge badge-duo">2 Kişi</span>
   </div>
 
   <div class="game-card" onclick="openGame('../sinif-arenasi/index.html#g1','صح أم خطأ')">
     <span class="card-icon">✅</span>
     <div class="card-name">صح أم خطأ</div>
-    <div class="card-tr">Doğru / Yanlış yarışı</div>
+    <div class="card-tr">Doğru mu yanlış mı? İlk basan kazanır</div>
     <span class="card-badge badge-duo">2 Kişi</span>
   </div>
 
   <div class="game-card" onclick="openGame('../sinif-arenasi/index.html#g4','الكلمة الناقصة')">
     <span class="card-icon">✏️</span>
     <div class="card-name">الكلمة الناقصة</div>
-    <div class="card-tr">Cümleyi tamamla yarışı</div>
+    <div class="card-tr">Cümledeki eksik kelimeyi bul</div>
     <span class="card-badge badge-duo">2 Kişi</span>
   </div>
 
   <div class="game-card" onclick="openGame('../sinif-arenasi/index.html#g5','مَنْ أنا؟')">
     <span class="card-icon">🔔</span>
     <div class="card-name">مَنْ أنا؟</div>
-    <div class="card-tr">Kim benim? Buzzer oyunu</div>
+    <div class="card-tr">İpuçlarından kelimeyi tahmin et</div>
     <span class="card-badge badge-duo">2 Kişi</span>
   </div>
 
 </div>
 
-<!-- SECTION 4: ARCADE OYUNLAR -->
-<div class="section-label">Arcade Oyunlar · Aksiyon & Macera</div>
+<!-- ══════════ SECTION 4: ARCADE OYUNLAR ══════════ -->
+<div class="section-label">🕹️ Arcade Oyunlar &middot; Aksiyon &amp; Macera</div>
 <div class="games-grid group-ar">
 
   <div class="game-card" onclick="openGame('../arcade-oyunlar/index.html#g1','اضرب الخُلد')">
     <span class="card-icon">🔨</span>
     <div class="card-name">اضرب الخُلد</div>
-    <div class="card-tr">Köstebek vur — doğru kelimeyi ez</div>
-    <span class="card-badge badge-duo">Solo / 2 Kişi</span>
+    <div class="card-tr">Köstebeğe vur, doğru kelimeyi ez</div>
+    <span class="card-badge badge-both">Solo &amp; 2 Kişi</span>
   </div>
 
   <div class="game-card" onclick="openGame('../arcade-oyunlar/index.html#g2','فرقعة البالونات')">
     <span class="card-icon">🎈</span>
     <div class="card-name">فرقعة البالونات</div>
-    <div class="card-tr">Balon patlatma — doğru kelimeyi yakala</div>
-    <span class="card-badge badge-duo">Solo / 2 Kişi</span>
+    <div class="card-tr">Doğru kelimeyi taşıyan balonu patlat</div>
+    <span class="card-badge badge-both">Solo &amp; 2 Kişi</span>
   </div>
 
   <div class="game-card" onclick="openGame('../arcade-oyunlar/index.html#g3','الأفعى الجائعة')">
     <span class="card-icon">🐍</span>
     <div class="card-name">الأفعى الجائعة</div>
-    <div class="card-tr">Yılan oyunu — doğru kelimeyi ye</div>
-    <span class="card-badge badge-duo">Solo / 2 Kişi</span>
+    <div class="card-tr">Yılanla doğru kelimeleri topla</div>
+    <span class="card-badge badge-both">Solo &amp; 2 Kişi</span>
   </div>
 
   <div class="game-card" onclick="openGame('../arcade-oyunlar/index.html#g4','ركلات الترجيح')">
     <span class="card-icon">⚽</span>
     <div class="card-name">ركلات الترجيح</div>
-    <div class="card-tr">Penaltı atışları — bilgi yarışması</div>
-    <span class="card-badge badge-duo">Solo / 2 Kişi</span>
+    <div class="card-tr">Soruyu bil, penaltıyı at ve gol yap</div>
+    <span class="card-badge badge-both">Solo &amp; 2 Kişi</span>
   </div>
 
   <div class="game-card" onclick="openGame('../arcade-oyunlar/index.html#g5','برج الكلمات')">
     <span class="card-icon">🧱</span>
     <div class="card-name">برج الكلمات</div>
-    <div class="card-tr">Kelime kulesi — doğru blokları yığ</div>
-    <span class="card-badge badge-duo">Solo / 2 Kişi</span>
+    <div class="card-tr">Doğru blokları seç, kuleyi yükselt</div>
+    <span class="card-badge badge-both">Solo &amp; 2 Kişi</span>
   </div>
 
 </div>
+
+<!-- FOOTER -->
+<div class="hub-footer">İHO 7. Sınıf &middot; 1. Ünite &middot; ماذا فعلت اليوم؟</div>
 
 <!-- GAME OVERLAY -->
 <div id="overlay">
@@ -269,7 +299,6 @@ function closeGame() {
   document.body.style.overflow = '';
 }
 
-// ESC key closes overlay
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeGame();
 });
