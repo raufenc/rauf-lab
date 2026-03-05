@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bilim Nedir, Ne Değildir? — Rauf Enç</title>
+  <meta name="description" content="Bilimin türleri, yöntemleri ve sınırları üzerine felsefi bir yolculuk.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #04050e;
+      --surface: #0b0c20;
+      --border: rgba(99,102,241,0.18);
+      --accent: #818cf8;
+      --accent-dim: rgba(129,140,248,0.12);
+      --gold: #fbbf24;
+      --gold-dim: rgba(251,191,36,0.1);
+      --text: #e2e8f0;
+      --dim: #94a3b8;
+      --dim2: rgba(148,163,184,0.5);
+      --nav-h: 56px;
+    }
+
+    html { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+    body { overflow: hidden; height: 100dvh; }
+
+    /* ── Stars canvas ── */
+    #stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* ── Nav ── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px 0 20px; z-index: 200;
+      background: rgba(4,5,14,0.88); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 14px; font-weight: 600; color: var(--accent);
+      text-decoration: none;
+    }
+    .nav-logo:hover { color: #a5b4fc; }
+    .nav-back {
+      font-size: 12px; color: var(--dim2); text-decoration: none;
+      padding: 4px 0; border: none; background: none; cursor: pointer;
+      transition: color .2s;
+    }
+    .nav-back:hover { color: var(--dim); }
+    .nav-center { display: flex; align-items: center; gap: 10px; }
+    .nav-counter {
+      font-size: 12px; color: var(--dim); font-variant-numeric: tabular-nums;
+      min-width: 36px; text-align: center;
+    }
+    .nav-track {
+      width: 100px; height: 2px;
+      background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden;
+    }
+    .nav-fill {
+      height: 100%; background: var(--accent); border-radius: 2px;
+      transition: width .45s cubic-bezier(.4,0,.2,1);
+      width: 9.09%;
+    }
+    .toc-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--dim); padding: 5px 11px; border-radius: 6px;
+      font-size: 12px; cursor: pointer; transition: all .2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .toc-btn:hover { color: var(--text); border-color: var(--accent); }
+
+    /* ── TOC sidebar ── */
+    .toc-overlay {
+      position: fixed; inset: 0; z-index: 150;
+      background: rgba(0,0,0,0.4); display: none;
+    }
+    .toc-overlay.vis { display: block; }
+    .toc {
+      position: fixed; top: var(--nav-h); right: 0;
+      width: 270px; height: calc(100dvh - var(--nav-h));
+      background: rgba(11,12,32,0.98); border-left: 1px solid var(--border);
+      z-index: 160; transform: translateX(100%); transition: transform .3s ease;
+      overflow-y: auto; padding: 20px 0 40px;
+    }
+    .toc.open { transform: translateX(0); }
+    .toc-section {
+      padding: 14px 20px 4px; font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .12em; color: var(--dim2);
+    }
+    .toc-item {
+      display: block; padding: 9px 20px; font-size: 13px; color: var(--dim);
+      cursor: pointer; transition: all .2s; border-left: 2px solid transparent;
+      text-decoration: none;
+    }
+    .toc-item:hover, .toc-item.active {
+      color: var(--text); border-left-color: var(--accent); background: var(--accent-dim);
+    }
+
+    /* ── Dots ── */
+    .dots {
+      position: fixed; right: 18px; top: 50%; transform: translateY(-50%);
+      z-index: 100; display: flex; flex-direction: column; gap: 9px;
+    }
+    .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(255,255,255,0.13); cursor: pointer;
+      transition: all .25s ease; position: relative;
+    }
+    .dot.act { background: var(--accent); transform: scale(1.5); }
+    .dot:hover { background: rgba(255,255,255,0.35); }
+    .dot::before {
+      content: attr(data-tip); position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%); background: rgba(11,12,32,.95);
+      color: var(--text); font-size: 11px; white-space: nowrap;
+      padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border);
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .dot:hover::before { opacity: 1; }
+
+    /* ── Arrow buttons ── */
+    .arrows {
+      position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+      z-index: 100; display: flex; gap: 10px;
+    }
+    .arrow {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: var(--dim); font-size: 16px; cursor: pointer; transition: all .2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .arrow:hover { background: var(--accent-dim); color: var(--text); border-color: var(--accent); }
+    .arrow:disabled { opacity: 0.25; pointer-events: none; }
+
+    /* ── Scroll container ── */
+    .scroller {
+      position: fixed; top: var(--nav-h); left: 0; right: 0;
+      bottom: 0; overflow-y: scroll;
+      scroll-snap-type: y mandatory; z-index: 10;
+    }
+
+    /* ── Slide ── */
+    .slide {
+      height: 100%; scroll-snap-align: start;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      align-items: center; justify-items: center;
+      padding: 20px 56px 64px 24px;
+      gap: 14px; position: relative; min-height: 0;
+    }
+
+    /* ── Chapter badge ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 11px; border-radius: 20px; font-size: 10px;
+      font-weight: 600; text-transform: uppercase; letter-spacing: .1em;
+      border: 1px solid; opacity: 0; transform: translateY(-10px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .slide.vis .badge { opacity: 1; transform: translateY(0); }
+
+    /* Chapter badge colors */
+    .ch1 .badge { color: #818cf8; border-color: #818cf8; background: rgba(129,140,248,.08); }
+    .ch2 .badge { color: #34d399; border-color: #34d399; background: rgba(52,211,153,.08); }
+    .ch3 .badge { color: #60a5fa; border-color: #60a5fa; background: rgba(96,165,250,.08); }
+    .ch4 .badge { color: #f472b6; border-color: #f472b6; background: rgba(244,114,182,.08); }
+    .ch5 .badge { color: #fbbf24; border-color: #fbbf24; background: rgba(251,191,36,.08); }
+    .ch6 .badge { color: #fb923c; border-color: #fb923c; background: rgba(251,146,60,.08); }
+
+    /* ── Image wrapper 16:9 ── */
+    .img-wrap {
+      width: 100%; max-width: 860px; position: relative;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 20px 80px rgba(0,0,0,0.6);
+      opacity: 0; transform: translateY(22px) scale(0.97);
+      transition: opacity .6s ease .1s, transform .6s cubic-bezier(.34,1.56,.64,1) .1s;
+    }
+    .slide.vis .img-wrap { opacity: 1; transform: translateY(0) scale(1); }
+    .img-wrap::before { content: ''; display: block; padding-top: 56.25%; }
+    .img-wrap img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: contain; background: #080810;
+    }
+
+    /* ── Caption ── */
+    .caption {
+      text-align: center; max-width: 680px; padding: 0 8px;
+      opacity: 0; transform: translateY(14px);
+      transition: opacity .5s ease .3s, transform .5s ease .3s;
+    }
+    .slide.vis .caption { opacity: 1; transform: translateY(0); }
+
+    .slide-num {
+      font-size: 10px; color: var(--dim2); font-variant-numeric: tabular-nums;
+      letter-spacing: .08em; text-transform: uppercase; margin-bottom: 7px;
+    }
+    .slide-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(16px, 2.2vw, 26px); font-weight: 700;
+      color: var(--text); line-height: 1.35; margin-bottom: 7px;
+    }
+    .slide-sub {
+      font-size: clamp(12px, 1.3vw, 14px); color: var(--dim);
+      line-height: 1.65;
+    }
+
+    /* ── Special: Heisenberg slide ── */
+    .heisenberg .img-wrap {
+      box-shadow: 0 0 0 1px rgba(251,191,36,0.15), 0 20px 80px rgba(0,0,0,0.7), 0 0 60px rgba(251,191,36,0.06);
+    }
+    .heisenberg .slide-title {
+      color: var(--gold); font-style: italic; font-weight: 400;
+      font-size: clamp(13px, 1.7vw, 20px); line-height: 1.6;
+    }
+    .heisenberg .slide-sub { color: #d97706; }
+
+    /* ── Mobile ── */
+    @media (max-width: 640px) {
+      .slide { padding: 14px 14px 60px 14px; }
+      .dots { display: none; }
+      .nav-track { width: 70px; }
+      .nav-back { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars"></canvas>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <a href="/" class="nav-back">← lab.raufenc.com</a>
+      <a class="nav-logo" href="/bilim">🔬 Bilim Nedir?</a>
+    </div>
+    <div class="nav-center">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+    </div>
+    <button class="toc-btn" id="tocBtn">☰ Bölümler</button>
+  </nav>
+
+  <!-- TOC -->
+  <div class="toc-overlay" id="tocOverlay"></div>
+  <aside class="toc" id="toc">
+    <div class="toc-section">Bölüm 1 · Giriş</div>
+    <a class="toc-item" data-g="0">Bilim Nedir, Ne Değildir?</a>
+
+    <div class="toc-section">Bölüm 2 · Bilim Nedir?</div>
+    <a class="toc-item" data-g="1">Bilim Türleri</a>
+    <a class="toc-item" data-g="2">Formel Bilimler Nasıl Çalışır?</a>
+    <a class="toc-item" data-g="3">Fen ve Sosyal Bilimler</a>
+    <a class="toc-item" data-g="4">Objektiflik Arayışı</a>
+
+    <div class="toc-section">Bölüm 3 · Bilim ve Gerçeklik</div>
+    <a class="toc-item" data-g="5">Nedenselliğin Arkası</a>
+    <a class="toc-item" data-g="6">Teori Yüklü Gözlem</a>
+
+    <div class="toc-section">Bölüm 4 · Bilim ve Anlam</div>
+    <a class="toc-item" data-g="7">Açıklama mı, Anlam mı?</a>
+    <a class="toc-item" data-g="8">Bilim ve İnanç Söylemi</a>
+
+    <div class="toc-section">Bölüm 5 · Bilimin Sınırları</div>
+    <a class="toc-item" data-g="9">Bilim Mutlak mı?</a>
+
+    <div class="toc-section">Kapanış</div>
+    <a class="toc-item" data-g="10">Werner Heisenberg</a>
+  </aside>
+
+  <!-- Dots -->
+  <div class="dots" id="dots"></div>
+
+  <!-- Arrows -->
+  <div class="arrows">
+    <button class="arrow" id="prevBtn" disabled>↑</button>
+    <button class="arrow" id="nextBtn">↓</button>
+  </div>
+
+  <!-- Main scroller -->
+  <main class="scroller" id="scroller">
+
+    <!-- 01 -->
+    <section class="slide ch1" data-i="0">
+      <div class="badge">Bölüm 1 · Giriş</div>
+      <div class="img-wrap">
+        <img src="/bilim/images/slide-01.jpg" alt="Bilim Nedir, Ne Değildir?" loading="eager">
+      </div>
+      <div class="caption">
+        <div class="slide-num">01 / 11</div>
+        <h2 class="slide-title">Bilim Nedir, Ne Değildir?</h2>
+        <p class="slide-sub">Kaliteli bir epistemik girişimdir. Ama tek başına yeterli değildir.</p>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section class="slide ch2" data-i="1">
+      <div class="badge">Bölüm 2 · Bilim Nedir?</div>
+      <div class="img-wrap">
+        <img src="/bilim/images/slide-02.jpg" alt="Bilim Türleri" loading="lazy">
+      </div>
+      <div class="caption">
+        <div class="slide-num">02 / 11</div>
+        <h2 class="slide-title">Bilim Türleri</h2>
+        <p class="slide-sub">Formel, Fen ve Sosyal bilimler — her biri farklı bir yöntemle gerçekliğe ulaşmaya çalışır.</p>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section class="slide ch2" data-i="2">
+      <div class="badge">Bölüm 2 · Bilim Nedir?</div>
+      <div class="img-wrap">
+        <img src="/bilim/images/slide-03.jpg" alt="Formel Bilimler Nasıl Çalışır?" loading="lazy">
+      </div>
+      <div class="caption">
+        <div class="slide-num">03 / 11</div>
+        <h2 class="slide-title">Formel Bilimler Nasıl Çalışır?</h2>
+        <p class="slide-sub">Aksiyomlar'dan tümdengelimle tutarlı bir yapı inşa edilir. Saf akıl yürütme, deneye ihtiyaç duymaz.</p>
+      </div>
+    </section>
+
+    <!-- 04 -->
+    <section class="slide ch2" data-i="3">
+      <div class="badge">Bölüm 2 · Bilim Nedir?</div>
+      <div class="img-wrap">
+        <img src="/bilim/images/slide-04.jpg" alt="Fen ve Sosyal Bilimler" loading="lazy">
+      </div>
+      <div class="caption">
+        <div class="slide-num">04 / 11</div>
+        <h2 class="slide-title">Fen ve Sosyal Bilimler</h2>
+        <p class="slide-sub">Deney ve gözleme dayalı tümevarım: tekil gözlemlerden genel yasalara ulaşma girişimi.</p>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section class="slide ch2" data-i="4">
+      <div class="badge">Bölüm 2 · Bilim Nedir?</div>
+      <div class="img-wrap">
+        <img src="/bilim/images/slide-05.jpg" alt="Objektiflik Arayışı" loading="lazy">
+      </div>
+      <div class="caption">
+        <div class="slide-num">05 / 11</div>
+        <h2 class="slide-title">Objektiflik Arayışı</h2>
+        <p class="slide-sub">Matematiğin kesinliği ideal olarak görüldü — diğer bilimler bu kesinliğe öykündü.</p>
+      </div>
+    </section>
+
+    <!-- 06 -->
+    <section class="slide ch3" data-i="5">
+      <div class="badge">Bölüm 3 · Bilim ve Gerçeklik</div>
+      <div class="img-wrap">
+        <img src="/bilim/images/slide-06.jpg" alt="Nedenselliğin Arkası Kodlanmış Olabilir" loading="lazy">
+      </div>
+      <div class="caption">
+        <div class="slide-num">06 / 11</div>
+        <h2 class="slide-title">Nedenselliğin Arkası Kodlanmış Olabilir</h2>
+        <p class="slide-sub">Simülasyonda sebep–sonuç sadece görünen koddur. Peki ya gerçek evrende?</p>
+      </div>
+    </section>
+
+    <!-- 07 -->
+    <section class="slide ch3" data-i="6">
+      <div class="badge">Bölüm 3 · Bilim ve Gerçeklik</div>
+      <div class="img-wrap">
+        <img src="/bilim/images/slide-07.jpg" alt="Teori Yüklü Gözlem" loading="lazy">
+      </div>
+      <div class="caption">
+        <div class="slide-num">07 / 11</div>
+        <h2 class="slide-title">Teori Yüklü Gözlem</h2>
+        <p class="slide-sub">Gözlem nötr değildir. Her gözlem, önceden kabul edilmiş teorilerin filtresiyle yapılır.</p>
+      </div>
+    </section>
+
+    <!-- 08 -->
+    <section class="slide ch4" data-i="7">
+      <div class="badge">Bölüm 4 · Bilim ve Anlam</div>
+      <div class="img-wrap">
+        <img src="/bilim/images/slide-08.jpg" alt="Açıklama mı, Anlam mı?" loading="lazy">
+      </div>
+      <div class="caption">
+        <div class="slide-num">08 / 11</div>
+        <h2 class="slide-title">Açıklama mı, Anlam mı?</h2>
+        <p class="slide-sub">"Güneş ısı verir" demek başkadır, "Güneş nimettir" demek başka. Bilim birincisini söyler; ikincisi başka bir sorunun cevabıdır.</p>
+      </div>
+    </section>
+
+    <!-- 09 -->
+    <section class="slide ch4" data-i="8">
+      <div class="badge">Bölüm 4 · Bilim ve Anlam</div>
+      <div class="img-wrap">
+        <img src="/bilim/images/slide-09.jpg" alt="Bilim ve İnanç Söylemi" loading="lazy">
+      </div>
+      <div class="caption">
+        <div class="slide-num">09 / 11</div>
+        <h2 class="slide-title">Bilim ve İnanç Söylemi</h2>
+        <p class="slide-sub">Görmediğin yaratık varsa "bilimsel merak", yaratıcı varsa "çağ dışı"? Bu tutarsızlık nereden geliyor?</p>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="slide ch5" data-i="9">
+      <div class="badge">Bölüm 5 · Bilimin Sınırları</div>
+      <div class="img-wrap">
+        <img src="/bilim/images/slide-10.jpg" alt="Bilim Mutlak mı?" loading="lazy">
+      </div>
+      <div class="caption">
+        <div class="slide-num">10 / 11</div>
+        <h2 class="slide-title">Bilim Mutlak mı?</h2>
+        <p class="slide-sub">Bilimin kendisi de inanca dayanır. Ampirik dogmadan kaçmak için ampirik dogmaya mı sığınıyoruz?</p>
+      </div>
+    </section>
+
+    <!-- 11 Heisenberg -->
+    <section class="slide ch6 heisenberg" data-i="10">
+      <div class="badge">Kapanış</div>
+      <div class="img-wrap">
+        <img src="/bilim/images/slide-11.jpg" alt="Werner Heisenberg" loading="lazy">
+      </div>
+      <div class="caption">
+        <div class="slide-num">11 / 11</div>
+        <h2 class="slide-title">"The first gulp from the glass of natural sciences will turn you into an atheist, but at the bottom of the glass God is waiting for you."</h2>
+        <p class="slide-sub">— Werner Heisenberg · Nobel Fizik Ödülü Sahibi</p>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // ── Stars ──
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+    function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+    resize(); addEventListener('resize', resize);
+    const STARS = Array.from({length: 180}, () => ({
+      x: Math.random(), y: Math.random(),
+      r: Math.random() * 1.1 + 0.2,
+      a: Math.random() * 0.6 + 0.1,
+      da: (Math.random() - 0.5) * 0.004
+    }));
+    (function tick() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      STARS.forEach(s => {
+        s.a += s.da;
+        if (s.a < 0.05) s.da = Math.abs(s.da);
+        if (s.a > 0.75) s.da = -Math.abs(s.da);
+        ctx.beginPath();
+        ctx.arc(s.x * canvas.width, s.y * canvas.height, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(190,200,255,${s.a})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(tick);
+    })();
+
+    // ── Elements ──
+    const slides = document.querySelectorAll('.slide');
+    const N = slides.length;
+    const dotsEl = document.getElementById('dots');
+    const counterEl = document.getElementById('counter');
+    const navFill = document.getElementById('navFill');
+    const scroller = document.getElementById('scroller');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const tocEl = document.getElementById('toc');
+    const tocOverlay = document.getElementById('tocOverlay');
+    const tocBtn = document.getElementById('tocBtn');
+    const tocItems = document.querySelectorAll('.toc-item');
+
+    let cur = 0;
+
+    // ── Dots ──
+    slides.forEach((s, i) => {
+      const title = s.querySelector('.slide-title')?.textContent || '';
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' act' : '');
+      d.setAttribute('data-tip', `${String(i+1).padStart(2,'0')} · ${title.slice(0,22)}${title.length > 22 ? '…' : ''}`);
+      d.addEventListener('click', () => goTo(i));
+      dotsEl.appendChild(d);
+    });
+    const dots = dotsEl.querySelectorAll('.dot');
+
+    // ── UI update ──
+    function updateUI(i) {
+      cur = i;
+      counterEl.textContent = `${i + 1} / ${N}`;
+      navFill.style.width = ((i + 1) / N * 100) + '%';
+      dots.forEach((d, j) => d.classList.toggle('act', j === i));
+      tocItems.forEach((el, j) => el.classList.toggle('active', j === i));
+      prevBtn.disabled = i === 0;
+      nextBtn.disabled = i === N - 1;
+    }
+
+    // ── goTo ──
+    function goTo(i) {
+      slides[i].scrollIntoView({ behavior: 'smooth' });
+      closeToc();
+    }
+
+    // ── Intersection observer ──
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting && e.intersectionRatio >= 0.45) {
+          e.target.classList.add('vis');
+          updateUI(+e.target.dataset.i);
+        }
+      });
+    }, { threshold: 0.45 });
+    slides.forEach(s => obs.observe(s));
+    slides[0].classList.add('vis');
+
+    // ── Arrow buttons ──
+    prevBtn.addEventListener('click', () => cur > 0 && goTo(cur - 1));
+    nextBtn.addEventListener('click', () => cur < N - 1 && goTo(cur + 1));
+
+    // ── Keyboard ──
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault(); cur < N - 1 && goTo(cur + 1);
+      }
+      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        e.preventDefault(); cur > 0 && goTo(cur - 1);
+      }
+    });
+
+    // ── TOC ──
+    function openToc() { tocEl.classList.add('open'); tocOverlay.classList.add('vis'); }
+    function closeToc() { tocEl.classList.remove('open'); tocOverlay.classList.remove('vis'); }
+    tocBtn.addEventListener('click', () => tocEl.classList.contains('open') ? closeToc() : openToc());
+    tocOverlay.addEventListener('click', closeToc);
+    tocItems.forEach(el => el.addEventListener('click', () => goTo(+el.dataset.g)));
+
+    // ── Touch / swipe ──
+    let ty0 = 0;
+    scroller.addEventListener('touchstart', e => { ty0 = e.touches[0].clientY; }, {passive:true});
+    scroller.addEventListener('touchend', e => {
+      const dy = ty0 - e.changedTouches[0].clientY;
+      if (Math.abs(dy) > 40) { dy > 0 ? (cur < N-1 && goTo(cur+1)) : (cur > 0 && goTo(cur-1)); }
+    }, {passive:true});
+  </script>
+</body>
+</html>
