@@ -462,6 +462,12 @@
     footer a { color: var(--muted2); text-decoration: none; transition: color 0.2s; }
     footer a:hover { color: var(--text); }
 
+    /* -- Hide redundant text (images already show everything) -- */
+    .feed-word, .feed-meaning, .feed-tag { display: none; }
+    .feed-overlay { display: none; }
+    .lb-word, .lb-meaning, .lb-tag { display: none; }
+    .card-body { display: none; }
+
     /* -- Responsive -- */
     @media (max-width: 520px) {
       header { padding: 32px 0 24px; }
@@ -678,7 +684,10 @@ function renderKategoriler() {
     const card = document.createElement('div');
     card.className = 'kat-card';
     card.style.animationDelay = `${idx * 40}ms`;
-    card.onclick = () => { currentKategori = idx; renderKategoriler(); };
+    card.onclick = () => {
+      const items = kat.items.map(item => ({ ...item, kategori: kat.baslik, emoji: kat.emoji }));
+      openFeed(items);
+    };
     card.innerHTML = `
       <div class="kat-emoji">${kat.emoji}</div>
       <div class="kat-title">${kat.baslik}</div>
@@ -718,11 +727,15 @@ function karistir() {
 }
 
 // -- KESFET FEED --
-function openFeed() {
-  feedItems = [...allItems];
-  for (let i = feedItems.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [feedItems[i], feedItems[j]] = [feedItems[j], feedItems[i]];
+function openFeed(customItems) {
+  if (customItems) {
+    feedItems = [...customItems];
+  } else {
+    feedItems = [...allItems];
+    for (let i = feedItems.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [feedItems[i], feedItems[j]] = [feedItems[j], feedItems[i]];
+    }
   }
 
   const container = document.getElementById('feed-slides');
