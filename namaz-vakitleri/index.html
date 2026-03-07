@@ -1107,13 +1107,33 @@ function drawSolar(){
   SCX.setLineDash([]);
 
   // Event tick markers
-  EVENTS.forEach(ev => {
+  // 6 main events that get HH:MM labels: İmsak, Güneş, Öğle, İkindi(Evvel), Akşam, Yatsı(İmâmeyn)
+  const _pt = calcPrayerTimes(selectedDate, selectedCity);
+  const _labeledIdx = [0,1,4,5,8,10];
+  const _labelMins = [_pt.imsak, _pt.gunes, _pt.ogle, _pt.ikindiEvvel, _pt.aksam, _pt.yatsiIma];
+  EVENTS.forEach((ev, idx) => {
     const p = sunXY(ev.f);
     SCX.strokeStyle = ev.dot;
     SCX.lineWidth = 1.5;
     SCX.beginPath();
     SCX.moveTo(p.x, HY - 6); SCX.lineTo(p.x, HY + 6);
     SCX.stroke();
+    // HH:MM label for main 6 events
+    const li = _labeledIdx.indexOf(idx);
+    if(li >= 0){
+      const timeStr = minutesToHM(_labelMins[li]);
+      SCX.save();
+      SCX.font = 'bold 9px Inter, sans-serif';
+      SCX.textAlign = 'center';
+      SCX.textBaseline = 'bottom';
+      // Alternate vertical position to avoid overlap for close events
+      const yOff = (li === 1) ? 22 : 12; // Güneş slightly lower to avoid İmsak overlap
+      SCX.fillStyle = 'rgba(10,18,40,0.65)';
+      SCX.fillRect(p.x - 16, HY - yOff - 10, 32, 11);
+      SCX.fillStyle = ev.dot;
+      SCX.fillText(timeStr, p.x, HY - yOff);
+      SCX.restore();
+    }
   });
 
   // Sun disc
