@@ -46,8 +46,6 @@
     @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
     @keyframes pulse  { 0%,100% { opacity:1; } 50% { opacity:.4; } }
     @keyframes cardPop { from { opacity:0; transform:scale(0.95) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
-    @keyframes slideUp { from { opacity:0; transform:translateY(100%); } to { opacity:1; transform:translateY(0); } }
-    @keyframes slideDown { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(100%); } }
 
     .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
 
@@ -174,7 +172,7 @@
 
     #grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 12px;
       padding-bottom: 24px;
     }
@@ -196,7 +194,7 @@
     }
 
     .card-img {
-      width: 100%; aspect-ratio: 1; object-fit: cover;
+      width: 100%; aspect-ratio: 2/3; object-fit: cover;
       background: var(--surface2);
       display: block;
     }
@@ -237,17 +235,18 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
-      max-width: 420px; width: 100%;
+      max-width: 380px; width: 100%;
       overflow: hidden;
       transform: translateY(20px) scale(0.96);
       transition: transform 0.3s ease;
+      max-height: 90vh; overflow-y: auto;
     }
     .lightbox.open .lb-content {
       transform: translateY(0) scale(1);
     }
 
     .lb-img {
-      width: 100%; aspect-ratio: 1; object-fit: cover;
+      width: 100%; aspect-ratio: 2/3; object-fit: cover;
       display: block; background: var(--surface2);
     }
 
@@ -288,30 +287,121 @@
       color: white; width: 36px; height: 36px; border-radius: 50%;
       cursor: pointer; font-size: 18px; display: flex;
       align-items: center; justify-content: center;
-      transition: background 0.2s;
+      transition: background 0.2s; z-index: 2;
     }
     .lb-close:hover { background: rgba(255,255,255,0.2); }
 
-    /* ── Keşfet tab: Random card ── */
-    .kesfet-area { text-align: center; padding: 40px 0; }
-    .kesfet-card {
-      max-width: 360px; margin: 0 auto;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 16px; overflow: hidden;
-      animation: cardPop 0.35s ease both;
+    /* ── Keşfet: Instagram-style vertical scroll ── */
+    .kesfet-feed {
+      position: fixed; inset: 0; z-index: 50;
+      background: var(--bg);
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      display: none;
     }
-    .kesfet-card .card-img { aspect-ratio: 1; }
-    .kesfet-card .lb-body { padding: 20px 24px 24px; text-align: left; }
-    .kesfet-btn {
-      margin-top: 24px;
+    .kesfet-feed.open { display: block; }
+
+    .kesfet-feed::-webkit-scrollbar { display: none; }
+    .kesfet-feed { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .feed-slide {
+      height: 100vh; height: 100dvh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+
+    .feed-slide img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+
+    .feed-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.85) 0%,
+        rgba(0,0,0,0.3) 35%,
+        transparent 60%
+      );
+    }
+
+    .feed-info {
+      position: relative; z-index: 2;
+      padding: 28px 24px 40px;
+      width: 100%;
+    }
+
+    .feed-word {
+      font-size: 28px; font-weight: 800; color: #fff;
+      letter-spacing: 0.02em; margin-bottom: 8px;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    }
+    .feed-meaning {
+      font-size: 15px; color: rgba(255,255,255,0.8); line-height: 1.6;
+      max-width: 340px;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+    }
+    .feed-letter {
+      display: inline-block; margin-top: 12px;
+      font-size: 11px; font-weight: 700;
+      color: rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+      padding: 4px 12px; border-radius: 100px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    .feed-counter {
+      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+      z-index: 52;
+      font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5);
+      background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+      padding: 5px 14px; border-radius: 100px;
+      letter-spacing: 0.05em;
+      pointer-events: none;
+    }
+
+    .feed-close {
+      position: fixed; top: 14px; right: 16px; z-index: 52;
+      background: rgba(255,255,255,0.12); border: none;
+      color: white; width: 40px; height: 40px; border-radius: 50%;
+      cursor: pointer; font-size: 20px;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(8px);
+      transition: background 0.2s;
+    }
+    .feed-close:hover { background: rgba(255,255,255,0.25); }
+
+    .feed-hint {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      z-index: 52; color: rgba(255,255,255,0.35);
+      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      animation: pulse 2s infinite;
+      pointer-events: none;
+    }
+
+    /* ── Keşfet panel (non-feed) ── */
+    .kesfet-start {
+      text-align: center; padding: 60px 0;
+    }
+    .kesfet-start-btn {
       background: var(--accent); border: none; color: #0a0a0f;
-      font-size: 14px; font-weight: 700; padding: 12px 28px;
+      font-size: 15px; font-weight: 700; padding: 14px 36px;
       border-radius: 100px; cursor: pointer; font-family: inherit;
       transition: all 0.2s; letter-spacing: 0.02em;
     }
-    .kesfet-btn:hover {
+    .kesfet-start-btn:hover {
       background: var(--accent2);
       box-shadow: 0 4px 20px var(--accent-glow);
+    }
+    .kesfet-desc {
+      color: var(--muted2); font-size: 13px; margin-top: 16px; line-height: 1.6;
     }
 
     /* ── Footer ── */
@@ -334,6 +424,8 @@
       .az-btn { width: 32px; height: 32px; font-size: 12px; }
       .lb-content { max-width: 100%; border-radius: 12px; }
       .tab { padding: 8px 12px; font-size: 12px; }
+      .feed-word { font-size: 24px; }
+      .feed-meaning { font-size: 14px; }
     }
   </style>
 </head>
@@ -387,12 +479,23 @@
   <div class="results-info">
     <span id="fihrist-count">0 sonuç</span>
   </div>
-  <div id="fihrist-grid" class="fihrist-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; padding-bottom:24px;"></div>
+  <div id="fihrist-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; padding-bottom:24px;"></div>
 </div>
 
 <!-- ── KEŞFET TAB ── -->
 <div class="wrap" id="panel-kesfet" style="display:none;">
-  <div class="kesfet-area" id="kesfet-area"></div>
+  <div class="kesfet-start">
+    <button class="kesfet-start-btn" onclick="openFeed()">Keşfetmeye Başla</button>
+    <p class="kesfet-desc">Rastgele sıralanmış kelimeleri Instagram gibi kaydırarak keşfet</p>
+  </div>
+</div>
+
+<!-- ── Keşfet Feed (fullscreen) ── -->
+<div class="kesfet-feed" id="kesfet-feed">
+  <button class="feed-close" onclick="closeFeed()">&times;</button>
+  <div class="feed-counter" id="feed-counter"></div>
+  <div class="feed-hint" id="feed-hint">Kaydır</div>
+  <div id="feed-slides"></div>
 </div>
 
 <!-- ── Lightbox ── -->
@@ -430,32 +533,32 @@ let currentList = [];
 let lbIndex = -1;
 let aktifHarf = null;
 let aktifTab = 'arama';
+let feedItems = [];
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('total').textContent = SOZLUK.length;
 
-  // Tabs
   document.querySelectorAll('.tab').forEach(btn => {
     btn.addEventListener('click', () => setTab(btn.dataset.tab));
   });
 
-  // Search
   document.getElementById('search').addEventListener('input', e => {
     renderArama(e.target.value.trim());
   });
 
-  // Lightbox close
   document.getElementById('lightbox').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeLB();
   });
 
-  // Keyboard
   document.addEventListener('keydown', e => {
     if (document.getElementById('lightbox').classList.contains('open')) {
       if (e.key === 'Escape') closeLB();
       if (e.key === 'ArrowLeft') navLB(-1);
       if (e.key === 'ArrowRight') navLB(1);
+    }
+    if (document.getElementById('kesfet-feed').classList.contains('open')) {
+      if (e.key === 'Escape') closeFeed();
     }
   });
 
@@ -473,7 +576,6 @@ function setTab(tab) {
   document.getElementById('panel-kesfet').style.display = tab === 'kesfet' ? '' : 'none';
 
   if (tab === 'fihrist') renderFihrist();
-  if (tab === 'kesfet') renderKesfet();
 }
 
 // ── ARAMA ──
@@ -514,7 +616,6 @@ function renderFihrist() {
   const bar = document.getElementById('az-bar');
   bar.innerHTML = '';
 
-  // Tümü butonu
   const allBtn = document.createElement('button');
   allBtn.className = 'az-btn' + (!aktifHarf ? ' active' : '');
   allBtn.textContent = '*';
@@ -542,22 +643,69 @@ function renderFihrist() {
   renderGrid('fihrist-grid', filtered);
 }
 
-// ── KEŞFET ──
-function renderKesfet() {
-  const item = SOZLUK[Math.floor(Math.random() * SOZLUK.length)];
-  const area = document.getElementById('kesfet-area');
-  area.innerHTML = `
-    <div class="kesfet-card">
-      <img class="card-img" src="kitap/${item.img}" alt="${item.kelime}" loading="lazy"
-           onerror="this.style.background='var(--surface2)'" />
-      <div class="lb-body">
-        <div class="lb-word">${item.kelime}</div>
-        <div class="lb-meaning">${item.anlam}</div>
-        <span class="lb-letter">${item.kelime[0]}</span>
-      </div>
-    </div>
-    <button class="kesfet-btn" onclick="renderKesfet()">Yeni Kelime</button>
-  `;
+// ── KEŞFET FEED ──
+function openFeed() {
+  // Shuffle for feed
+  feedItems = [...SOZLUK];
+  for (let i = feedItems.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [feedItems[i], feedItems[j]] = [feedItems[j], feedItems[i]];
+  }
+
+  const container = document.getElementById('feed-slides');
+  container.innerHTML = '';
+
+  // Render first batch (lazy load rest)
+  const batchSize = 20;
+  for (let i = 0; i < Math.min(batchSize, feedItems.length); i++) {
+    container.appendChild(createSlide(feedItems[i], i));
+  }
+
+  const feed = document.getElementById('kesfet-feed');
+  feed.classList.add('open');
+  feed.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+  updateFeedCounter(0);
+
+  // Lazy load more slides on scroll
+  let loaded = batchSize;
+  feed.onscroll = () => {
+    const idx = Math.round(feed.scrollTop / feed.clientHeight);
+    updateFeedCounter(idx);
+
+    // Hide hint after first scroll
+    const hint = document.getElementById('feed-hint');
+    if (idx > 0 && hint) hint.style.display = 'none';
+
+    // Load more slides when near end
+    if (idx >= loaded - 5 && loaded < feedItems.length) {
+      const end = Math.min(loaded + batchSize, feedItems.length);
+      for (let i = loaded; i < end; i++) {
+        container.appendChild(createSlide(feedItems[i], i));
+      }
+      loaded = end;
+    }
+  };
+}
+
+function createSlide(item, index) {
+  const div = document.createElement('div');
+  div.className = 'feed-slide';
+  div.innerHTML = `
+    <img src="kitap/${item.img}" alt="${item.kelime}" loading="${index < 3 ? 'eager' : 'lazy'}" />`;
+  return div;
+}
+
+function updateFeedCounter(idx) {
+  document.getElementById('feed-counter').textContent = `${idx + 1} / ${feedItems.length}`;
+}
+
+function closeFeed() {
+  const feed = document.getElementById('kesfet-feed');
+  feed.classList.remove('open');
+  feed.onscroll = null;
+  document.body.style.overflow = '';
+  document.getElementById('feed-hint').style.display = '';
 }
 
 // ── Grid Render ──

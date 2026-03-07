@@ -68,8 +68,10 @@ section{padding:80px 1.5rem;}
 .timeline-handle{position:absolute;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;background:var(--accent);border-radius:50%;border:2px solid #06091a;cursor:grab;transition:left .05s;}
 .time-display{font-size:0.85rem;color:var(--text2);margin-top:0.3rem;}
 .prayer-btns{display:flex;gap:0.5rem;flex-wrap:wrap;}
-.prayer-btn{font-size:0.75rem;padding:5px 10px;border-radius:6px;border:1px solid var(--border);cursor:pointer;transition:all .2s;color:var(--text2);}
+.prayer-btn{font-size:0.75rem;padding:5px 10px;border-radius:6px;border:1px solid var(--border);cursor:pointer;transition:all .2s;color:var(--text2);display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.3;}
 .prayer-btn:hover{border-color:var(--accent);color:var(--accent);}
+.pb-time{font-size:0.82rem;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:0.02em;}
+.prayer-btn:hover .pb-time{color:var(--accent);}
 
 /* PRAYER TIME CARDS */
 #vakitler{background:var(--bg);}
@@ -957,10 +959,17 @@ function rebuildEvents(){
     { f:toF(pt.yatsiIma),    name:'Yatsı — İmâmeyn (−17°)',             alt:-17, color:'#4f46e5', dot:'#818cf8' },
     { f:toF(pt.yatsiImam),   name:"Yatsı — İmâm-ı A'zam (−19°)",       alt:-19, color:'#312e81', dot:'#6366f1' },
   ];
-  // Update prayer buttons
+  // Update prayer buttons with actual times
   const btns = document.querySelectorAll('.prayer-btn');
   const fracs = [EVENTS[0].f, EVENTS[1].f, EVENTS[4].f, EVENTS[5].f, EVENTS[8].f, EVENTS[10].f];
-  btns.forEach((b,i) => { if(fracs[i] !== undefined) b.onclick = () => jumpTo(fracs[i], b.textContent); });
+  const btnNames = ['İmsak','Güneş Doğuşu','Öğle','İkindi','Akşam','Yatsı'];
+  const btnMins  = [pt.imsak, pt.gunes, pt.ogle, pt.ikindiEvvel, pt.aksam, pt.yatsiIma];
+  btns.forEach((b,i) => {
+    if(fracs[i] !== undefined){
+      b.innerHTML = `<span>${btnNames[i]}</span><span class="pb-time">${minutesToHM(btnMins[i])}</span>`;
+      b.onclick = () => jumpTo(fracs[i], btnNames[i]);
+    }
+  });
 }
 
 function resizeSolar(){
