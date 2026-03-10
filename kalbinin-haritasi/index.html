@@ -374,7 +374,6 @@ function render(){
   app.className='container mx-auto max-w-3xl p-4 sm:p-6 py-10 fade-in';
   const screens={welcome:screenWelcome,start:screenStart,quiz:screenQuiz,result:screenResult,history:screenHistory};
   app.innerHTML=(screens[S.screen]||screenWelcome)();
-  attachEvents();
   window.scrollTo(0,0);
 }
 
@@ -578,6 +577,7 @@ async function shareImg(){
 }
 
 render();
+attachEvents();
 </script>
 </body>
 </html>
