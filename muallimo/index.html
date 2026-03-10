@@ -67,6 +67,13 @@ body {
   display: flex; align-items: center; gap: 6px;
 }
 .hdr-btn:hover { background: var(--border2); color: var(--text); }
+.hdr-nav-a {
+  color: var(--text2); text-decoration: none; font-size: .78rem;
+  padding: 5px 10px; border-radius: 7px; white-space: nowrap;
+  transition: color .15s, background .15s;
+}
+.hdr-nav-a:hover { color: var(--text); background: var(--bg3); }
+.hdr-nav-a.hdr-nav-home { padding: 5px 8px; }
 
 /* ── EKRANLAR ───────────────────────────────────────────────── */
 .screen { display: none; }
@@ -401,7 +408,7 @@ body {
 </style>
   <script src="/nav.js"></script>
 </head>
-<body>
+<body data-nav-skip="true">
 
 <!-- HEADER -->
 <header id="header">
@@ -412,6 +419,8 @@ body {
     <span id="crumb-cilt" style="color:var(--text2)"></span>
   </div>
   <div id="header-right">
+    <a href="/" class="hdr-nav-a" title="Lab ana sayfası">← Lab</a>
+    <a href="https://raufenc.com" class="hdr-nav-a hdr-nav-home" title="raufenc.com">🏠</a>
     <button class="hdr-btn" id="hdr-back" style="display:none" onclick="goBack()">← Geri</button>
   </div>
 </header>
@@ -642,6 +651,7 @@ function ciltAc(slug, ciltIdx) {
 
 // ── TAM EKRAN SCROLL AÇ/KAPAT ────────────────────────────────
 function acScrollView() {
+  document.getElementById('header').style.display='none';
   $('scroll-container').classList.add('active');
   $('sc-close-btn').classList.add('visible');
   $('sc-grid-btn').classList.add('visible');
@@ -649,6 +659,7 @@ function acScrollView() {
   document.body.style.overflow = 'hidden';
 }
 function kapatScrollView(mode) {
+  document.getElementById('header').style.display='';
   $('scroll-container').classList.remove('active');
   $('sc-close-btn').classList.remove('visible');
   $('sc-grid-btn').classList.remove('visible');

@@ -4,6 +4,7 @@
  * Proje sayfaları  → ← Lab  +  🏠 raufenc.com butonları
  */
 (function () {
+  if (document.body && document.body.getAttribute('data-nav-skip') === 'true') return;
   var PATH     = window.location.pathname.replace(/\/index\.html$/, '/');
   var isHome   = PATH === '/' || PATH === '';
   var RAUFENC  = 'https://raufenc.com';
