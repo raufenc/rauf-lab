@@ -512,16 +512,18 @@ async function fetchGemini(scores){
   try{
     const res=await fetch('/api/gemini',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
     const reader=res.body.getReader(), decoder=new TextDecoder();
-    let fullText='';
+    let fullText='', buf='';
     while(true){
       const{done,value}=await reader.read(); if(done) break;
-      decoder.decode(value,{stream:true}).split('\n').forEach(line=>{
-        if(!line.startsWith('data: ')||line==='data: [DONE]') return;
+      buf+=decoder.decode(value,{stream:true});
+      const lines=buf.split('\n'); buf=lines.pop();
+      for(const line of lines){
+        if(!line.startsWith('data: ')||line==='data: [DONE]') continue;
         try{
           const token=JSON.parse(line.slice(6)).choices?.[0]?.delta?.content||'';
           if(token){ fullText+=token; S.gemini.text=fullText; const el=document.getElementById('gemini-stream'); if(el) el.innerHTML=renderGeminiText(fullText)+'<span class="inline-block w-0.5 h-4 bg-emerald-400 ml-0.5 align-middle animate-pulse"></span>'; }
         }catch{}
-      });
+      }
     }
     const lines=fullText.split('\n'), last=lines[lines.length-1].trim();
     if(last.startsWith('SONRAKI_TEST:')){
