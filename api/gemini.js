@@ -1,34 +1,27 @@
-export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
-  const { prompt } = req.body;
+export const config = { runtime: 'edge' };
 
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
+export default async function handler(req) {
+  if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 });
 
-  try {
-    const upstream = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        stream: true,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+  const { prompt } = await req.json();
 
-    const reader = upstream.body.getReader();
-    const decoder = new TextDecoder();
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      res.write(decoder.decode(value, { stream: true }));
+  const upstream = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      stream: true,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+
+  return new Response(upstream.body, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
     }
-  } catch(e) {
-    res.write('data: [DONE]\n\n');
-  }
-  res.end();
+  });
 }
