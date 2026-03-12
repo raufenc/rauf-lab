@@ -671,7 +671,10 @@ function openPanel(scholar, idx) {
   if (!_scrubbing) {
     const lng = scholar._lng !== undefined ? scholar._lng : scholar.koordinat[1];
     const lat = scholar._lat !== undefined ? scholar._lat : scholar.koordinat[0];
-    S.map.flyTo({ center: [lng, lat], zoom: Math.max(S.map.getZoom(), 5), duration: 1100, offset: [190, 0] });
+    const isMobile = window.innerWidth <= 620;
+    // Mobile: panel is bottom sheet (72vh), offset map upward so city shows in visible top area
+    const flyOffset = isMobile ? [0, -Math.round(window.innerHeight * 0.34)] : [190, 0];
+    S.map.flyTo({ center: [lng, lat], zoom: Math.max(S.map.getZoom(), 5), duration: isMobile ? 900 : 1100, offset: flyOffset });
   }
 
   showPath(idx);
