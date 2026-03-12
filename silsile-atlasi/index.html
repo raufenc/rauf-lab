@@ -522,7 +522,7 @@ function openPanel(scholar, idx) {
   portraitEl.innerHTML = PORTRAIT_SVG;
   portraitEl.classList.toggle('menba', isNabi);
   const halkaEl = document.getElementById('panel-halka');
-  halkaEl.textContent = isNabi ? 'Menba-ı Feyz · Silsilenin Nûru' : `${idx + 1}. Halka`;
+  halkaEl.textContent = isNabi ? '' : `${idx + 1}. Halka`;
   halkaEl.classList.toggle('menba', isNabi);
   document.getElementById('panel-name').textContent = scholar.tam_ad;
   document.getElementById('panel-lakap').textContent = scholar.lakap || '';
