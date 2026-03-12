@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Osmanlı Harita Timelapse — Rauf Enç</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: rgba(8,8,14,0.90);
+      --border: rgba(255,255,255,0.10);
+      --text: #e8e8f0;
+      --muted: #44445a;
+      --muted2: #7777a0;
+      --gold: #d4a054;
+      --gold-dim: rgba(212,160,84,0.15);
+      --green: #22c55e;
+      --green-dim: rgba(34,197,94,0.12);
+      --red: #ef4444;
+    }
+
+    html, body {
+      height: 100%; width: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+    }
+
+    /* ── Globe ── */
+    #globe-wrap {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+    #globe-wrap canvas { display: block; }
+
+    /* ── Sultan Kartı ── */
+    #sultan-panel {
+      position: fixed;
+      bottom: 88px;
+      left: 16px;
+      width: 260px;
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px 12px;
+      z-index: 20;
+      transition: opacity 0.3s;
+    }
+
+    #sultan-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    #sultan-emoji {
+      font-size: 28px;
+      line-height: 1;
+      filter: drop-shadow(0 0 6px rgba(212,160,84,0.4));
+    }
+
+    #sultan-info { flex: 1; min-width: 0; }
+
+    #sultan-unvan {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gold);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #sultan-lakap {
+      font-size: 10px;
+      color: var(--muted2);
+      letter-spacing: 0.05em;
+      margin-top: 1px;
+    }
+
+    #sultan-tarih {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    /* Chart */
+    #chart-wrap {
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      margin-top: 4px;
+    }
+
+    #chart-label {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    #toprak-chart { height: 72px !important; }
+
+    /* Aktif olay */
+    #aktif-olay {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted2);
+      min-height: 20px;
+      line-height: 1.4;
+    }
+    #aktif-olay.zafer   { color: var(--green); }
+    #aktif-olay.yenilgi { color: var(--red); }
+    #aktif-olay.fetih   { color: var(--gold); }
+
+    /* ── Timeline Bar ── */
+    #timeline-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 76px;
+      background: rgba(6,6,12,0.96);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid var(--border);
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 16px 0 12px;
+    }
+
+    /* Kontrol butonları */
+    #tl-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    #btn-play {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: none;
+      color: #0a0a0f;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+      transition: transform 0.1s, background 0.15s;
+      flex-shrink: 0;
+    }
+    #btn-play:hover { background: #e8c47a; transform: scale(1.08); }
+    #btn-play:active { transform: scale(0.95); }
+
+    #btn-speed {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--muted2);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px 6px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      letter-spacing: 0.04em;
+    }
+    #btn-speed:hover { color: var(--gold); border-color: var(--gold); }
+
+    /* Slider bölgesi */
+    #tl-slider-wrap {
+      flex: 1;
+      position: relative;
+      padding-top: 20px;
+    }
+
+    /* Tick işaretleri */
+    #year-ticks {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      pointer-events: none;
+      height: 18px;
+    }
+    .tick {
+      position: absolute;
+      font-size: 9px;
+      color: var(--muted);
+      transform: translateX(-50%);
+      white-space: nowrap;
+      line-height: 1;
+    }
+    .tick::before {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 4px;
+      background: var(--muted);
+      margin: 0 auto 2px;
+    }
+    .tick.major { color: var(--muted2); }
+    .tick.major::before { background: var(--muted2); height: 5px; }
+
+    /* Range input */
+    #timeline-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(to right,
+        var(--gold) 0%,
+        var(--gold) var(--pct,0%),
+        #1e1e2e var(--pct,0%),
+        #1e1e2e 100%);
+      outline: none;
+      cursor: pointer;
+    }
+    #timeline-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: 2px solid #fff;
+      cursor: grab;
+      box-shadow: 0 0 10px rgba(212,160,84,0.6);
+    }
+    #timeline-slider::-webkit-slider-thumb:active { cursor: grabbing; }
+    #timeline-slider::-moz-range-thumb {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: 2px solid #fff;
+      cursor: grab;
+    }
+
+    /* Yıl göstergesi */
+    #year-display {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--gold);
+      min-width: 56px;
+      text-align: right;
+      letter-spacing: -0.03em;
+      flex-shrink: 0;
+      text-shadow: 0 0 20px rgba(212,160,84,0.4);
+    }
+
+    /* ── Event marker stili ── */
+    .event-marker {
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+    }
+    .event-marker:hover { transform: scale(1.4); }
+
+    /* ── Olay popup ── */
+    #olay-popup {
+      position: fixed;
+      background: rgba(8,8,14,0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--gold);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 12px;
+      color: var(--text);
+      z-index: 50;
+      pointer-events: none;
+      display: none;
+      max-width: 200px;
+      line-height: 1.4;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    }
+    #olay-popup .popup-yil {
+      font-size: 10px;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    /* ── Toprak büyüklüğü badge ── */
+    #toprak-badge {
+      position: fixed;
+      top: 60px;
+      right: 16px;
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      z-index: 20;
+      text-align: right;
+    }
+    #toprak-badge .tb-label {
+      font-size: 9px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+    #toprak-badge .tb-value {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--green);
+      letter-spacing: -0.02em;
+      margin-top: 2px;
+    }
+    #toprak-badge .tb-unit {
+      font-size: 10px;
+      color: var(--muted2);
+    }
+
+    /* ── Loading ── */
+    #loading {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.6s;
+    }
+    #loading .ld-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+    }
+    #loading .ld-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- Loading ekranı -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <div class="ld-title">🌙 Osmanlı Haritası</div>
+    <div class="ld-sub">3D küre yükleniyor…</div>
+  </div>
+
+  <!-- Globe container -->
+  <div id="globe-wrap"></div>
+
+  <!-- Sultan bilgi kartı -->
+  <div id="sultan-panel">
+    <div id="sultan-header">
+      <div id="sultan-emoji">⚔️</div>
+      <div id="sultan-info">
+        <div id="sultan-unvan">I. Osman</div>
+        <div id="sultan-lakap">Gazi</div>
+        <div id="sultan-tarih">1299 – 1326</div>
+      </div>
+    </div>
+    <div id="chart-wrap">
+      <div id="chart-label">Osmanlı Toprakları (milyon km²)</div>
+      <canvas id="toprak-chart"></canvas>
+    </div>
+    <div id="aktif-olay">—</div>
+  </div>
+
+  <!-- Toprak büyüklüğü badge -->
+  <div id="toprak-badge">
+    <div class="tb-label">Toprak</div>
+    <div class="tb-value" id="tb-value">0.02</div>
+    <div class="tb-unit">milyon km²</div>
+  </div>
+
+  <!-- Event popup -->
+  <div id="olay-popup">
+    <div class="popup-yil" id="popup-yil"></div>
+    <div id="popup-text"></div>
+  </div>
+
+  <!-- Timeline -->
+  <div id="timeline-bar">
+    <div id="tl-controls">
+      <button id="btn-play" title="Oynat / Durdur (Space)">▶</button>
+      <button id="btn-speed" title="Hız">1×</button>
+    </div>
+    <div id="tl-slider-wrap">
+      <div id="year-ticks"></div>
+      <input type="range" id="timeline-slider" min="1299" max="1922" value="1299" step="1" />
+    </div>
+    <div id="year-display">1299</div>
+  </div>
+
+  <!-- CDN -->
+  <script src="/nav.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/globe.gl@2.28.1/dist/globe.gl.min.js"></script>
+  <script src="veri.js"></script>
+
+  <script>
+  // ── STATE ──────────────────────────────────────────────────
+  const S = {
+    year: 1299,
+    playing: false,
+    interval: null,
+    speed: 1,       // multiplier
+    speeds: [1,2,5],
+    speedIdx: 0,
+    globe: null,
+    chart: null,
+  };
+
+  // Hız ayarları (her tick kaç yıl ilerler)
+  const TICK_MS = 100;
+  const YEARS_PER_TICK = [1, 2, 5];
+
+  // ── BAŞLAT ─────────────────────────────────────────────────
+  // Tüm CDN scriptler senkron yüklendiğinden doğrudan çağır
+  buildTicks();
+  initChart();
+  initGlobe();
+  initControls();
+
+  // ── TICK MARKS ─────────────────────────────────────────────
+  function buildTicks() {
+    const TICKS = [
+      {y:1299,m:true},{y:1362},{y:1453,m:true},{y:1517},{y:1566,m:true},
+      {y:1620},{y:1683},{y:1699},{y:1774},{y:1829},{y:1878},{y:1913},{y:1922,m:true}
+    ];
+    const wrap = document.getElementById('year-ticks');
+    const span = 1922 - 1299;
+    TICKS.forEach(t => {
+      const el = document.createElement('div');
+      el.className = 'tick' + (t.m ? ' major' : '');
+      el.style.left = ((t.y - 1299) / span * 100) + '%';
+      el.textContent = t.y;
+      wrap.appendChild(el);
+    });
+  }
+
+  // ── CHART ──────────────────────────────────────────────────
+  function initChart() {
+    const labels = TOPRAK_VERILERI.map(d => d.yil);
+    const values = TOPRAK_VERILERI.map(d => +(d.toprak_km2 / 1_000_000).toFixed(2));
+
+    const cursorPlugin = {
+      id: 'cursor',
+      afterDraw(chart) {
+        const year = S.year;
+        const idx = TOPRAK_VERILERI.filter(d => d.yil <= year).length - 1;
+        if (idx < 0) return;
+        const meta = chart.getDatasetMeta(0);
+        if (!meta.data[idx]) return;
+        const x = meta.data[idx].x;
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.strokeStyle = '#d4a054';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([3,4]);
+        ctx.beginPath();
+        ctx.moveTo(x, chart.chartArea.top);
+        ctx.lineTo(x, chart.chartArea.bottom);
+        ctx.stroke();
+        // Nokta
+        const yVal = values[idx];
+        const y = chart.scales.y.getPixelForValue(yVal);
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#d4a054';
+        ctx.beginPath();
+        ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    };
+
+    S.chart = new Chart(document.getElementById('toprak-chart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          data: values,
+          borderColor: '#22c55e',
+          backgroundColor: 'rgba(34,197,94,0.07)',
+          borderWidth: 1.5,
+          pointRadius: 0,
+          fill: true,
+          tension: 0.35,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false },
+        },
+        scales: {
+          x: { display: false },
+          y: {
+            display: true,
+            grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false },
+            ticks: {
+              color: '#44445a',
+              font: { size: 8 },
+              maxTicksLimit: 4,
+              callback: v => v + 'M'
+            },
+            border: { display: false },
+          }
+        }
+      },
+      plugins: [cursorPlugin]
+    });
+  }
+
+  // ── GLOBE ──────────────────────────────────────────────────
+  function initGlobe() {
+    const el = document.getElementById('globe-wrap');
+
+    S.globe = Globe()
+      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+      .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
+      .atmosphereAltitude(0.18)
+      .atmosphereColor('rgba(100,180,255,0.15)')
+      // Toprak polygonları
+      .polygonsData([])
+      .polygonCapColor(() => 'rgba(34,197,94,0.48)')
+      .polygonSideColor(() => 'rgba(34,197,94,0.18)')
+      .polygonStrokeColor(() => '#22c55e')
+      .polygonAltitude(0.004)
+      // Olay işaretçileri
+      .htmlElementsData([])
+      .htmlElement(d => createMarker(d))
+      .htmlLat(d => d.lat)
+      .htmlLng(d => d.lon)
+      .htmlAltitude(0.015)
+      (el);
+
+    // Pixel ratio ayarı (mobile performans)
+    S.globe.renderer().setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+
+    // İstanbul / Anadolu merkezine bak
+    S.globe.pointOfView({ lat: 39, lng: 32, altitude: 2.2 }, 0);
+
+    // Otomatik döndürme
+    S.globe.controls().autoRotate = true;
+    S.globe.controls().autoRotateSpeed = 0.25;
+    S.globe.controls().enableDamping = true;
+    S.globe.controls().dampingFactor = 0.1;
+
+    // Globe yüklenince
+    S.globe.onGlobeReady(() => {
+      const loading = document.getElementById('loading');
+      loading.style.opacity = '0';
+      setTimeout(() => loading.style.display = 'none', 600);
+      updateYear(1299);
+    });
+
+    // Pencere yeniden boyutlandırma
+    window.addEventListener('resize', () => {
+      S.globe.width(window.innerWidth).height(window.innerHeight);
+    });
+  }
+
+  // ── OLAY İŞARETÇİSİ ───────────────────────────────────────
+  const MARKER_ICONS = {
+    zafer:    '⚔️',
+    yenilgi:  '💀',
+    fetih:    '🏰',
+    antlasma: '📜',
+    kurulus:  '🌟',
+    isyan:    '🔥',
+    savas:    '⚔️',
+    son:      '🌙',
+  };
+
+  function createMarker(d) {
+    const el = document.createElement('div');
+    el.className = 'event-marker';
+    el.innerHTML = `<span style="font-size:18px">${MARKER_ICONS[d.tur] || '📍'}</span>`;
+    el.addEventListener('mouseenter', (e) => showPopup(d, e));
+    el.addEventListener('mouseleave', hidePopup);
+    el.addEventListener('click', (e) => showPopup(d, e));
+    return el;
+  }
+
+  function showPopup(d, e) {
+    const popup = document.getElementById('olay-popup');
+    document.getElementById('popup-yil').textContent = d.yil;
+    document.getElementById('popup-text').textContent = d.baslik;
+    popup.style.display = 'block';
+    positionPopup(e.clientX || e.pageX, e.clientY || e.pageY);
+  }
+
+  function hidePopup() {
+    document.getElementById('olay-popup').style.display = 'none';
+  }
+
+  function positionPopup(x, y) {
+    const popup = document.getElementById('olay-popup');
+    const pw = popup.offsetWidth || 180;
+    const ph = popup.offsetHeight || 50;
+    let left = x + 12;
+    let top  = y - ph / 2;
+    if (left + pw > window.innerWidth - 8) left = x - pw - 12;
+    if (top < 8) top = 8;
+    if (top + ph > window.innerHeight - 88) top = window.innerHeight - 88 - ph;
+    popup.style.left = left + 'px';
+    popup.style.top  = top  + 'px';
+  }
+
+  // ── YIL GÜNCELLE ──────────────────────────────────────────
+  function updateYear(year) {
+    S.year = year;
+
+    // Slider + yıl göstergesi
+    const slider = document.getElementById('timeline-slider');
+    slider.value = year;
+    const pct = ((year - 1299) / (1922 - 1299) * 100).toFixed(2);
+    slider.style.setProperty('--pct', pct + '%');
+    document.getElementById('year-display').textContent = year;
+
+    // Toprak verisi
+    const territory = getNearestTerritory(year);
+    if (territory && S.globe) {
+      const features = multipolygonToFeatures(territory.geojson);
+      S.globe.polygonsData(features);
+
+      // Toprak badge
+      const mkm2 = (territory.toprak_km2 / 1_000_000).toFixed(2);
+      document.getElementById('tb-value').textContent = mkm2;
+    }
+
+    // Sultan paneli
+    const sultan = getCurrentSultan(year);
+    updateSultanPanel(sultan);
+
+    // Aktif olaylar
+    const events = getActiveEvents(year);
+    if (S.globe) S.globe.htmlElementsData(events);
+
+    // Güncel olay metni
+    const nowEvent = OLAYLAR.find(o => o.yil === year);
+    const oayEl = document.getElementById('aktif-olay');
+    if (nowEvent) {
+      oayEl.textContent = nowEvent.baslik;
+      oayEl.className = nowEvent.tur;
+    } else {
+      oayEl.textContent = '—';
+      oayEl.className = '';
+    }
+
+    // Chart cursor
+    S.chart && S.chart.update('none');
+  }
+
+  // ── YARDIMCI FONKSİYONLAR ─────────────────────────────────
+  function multipolygonToFeatures(geom) {
+    return geom.coordinates.map(ring => ({
+      type: 'Feature',
+      geometry: { type: 'Polygon', coordinates: ring },
+      properties: {}
+    }));
+  }
+
+  function getNearestTerritory(year) {
+    let best = null;
+    for (const d of TOPRAK_VERILERI) {
+      if (d.yil <= year && (!best || d.yil > best.yil)) best = d;
+    }
+    return best;
+  }
+
+  function getCurrentSultan(year) {
+    for (const s of SULTANLAR) {
+      if (year >= s.baslangic_yil && year < s.bitis_yil) return s;
+    }
+    return SULTANLAR[SULTANLAR.length - 1];
+  }
+
+  function getActiveEvents(year) {
+    return OLAYLAR.filter(o => Math.abs(o.yil - year) <= 6);
+  }
+
+  function updateSultanPanel(s) {
+    if (!s) return;
+    document.getElementById('sultan-emoji').textContent = s.emoji;
+    document.getElementById('sultan-unvan').textContent = s.unvan;
+    document.getElementById('sultan-lakap').textContent = s.lakap || '';
+    document.getElementById('sultan-tarih').textContent = s.baslangic_yil + ' – ' + s.bitis_yil;
+  }
+
+  // ── ANIMASYON ─────────────────────────────────────────────
+  function play() {
+    if (S.playing) return;
+    S.playing = true;
+    document.getElementById('btn-play').textContent = '⏸';
+    if (S.globe) S.globe.controls().autoRotate = false;
+    if (S.year >= 1922) updateYear(1299);
+
+    S.interval = setInterval(() => {
+      const next = S.year + YEARS_PER_TICK[S.speedIdx];
+      if (next > 1922) { pause(); return; }
+      updateYear(next);
+    }, TICK_MS);
+  }
+
+  function pause() {
+    if (!S.playing) return;
+    S.playing = false;
+    clearInterval(S.interval);
+    S.interval = null;
+    document.getElementById('btn-play').textContent = '▶';
+    if (S.globe) S.globe.controls().autoRotate = true;
+  }
+
+  function togglePlay() {
+    S.playing ? pause() : play();
+  }
+
+  // ── KONTROLLER ────────────────────────────────────────────
+  function initControls() {
+    // Oynat butonu
+    document.getElementById('btn-play').addEventListener('click', togglePlay);
+
+    // Hız butonu
+    document.getElementById('btn-speed').addEventListener('click', () => {
+      S.speedIdx = (S.speedIdx + 1) % S.speeds.length;
+      document.getElementById('btn-speed').textContent = S.speeds[S.speedIdx] + '×';
+    });
+
+    // Slider
+    const slider = document.getElementById('timeline-slider');
+    slider.addEventListener('input', e => {
+      pause();
+      updateYear(parseInt(e.target.value));
+    });
+
+    // Klavye
+    document.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT') return;
+      if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+      if (e.key === 'ArrowRight') { pause(); updateYear(Math.min(1922, S.year + 1)); }
+      if (e.key === 'ArrowLeft')  { pause(); updateYear(Math.max(1299, S.year - 1)); }
+      if (e.key === 'ArrowUp')    { pause(); updateYear(Math.min(1922, S.year + 10)); }
+      if (e.key === 'ArrowDown')  { pause(); updateYear(Math.max(1299, S.year - 10)); }
+    });
+  }
+  </script>
+</body>
+</html>
