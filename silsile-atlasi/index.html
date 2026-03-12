@@ -128,6 +128,8 @@ html, body { height: 100%; overflow: hidden; background: var(--bg); font-family:
 #panel-bio {
   font-size: 13px; color: #aaa8c2; line-height: 1.8;
 }
+#panel-bio p { margin: 0 0 12px; }
+#panel-bio p:last-child { margin-bottom: 0; }
 
 .panel-tags { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 16px; }
 .ptag {
@@ -529,7 +531,8 @@ function openPanel(scholar, idx) {
   document.getElementById('panel-dates').textContent =
     scholar.dogum && scholar.vefat ? `${scholar.dogum} — ${scholar.vefat}` : '';
   document.getElementById('panel-loc').textContent = `${scholar.sehir}, ${scholar.ulke}`;
-  document.getElementById('panel-bio').textContent = scholar.biyografi;
+  document.getElementById('panel-bio').innerHTML = scholar.biyografi
+    .split('\n\n').map(p => `<p>${p.replace(/\n/g,' ')}</p>`).join('');
   document.getElementById('ptag-asir').textContent = scholar.asir;
   document.getElementById('ptag-bolge').textContent = scholar.bolge;
 
