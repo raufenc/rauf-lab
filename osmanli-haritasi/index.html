@@ -453,6 +453,10 @@
 
   // ── CHART ──────────────────────────────────────────────────
   function initChart() {
+    // Önceki instance varsa temizle (çift yüklemede donmayı önler)
+    const existing = Chart.getChart('toprak-chart');
+    if (existing) existing.destroy();
+
     const labels = TOPRAK_VERILERI.map(d => d.yil);
     const values = TOPRAK_VERILERI.map(d => +(d.toprak_km2 / 1_000_000).toFixed(2));
 
@@ -563,11 +567,19 @@
 
     // Globe yüklenince
     S.globe.onGlobeReady(() => {
+      showApp();
+    });
+
+    // Fallback: WebGL geç başlarsa 8 saniye sonra zorla aç
+    setTimeout(() => showApp(), 8000);
+
+    function showApp() {
       const loading = document.getElementById('loading');
+      if (loading.style.display === 'none') return;
       loading.style.opacity = '0';
       setTimeout(() => loading.style.display = 'none', 600);
       updateYear(1299);
-    });
+    }
 
     // Pencere yeniden boyutlandırma
     window.addEventListener('resize', () => {
