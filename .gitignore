@@ -4,6 +4,7 @@
 
 # Muallimo resim dosyaları (CDN'de tutulur, repo'ya eklenmez)
 muallimo/WEBP_Final/
+muallimo/fen-bilimleri/
 
 # Claude proje dosyaları
 .claude/
