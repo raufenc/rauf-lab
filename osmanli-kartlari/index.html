@@ -640,15 +640,13 @@ function renderCards(donem) {
   const gridEl = document.getElementById('kart-grid');
   const filtered = donem === 'all' ? SULTANLAR : SULTANLAR.filter(s => s.donem === donem);
   gridEl.innerHTML = filtered.map(s => {
-    const locked = !state.collected.includes(s.id);
-    return `<div class="kart-wrap ${locked ? 'locked' : ''}" onclick="handleCardClick('${s.id}', this)">
+    return `<div class="kart-wrap" onclick="handleCardClick('${s.id}', this)">
       <div class="kart-inner">
         <div class="kart-on"><img src="images/${s.id}.webp" alt="${s.ad}" loading="lazy">
           <div class="kart-overlay"><div class="kart-ad">${s.ad}</div><div class="kart-yil">${s.saltanat}</div></div>
         </div>
         <div class="kart-arka"><img src="images/${s.id}-arka.webp" alt="${s.ad} arka" loading="lazy"></div>
       </div>
-      <div class="kart-lock">🔒</div>
     </div>`;
   }).join('');
 }
@@ -1287,16 +1285,16 @@ function initKoleksiyon() {
       <div class="kol-stat"><div class="kol-num">${Math.round(state.collected.length/36*100)}%</div><div class="kol-label">Tamamlanan</div></div>
     </div>
     <div class="kart-grid">${SULTANLAR.map(s => {
-      const collected = state.collected.includes(s.id);
       const d = DONEMLER[s.donem];
-      return `<div class="kart-wrap ${collected ? '' : 'locked'}" onclick="${collected ? `showSultanProfil('${s.id}')` : ''}">
+      const collected = state.collected.includes(s.id);
+      return `<div class="kart-wrap" onclick="handleCardClick('${s.id}', this)">
         <div class="kart-inner">
           <div class="kart-on"><img src="images/${s.id}.webp" alt="${s.ad}" loading="lazy">
-            <div class="kart-overlay"><div class="kart-ad">${s.ad}</div><div class="kart-yil">${s.saltanat}</div></div>
+            <div class="kart-overlay"><div class="kart-ad">${s.ad}</div><div class="kart-yil">${s.saltanat}</div>
+              ${collected ? '<span style="color:var(--green);font-size:.6rem">✓ Toplandı</span>' : ''}</div>
           </div>
           <div class="kart-arka"><img src="images/${s.id}-arka.webp" alt="${s.ad}" loading="lazy"></div>
         </div>
-        <div class="kart-lock">🔒</div>
       </div>`;
     }).join('')}</div>`;
 }
