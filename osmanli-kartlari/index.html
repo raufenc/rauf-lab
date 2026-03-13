@@ -175,9 +175,6 @@ button{font-family:inherit;cursor:pointer;border:none}
   display:flex;align-items:center;gap:6px}
 .tl-donem-label::before{content:'';position:absolute;left:-28px;top:4px;width:10px;height:10px;
   border-radius:2px}
-.tl-world{position:relative;margin-left:44px;margin-bottom:12px;padding:6px 10px;
-  background:rgba(41,128,185,.1);border-left:2px solid var(--blue);border-radius:0 6px 6px 0;
-  font-size:.7rem;color:var(--blue)}
 
 /* ── SOY AĞACI ─────────────────────────────────────────────── */
 .soyagaci-wrap{padding:16px;overflow:auto;-webkit-overflow-scrolling:touch}
@@ -800,8 +797,6 @@ function initTimeline() {
   const el = document.getElementById('timeline-content');
   let html = '<div class="tl-line"></div>';
   let lastDonem = '';
-  const worldIdx = {};
-  DUNYA_OLAYLARI.forEach(d => worldIdx[d.yil] = d.olay);
 
   SULTANLAR.forEach(s => {
     const d = DONEMLER[s.donem];
@@ -809,23 +804,12 @@ function initTimeline() {
       html += `<div class="tl-donem-label" style="color:${d.renk}"><span style="display:inline-block;width:10px;height:10px;background:${d.renk};border-radius:2px"></span> ${d.ad} (${d.yillar})</div>`;
       lastDonem = s.donem;
     }
-    const startYear = parseInt(s.saltanat);
-    // Check for world events during this sultan's reign
-    DUNYA_OLAYLARI.forEach(w => {
-      const endYear = parseInt(s.saltanat.split('–')[1] || s.saltanat.split('–')[0]);
-      if (w.yil >= startYear && w.yil <= endYear && !w._shown) {
-        html += `<div class="tl-world">🌍 ${w.yil}: ${w.olay}</div>`;
-        w._shown = true;
-      }
-    });
     html += `<div class="tl-item" onclick="showSultanProfil('${s.id}')" style="border-left:3px solid ${d.renk}">
       <div class="tl-yil">${s.saltanat}</div>
       <div class="tl-ad">${s.sira}. ${s.ad}</div>
       <div class="tl-lakap">${s.lakap}</div>
     </div>`;
   });
-  // Reset world events shown flag
-  DUNYA_OLAYLARI.forEach(w => delete w._shown);
   el.innerHTML = html;
 }
 
