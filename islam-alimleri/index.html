@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>İslam Alimleri — İnteraktif Kart Seti</title>
+<meta name="description" content="22 büyük İslam alimi: interaktif kartlar, biyografiler ve quizlerle İslam ilim geleneğini keşfet!">
+<style>
+/* ── RESET & ROOT ──────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08080f;--bg2:#10101a;--bg3:#181828;--bg4:#202038;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.13);
+  --text:#f0ead6;--text2:#a09882;--text3:#605848;
+  --gold:#c8a46e;--gold2:#a07840;--gold-dim:rgba(200,164,110,.12);
+  --green:#27ae60;--red:#c0392b;--blue:#2980b9;--purple:#8e44ad;
+  --radius:16px;--radius-sm:10px;
+  --shadow:0 8px 32px rgba(0,0,0,.7);
+  --font:'Segoe UI',system-ui,-apple-system,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100dvh;overflow-x:hidden}
+button{font-family:inherit;cursor:pointer;border:none}
+
+/* ── İSLAMİ DESEN ARKAPLAN ─────────────────────────── */
+.pattern-bg{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='40' cy='40' r='35' fill='none' stroke='%23c8a46e' stroke-width='.5'/%3E%3Cpath d='M40 5L75 40L40 75L5 40Z' fill='none' stroke='%23c8a46e' stroke-width='.5'/%3E%3Cpath d='M40 15L65 40L40 65L15 40Z' fill='none' stroke='%23c8a46e' stroke-width='.3'/%3E%3C/svg%3E");
+  background-size:80px 80px}
+
+/* ── HEADER ───────────────────────────────────────────── */
+#header{position:sticky;top:0;z-index:200;background:rgba(8,8,15,.9);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);height:54px;
+  display:flex;align-items:center;padding:0 16px;gap:12px}
+.logo{font-size:.95rem;font-weight:800;letter-spacing:.03em;cursor:pointer;
+  background:linear-gradient(135deg,var(--gold),#e8d0a0);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+.logo span{font-weight:400;opacity:.5}
+#nav-back{display:none;background:var(--bg3);border:1px solid var(--border2);
+  color:var(--text2);padding:5px 10px;border-radius:8px;font-size:.78rem}
+#nav-back:hover{background:var(--bg4);color:var(--text)}
+#hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.hdr-xp{font-size:.75rem;color:var(--gold);display:flex;align-items:center;gap:4px}
+.hdr-puan{font-size:.8rem;padding:3px 8px;background:var(--gold-dim);border-radius:6px;
+  color:var(--gold);font-weight:600}
+
+/* ── EKRANLAR ─────────────────────────────────────────── */
+.screen{display:none;position:relative;z-index:1;animation:fadeIn .25s ease}
+.screen.active{display:block}
+.screen-pad{padding:20px 16px 100px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ── ANA SAYFA ─────────────────────────────────────────── */
+.hero{text-align:center;padding:40px 16px 28px}
+.hero h1{font-size:clamp(1.5rem,5vw,2.2rem);font-weight:800;
+  background:linear-gradient(135deg,var(--gold),#f0d89a,var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.25}
+.hero p{color:var(--text2);font-size:.88rem;margin-top:8px;max-width:480px;margin-inline:auto;line-height:1.6}
+.hero-stats{display:flex;justify-content:center;gap:28px;margin-top:20px;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat .num{font-size:1.4rem;font-weight:800;color:var(--gold)}
+.hero-stat .lbl{font-size:.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+
+.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;padding:0 16px 24px}
+.mod-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 14px;cursor:pointer;transition:all .2s;text-align:center}
+.mod-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,164,110,.1)}
+.mod-card .mod-icon{font-size:2rem;margin-bottom:8px}
+.mod-card .mod-name{font-size:.85rem;font-weight:700;color:var(--text)}
+.mod-card .mod-desc{font-size:.68rem;color:var(--text2);margin-top:4px}
+
+.sec-title{font-size:1rem;font-weight:700;color:var(--text);padding:16px 16px 10px;
+  display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';width:3px;height:16px;background:var(--gold);border-radius:2px}
+
+/* ── KART GALERİSİ ────────────────────────────────────── */
+.galeri-filters{display:flex;gap:6px;padding:10px 16px;flex-wrap:wrap;overflow-x:auto;
+  scrollbar-width:none;-ms-overflow-style:none}
+.galeri-filters::-webkit-scrollbar{display:none}
+.filter-btn{padding:5px 14px;border-radius:20px;font-size:.72rem;font-weight:600;white-space:nowrap;
+  background:var(--bg3);border:1px solid var(--border);color:var(--text2);transition:all .15s;flex-shrink:0}
+.filter-btn:hover,.filter-btn.active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+
+.kart-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;padding:12px 16px 40px}
+
+/* ── KART (flip) ──────────────────────────────────────── */
+.kart-wrap{aspect-ratio:2/3;perspective:1200px;cursor:pointer}
+.kart-inner{position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.4,0,.2,1);
+  transform-style:preserve-3d;border-radius:var(--radius);overflow:visible}
+.kart-wrap.flipped .kart-inner{transform:rotateY(180deg)}
+.kart-on,.kart-arka{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--radius);
+  overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.7)}
+.kart-arka{transform:rotateY(180deg)}
+
+/* Görsel VEYA Placeholder */
+.kart-gorsel{width:100%;height:100%;object-fit:cover;display:block}
+.kart-placeholder{width:100%;height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;
+  background:linear-gradient(160deg,var(--bg3),var(--bg4))}
+.kart-placeholder .ph-initials{font-size:clamp(1.6rem,5vw,2.4rem);font-weight:800;
+  background:linear-gradient(135deg,var(--gold),#e8d09a);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.04em}
+.kart-placeholder .ph-alan{font-size:.6rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;opacity:.5;color:var(--text2)}
+.kart-placeholder .ph-ornament{font-size:1.2rem;opacity:.3;position:absolute;top:14px;right:14px}
+.kart-placeholder .ph-border{position:absolute;inset:6px;border:1px solid var(--gold-dim);
+  border-radius:calc(var(--radius) - 4px);pointer-events:none}
+
+/* Kart Overlay (altta isim) */
+.kart-overlay{position:absolute;bottom:0;left:0;right:0;padding:12px;
+  background:linear-gradient(transparent,rgba(0,0,0,.88));pointer-events:none}
+.kart-overlay .kart-ad{font-size:.8rem;font-weight:700;color:#fff;line-height:1.3}
+.kart-overlay .kart-yasadi{font-size:.68rem;color:rgba(255,255,255,.6)}
+.kart-alan-badge{position:absolute;top:8px;left:8px;padding:2px 8px;border-radius:10px;
+  font-size:.6rem;font-weight:700;backdrop-filter:blur(8px);pointer-events:none}
+
+/* Arka yüz */
+.kart-arka-icerik{padding:14px;height:100%;display:flex;flex-direction:column;gap:8px;
+  background:var(--bg2);border:1px solid var(--border2)}
+.kart-arka-ad{font-size:.78rem;font-weight:800;color:var(--gold);line-height:1.3;margin-bottom:4px}
+.kart-arka-lakap{font-size:.65rem;color:var(--text2);font-style:italic;margin-bottom:8px}
+.kart-arka-metin{font-size:.68rem;color:var(--text2);line-height:1.5;flex:1;overflow:hidden;
+  display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical}
+.kart-arka-eserler{margin-top:auto;padding-top:8px;border-top:1px solid var(--border)}
+.kart-arka-eser-lbl{font-size:.6rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.kart-arka-eser{font-size:.65rem;color:var(--text3);margin-top:2px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ── PROFİL ───────────────────────────────────────────── */
+.profil-hero{text-align:center;padding:24px 16px 8px}
+.profil-avatar{width:120px;height:160px;border-radius:var(--radius);
+  box-shadow:var(--shadow);border:2px solid var(--gold-dim);
+  margin:0 auto 14px;overflow:hidden;background:var(--bg3);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;
+  position:relative}
+.profil-avatar img{width:100%;height:100%;object-fit:cover}
+.profil-avatar .ph-initials{font-size:2.2rem;font-weight:800;
+  background:linear-gradient(135deg,var(--gold),#e8d09a);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.profil-avatar .ph-border{position:absolute;inset:5px;border:1px solid var(--gold-dim);
+  border-radius:calc(var(--radius)-3px)}
+.profil-ad{font-size:1.2rem;font-weight:800;
+  background:linear-gradient(135deg,var(--gold),#f5deb3);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.profil-lakap{font-size:.8rem;color:var(--text2);font-style:italic;margin-top:4px}
+.profil-meta{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.profil-badge{padding:4px 12px;border-radius:20px;font-size:.7rem;font-weight:600;
+  background:var(--gold-dim);border:1px solid rgba(200,164,110,.3);color:var(--gold)}
+.profil-body{padding:14px;max-width:640px;margin:0 auto}
+.profil-section{margin-bottom:18px}
+.profil-section h3{font-size:.85rem;font-weight:700;color:var(--gold);margin-bottom:8px;
+  display:flex;align-items:center;gap:6px}
+.profil-section p,.profil-section li{font-size:.82rem;color:var(--text2);line-height:1.65}
+.profil-section ul{list-style:none;padding:0}
+.profil-section li{padding:4px 0 4px 16px;position:relative}
+.profil-section li::before{content:'◈';position:absolute;left:0;color:var(--gold);font-size:.55rem;top:8px}
+.profil-fun{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-top:10px}
+.profil-fun .fun-label{font-size:.68rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.profil-fun p{font-size:.8rem;color:var(--text);line-height:1.55}
+.profil-nav{display:flex;gap:8px;justify-content:center;padding:14px 16px}
+.profil-nav button{padding:8px 20px;border-radius:8px;font-size:.8rem;font-weight:600;
+  background:var(--bg3);border:1px solid var(--border2);color:var(--text2);transition:all .15s}
+.profil-nav button:hover{border-color:var(--gold);color:var(--gold)}
+.profil-nav button.gold-btn{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+
+/* ── QUIZ ─────────────────────────────────────────────── */
+.quiz-setup{padding:24px;max-width:480px;margin:0 auto;text-align:center}
+.quiz-setup h2{font-size:1.1rem;font-weight:800;color:var(--gold);margin-bottom:20px}
+.quiz-config-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.quiz-config-item{padding:14px;border-radius:var(--radius-sm);background:var(--bg2);
+  border:2px solid var(--border);cursor:pointer;text-align:center;transition:all .15s}
+.quiz-config-item:hover,.quiz-config-item.selected{border-color:var(--gold);background:var(--gold-dim)}
+.quiz-config-item .ci-icon{font-size:1.4rem;margin-bottom:4px}
+.quiz-config-item .ci-label{font-size:.8rem;font-weight:600}
+.quiz-config-item .ci-desc{font-size:.65rem;color:var(--text2)}
+.quiz-start-btn{padding:12px 40px;border-radius:var(--radius-sm);
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000;font-size:.88rem;font-weight:700;margin-top:4px;transition:transform .15s}
+.quiz-start-btn:hover{transform:scale(1.05)}
+.quiz-start-btn:disabled{opacity:.4;pointer-events:none}
+
+.quiz-game{padding:16px;max-width:600px;margin:0 auto}
+.quiz-progress{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.quiz-bar{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.quiz-bar-fill{height:100%;background:var(--gold);transition:width .3s;border-radius:3px}
+.quiz-count{font-size:.72rem;color:var(--text2);white-space:nowrap}
+.quiz-skor{font-size:.72rem;color:var(--gold);font-weight:700;white-space:nowrap}
+.quiz-question{font-size:1rem;font-weight:700;margin-bottom:20px;line-height:1.45}
+.quiz-answers{display:flex;flex-direction:column;gap:9px}
+.quiz-ans{padding:13px 15px;border-radius:var(--radius-sm);background:var(--bg2);
+  border:2px solid var(--border);font-size:.85rem;text-align:left;color:var(--text);
+  transition:all .15s}
+.quiz-ans:hover:not(.answered){border-color:var(--gold)}
+.quiz-ans.correct{border-color:var(--green);background:rgba(39,174,96,.12);color:var(--green)}
+.quiz-ans.wrong{border-color:var(--red);background:rgba(192,57,43,.12);color:var(--red)}
+.quiz-ans.answered{pointer-events:none}
+.quiz-explain{margin-top:10px;padding:10px;background:var(--bg3);border-radius:8px;
+  font-size:.78rem;color:var(--text2);line-height:1.5;display:none}
+.quiz-explain.show{display:block}
+.quiz-next{margin-top:14px;padding:10px 24px;border-radius:8px;
+  background:var(--gold);color:#000;font-weight:700;font-size:.83rem;display:none}
+.quiz-next.show{display:inline-block}
+
+.quiz-results{text-align:center;padding:32px 16px}
+.quiz-score-ring{width:110px;height:110px;border-radius:50%;
+  border:4px solid var(--gold);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;margin:0 auto 16px}
+.quiz-score-num{font-size:1.8rem;font-weight:800;color:var(--gold)}
+.quiz-score-lbl{font-size:.65rem;color:var(--text2)}
+.quiz-result-msg{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:8px}
+.quiz-result-sub{font-size:.8rem;color:var(--text2);margin-bottom:20px}
+.quiz-result-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.quiz-result-btn{padding:10px 24px;border-radius:8px;font-size:.83rem;font-weight:700;
+  background:var(--bg3);border:1px solid var(--border2);color:var(--text2);transition:all .15s}
+.quiz-result-btn:hover{border-color:var(--gold);color:var(--gold)}
+.quiz-result-btn.primary{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+
+/* ── HIZLI TUR ────────────────────────────────────────── */
+.hizli-game{padding:16px;max-width:480px;margin:0 auto;text-align:center}
+.hizli-timer-wrap{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.hizli-timer{font-size:1.8rem;font-weight:800;color:var(--gold)}
+.hizli-timer.uyari{color:var(--red);animation:timerPulse .5s infinite}
+.hizli-skor{font-size:.9rem;color:var(--text2)}
+.hizli-skor strong{color:var(--gold)}
+@keyframes timerPulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hizli-question-box{background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px;margin-bottom:16px;min-height:90px;
+  display:flex;align-items:center;justify-content:center}
+.hizli-question{font-size:.95rem;font-weight:700;line-height:1.4}
+.hizli-btns{display:flex;gap:12px;justify-content:center}
+.hizli-btn{flex:1;max-width:160px;padding:14px;border-radius:var(--radius-sm);
+  font-size:.88rem;font-weight:700;transition:all .15s}
+.hizli-btn.dogru{background:rgba(39,174,96,.12);border:2px solid var(--green);color:var(--green)}
+.hizli-btn.yanlis{background:rgba(192,57,43,.12);border:2px solid var(--red);color:var(--red)}
+.hizli-btn:hover:not(:disabled){transform:scale(1.04)}
+.hizli-feedback{height:36px;display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;margin-top:8px}
+
+/* ── ESLEŞTİRME ──────────────────────────────────────── */
+.eslestirme-game{padding:16px}
+.eslestirme-info{text-align:center;margin-bottom:14px;display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+.eslestirme-info span{font-size:.8rem;color:var(--text2)}
+.eslestirme-info strong{color:var(--gold)}
+.eslestirme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:480px;margin:0 auto}
+.esles-card{aspect-ratio:3/4;border-radius:var(--radius-sm);background:var(--bg3);
+  border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:.68rem;font-weight:600;text-align:center;padding:6px;transition:all .2s;
+  color:transparent;position:relative;overflow:hidden}
+.esles-card::before{content:'☽';font-size:1.4rem;color:var(--gold);position:absolute;opacity:.6}
+.esles-card.acik{color:var(--text);border-color:var(--gold);background:var(--gold-dim)}
+.esles-card.acik::before{display:none}
+.esles-card.eslesti{border-color:var(--green);background:rgba(39,174,96,.1);color:var(--green);pointer-events:none}
+.esles-card.eslesti::before{display:none}
+.esles-card.yanlis-esles{border-color:var(--red);animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* ── TİMELINE ────────────────────────────────────────── */
+.timeline-wrap{padding:16px;overflow-x:hidden}
+.timeline{position:relative;padding-bottom:40px}
+.tl-line{position:absolute;left:22px;top:0;bottom:0;width:2px;background:var(--border2)}
+.tl-item{position:relative;margin-left:48px;margin-bottom:14px;padding:11px 13px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  cursor:pointer;transition:all .2s}
+.tl-item:hover{border-color:var(--gold);transform:translateX(4px)}
+.tl-item::before{content:'';position:absolute;left:-30px;top:14px;width:10px;height:10px;
+  border-radius:50%;border:2px solid var(--gold);background:var(--bg)}
+.tl-yil{font-size:.68rem;color:var(--gold);font-weight:700}
+.tl-ad{font-size:.85rem;font-weight:700;margin-top:2px}
+.tl-lakap{font-size:.68rem;color:var(--text2);margin-top:2px}
+.tl-alan-dot{display:inline-block;width:7px;height:7px;border-radius:50%;
+  margin-right:5px;vertical-align:middle}
+
+/* ── GENEL YARDIMCI ──────────────────────────────────── */
+.boşluk{height:48px}
+.section-empty{text-align:center;padding:40px 16px;color:var(--text3);font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="pattern-bg"></div>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="logo" onclick="goHome()">☽ <span>İslam</span> Alimleri</div>
+  <button id="nav-back" onclick="goBack()">← Geri</button>
+  <div id="hdr-right">
+    <div class="hdr-xp">⭐</div>
+    <div class="hdr-puan" id="hdr-puan">0 XP</div>
+  </div>
+</header>
+
+<!-- ── EKRAN: ANA SAYFA ────────────────────────────── -->
+<div class="screen active screen-pad" id="scr-ana">
+  <div class="hero">
+    <h1>İslam Alimleri<br>Kart Seti</h1>
+    <p>22 büyük âlim · biyografiler · eserler · quiz ve oyunlar</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">22</div><div class="lbl">Alim</div></div>
+      <div class="hero-stat"><div class="num" id="alan-sayi">7</div><div class="lbl">Alan</div></div>
+      <div class="hero-stat"><div class="num" id="toplam-xp">0</div><div class="lbl">XP</div></div>
+    </div>
+  </div>
+
+  <div class="sec-title">Modüller</div>
+  <div class="mod-grid">
+    <div class="mod-card" onclick="goster('scr-galeri')">
+      <div class="mod-icon">🃏</div>
+      <div class="mod-name">Kart Galerisi</div>
+      <div class="mod-desc">22 alimin kartlarını çevir, keşfet</div>
+    </div>
+    <div class="mod-card" onclick="goster('scr-timeline')">
+      <div class="mod-icon">📅</div>
+      <div class="mod-name">Kronoloji</div>
+      <div class="mod-desc">Tarihî sıraya göre görüntüle</div>
+    </div>
+    <div class="mod-card" onclick="goster('scr-quiz-setup')">
+      <div class="mod-icon">❓</div>
+      <div class="mod-name">Quiz</div>
+      <div class="mod-desc">Klasik çoktan seçmeli test</div>
+    </div>
+    <div class="mod-card" onclick="baslatHizliTur()">
+      <div class="mod-icon">⚡</div>
+      <div class="mod-name">Hızlı Tur</div>
+      <div class="mod-desc">60 saniyede doğru/yanlış yarışı</div>
+    </div>
+    <div class="mod-card" onclick="baslatEslestirme()">
+      <div class="mod-icon">🧩</div>
+      <div class="mod-name">Eşleştirme</div>
+      <div class="mod-desc">Alim-eser kartlarını eşleştir</div>
+    </div>
+  </div>
+
+  <div class="sec-title">Alanlara Göre</div>
+  <div class="mod-grid" id="alan-grid"></div>
+</div>
+
+<!-- ── EKRAN: KARİ GALERİSİ ────────────────────────── -->
+<div class="screen screen-pad" id="scr-galeri">
+  <div class="sec-title">Kart Galerisi</div>
+  <div class="galeri-filters" id="galeri-filters"></div>
+  <div class="kart-grid" id="kart-grid"></div>
+</div>
+
+<!-- ── EKRAN: PROFİL ───────────────────────────────── -->
+<div class="screen" id="scr-profil">
+  <div class="profil-hero">
+    <div class="profil-avatar" id="profil-avatar">
+      <div class="ph-border"></div>
+    </div>
+    <div class="profil-ad" id="profil-ad"></div>
+    <div class="profil-lakap" id="profil-lakap"></div>
+    <div class="profil-meta" id="profil-meta"></div>
+  </div>
+  <div class="profil-nav">
+    <button onclick="profilOnceki()">← Önceki</button>
+    <button class="gold-btn" onclick="goster('scr-galeri')">Geri</button>
+    <button onclick="profilSonraki()">Sonraki →</button>
+  </div>
+  <div class="profil-body" id="profil-body"></div>
+  <div class="boşluk"></div>
+</div>
+
+<!-- ── EKRAN: KRONOLOJİ ────────────────────────────── -->
+<div class="screen screen-pad" id="scr-timeline">
+  <div class="sec-title">Kronoloji</div>
+  <div class="timeline-wrap">
+    <div class="timeline">
+      <div class="tl-line"></div>
+      <div id="timeline-liste"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── EKRAN: QUIZ SETUP ───────────────────────────── -->
+<div class="screen screen-pad" id="scr-quiz-setup">
+  <div class="quiz-setup">
+    <h2>❓ Quiz Ayarları</h2>
+    <div class="quiz-config-grid" id="quiz-config"></div>
+    <button class="quiz-start-btn" id="quiz-baslat-btn" onclick="baslatQuiz()">Başlat</button>
+  </div>
+</div>
+
+<!-- ── EKRAN: QUIZ ─────────────────────────────────── -->
+<div class="screen screen-pad" id="scr-quiz">
+  <div class="quiz-game">
+    <div class="quiz-progress">
+      <div class="quiz-bar"><div class="quiz-bar-fill" id="quiz-bar-fill"></div></div>
+      <div class="quiz-count" id="quiz-count"></div>
+      <div class="quiz-skor" id="quiz-skor-hdr"></div>
+    </div>
+    <div class="quiz-question" id="quiz-question"></div>
+    <div class="quiz-answers" id="quiz-answers"></div>
+    <div class="quiz-explain" id="quiz-explain"></div>
+    <button class="quiz-next" id="quiz-next" onclick="quizSonraki()">Devam →</button>
+  </div>
+</div>
+
+<!-- ── EKRAN: QUIZ SONUÇ ──────────────────────────── -->
+<div class="screen screen-pad" id="scr-quiz-sonuc">
+  <div class="quiz-results">
+    <div class="quiz-score-ring">
+      <div class="quiz-score-num" id="quiz-sonuc-puan"></div>
+      <div class="quiz-score-lbl">Puan</div>
+    </div>
+    <div class="quiz-result-msg" id="quiz-sonuc-msg"></div>
+    <div class="quiz-result-sub" id="quiz-sonuc-sub"></div>
+    <div class="quiz-result-btns">
+      <button class="quiz-result-btn primary" onclick="baslatQuiz()">Tekrar Oyna</button>
+      <button class="quiz-result-btn" onclick="goster('scr-ana')">Ana Sayfa</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── EKRAN: HIZLI TUR ────────────────────────────── -->
+<div class="screen screen-pad" id="scr-hizli">
+  <div class="hizli-game">
+    <div class="hizli-timer-wrap">
+      <div class="hizli-timer" id="hizli-timer">60</div>
+      <div class="hizli-skor">Skor: <strong id="hizli-skor">0</strong></div>
+    </div>
+    <div class="hizli-question-box">
+      <div class="hizli-question" id="hizli-question"></div>
+    </div>
+    <div class="hizli-btns">
+      <button class="hizli-btn dogru" onclick="hizliCevap(true)">✓ Doğru</button>
+      <button class="hizli-btn yanlis" onclick="hizliCevap(false)">✗ Yanlış</button>
+    </div>
+    <div class="hizli-feedback" id="hizli-feedback"></div>
+  </div>
+</div>
+
+<!-- ── EKRAN: HIZLI SONUÇ ─────────────────────────── -->
+<div class="screen screen-pad" id="scr-hizli-sonuc">
+  <div class="quiz-results">
+    <div class="quiz-score-ring">
+      <div class="quiz-score-num" id="hizli-sonuc-puan"></div>
+      <div class="quiz-score-lbl">Doğru</div>
+    </div>
+    <div class="quiz-result-msg" id="hizli-sonuc-msg"></div>
+    <div class="quiz-result-sub" id="hizli-sonuc-sub"></div>
+    <div class="quiz-result-btns">
+      <button class="quiz-result-btn primary" onclick="baslatHizliTur()">Tekrar</button>
+      <button class="quiz-result-btn" onclick="goster('scr-ana')">Ana Sayfa</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── EKRAN: EŞLEŞTİRME ──────────────────────────── -->
+<div class="screen screen-pad" id="scr-eslestirme">
+  <div class="eslestirme-game">
+    <div class="sec-title">Eşleştirme</div>
+    <div class="eslestirme-info">
+      <span>Hamle: <strong id="esles-hamle">0</strong></span>
+      <span>Eşleşen: <strong id="esles-esles">0</strong>/8</span>
+    </div>
+    <div class="eslestirme-grid" id="eslestirme-grid"></div>
+  </div>
+</div>
+
+<!-- ── EKRAN: EŞLEŞTİRME SONUÇ ───────────────────── -->
+<div class="screen screen-pad" id="scr-esles-sonuc">
+  <div class="quiz-results">
+    <div class="quiz-score-ring">
+      <div class="quiz-score-num" id="esles-sonuc-hamle"></div>
+      <div class="quiz-score-lbl">Hamle</div>
+    </div>
+    <div class="quiz-result-msg" id="esles-sonuc-msg"></div>
+    <div class="quiz-result-btns">
+      <button class="quiz-result-btn primary" onclick="baslatEslestirme()">Tekrar</button>
+      <button class="quiz-result-btn" onclick="goster('scr-ana')">Ana Sayfa</button>
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="/nav.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════
+   YARDIMCI FONKSİYONLAR
+═══════════════════════════════════════════════════ */
+let aktifEkran = 'scr-ana';
+let ekranGecmisi = [];
+let toplamXP = 0;
+
+function goster(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id !== aktifEkran) ekranGecmisi.push(aktifEkran);
+  aktifEkran = id;
+  document.getElementById('nav-back').style.display = (id === 'scr-ana') ? 'none' : 'block';
+  window.scrollTo(0, 0);
+}
+
+function goHome() { goster('scr-ana'); ekranGecmisi = []; }
+function goBack() {
+  const onceki = ekranGecmisi.pop();
+  if (onceki) goster(onceki);
+  else goster('scr-ana');
+}
+
+function xpKazan(miktar) {
+  toplamXP += miktar;
+  document.getElementById('hdr-puan').textContent = toplamXP + ' XP';
+  document.getElementById('toplam-xp').textContent = toplamXP;
+}
+
+/* Görsel yüklenirse göster, yoksa placeholder */
+function kartGorselHTML(alim, boyut = 'full') {
+  const initials = alim.ad.split(' ').slice(-2).map(w => w[0]).join('').toUpperCase().slice(0,2);
+  const alanBilgi = ALANLAR[alim.alan] || {};
+  return `
+    <div class="kart-placeholder">
+      <div class="ph-border"></div>
+      <div class="ph-ornament">${alanBilgi.ikon || '☽'}</div>
+      <div class="ph-initials">${initials}</div>
+      <div class="ph-alan">${alanBilgi.ad || ''}</div>
+    </div>`;
+}
+
+function kartAlanBadge(alan) {
+  const a = ALANLAR[alan] || {};
+  return `<div class="kart-alan-badge" style="background:${a.renk||'#888'}22;color:${a.renk||'#888'};border:1px solid ${a.renk||'#888'}44">${a.ikon||''} ${a.ad||alan}</div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   ANA SAYFA BAŞLAT
+═══════════════════════════════════════════════════ */
+function anaBaslat() {
+  const grid = document.getElementById('alan-grid');
+  Object.entries(ALANLAR).forEach(([key, a]) => {
+    const sayi = ALIMLER.filter(x => x.alan === key).length;
+    if (!sayi) return;
+    const el = document.createElement('div');
+    el.className = 'mod-card';
+    el.innerHTML = `<div class="mod-icon">${a.ikon}</div>
+      <div class="mod-name">${a.ad}</div>
+      <div class="mod-desc">${sayi} alim · ${a.yy}</div>`;
+    el.onclick = () => { galeriFiltrele(key); goster('scr-galeri'); };
+    grid.appendChild(el);
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   GALERİ
+═══════════════════════════════════════════════════ */
+let aktifFiltre = 'tumu';
+
+function galeriBaslat() {
+  // Filtreler
+  const filtersEl = document.getElementById('galeri-filters');
+  filtersEl.innerHTML = '';
+  const btn0 = document.createElement('button');
+  btn0.className = 'filter-btn active'; btn0.textContent = 'Tümü'; btn0.dataset.f = 'tumu';
+  btn0.onclick = () => galeriFiltrele('tumu');
+  filtersEl.appendChild(btn0);
+  Object.entries(ALANLAR).forEach(([key, a]) => {
+    const sayi = ALIMLER.filter(x => x.alan === key).length;
+    if (!sayi) return;
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn'; btn.textContent = `${a.ikon} ${a.ad}`; btn.dataset.f = key;
+    btn.onclick = () => galeriFiltrele(key);
+    filtersEl.appendChild(btn);
+  });
+  galeriRender();
+}
+
+function galeriFiltrele(f) {
+  aktifFiltre = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.f === f));
+  galeriRender();
+}
+
+function galeriRender() {
+  const grid = document.getElementById('kart-grid');
+  grid.innerHTML = '';
+  const liste = aktifFiltre === 'tumu' ? ALIMLER : ALIMLER.filter(a => a.alan === aktifFiltre);
+  liste.forEach(alim => {
+    const wrap = document.createElement('div');
+    wrap.className = 'kart-wrap';
+    wrap.innerHTML = `
+      <div class="kart-inner">
+        <div class="kart-on">
+          ${kartGorselHTML(alim)}
+          ${kartAlanBadge(alim.alan)}
+          <div class="kart-overlay">
+            <div class="kart-ad">${alim.ad}</div>
+            <div class="kart-yasadi">${alim.yasadi}</div>
+          </div>
+        </div>
+        <div class="kart-arka">
+          <div class="kart-arka-icerik">
+            <div class="kart-arka-ad">${alim.ad}</div>
+            <div class="kart-arka-lakap">"${alim.lakap}"</div>
+            <div class="kart-arka-metin">${alim.biyografi}</div>
+            <div class="kart-arka-eserler">
+              <div class="kart-arka-eser-lbl">Önemli Eser</div>
+              <div class="kart-arka-eser">${alim.eserler[0] || '—'}</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    wrap.addEventListener('click', e => {
+      if (e.detail === 1) {
+        setTimeout(() => {
+          if (!wrap.dataset.dblclicked) wrap.classList.toggle('flipped');
+          delete wrap.dataset.dblclicked;
+        }, 200);
+      }
+    });
+    wrap.addEventListener('dblclick', () => {
+      wrap.dataset.dblclicked = '1';
+      wrap.classList.remove('flipped');
+      profilAc(alim.id);
+    });
+    wrap.setAttribute('title', 'Çevir · Çift tıkla profil aç');
+    grid.appendChild(wrap);
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   PROFİL
+═══════════════════════════════════════════════════ */
+let profilListesi = [];
+let profilIndeks = 0;
+
+function profilAc(id) {
+  profilListesi = aktifFiltre === 'tumu' ? ALIMLER : ALIMLER.filter(a => a.alan === aktifFiltre);
+  profilIndeks = profilListesi.findIndex(a => a.id === id);
+  profilRender();
+  goster('scr-profil');
+}
+
+function profilOnceki() { profilIndeks = (profilIndeks - 1 + profilListesi.length) % profilListesi.length; profilRender(); }
+function profilSonraki() { profilIndeks = (profilIndeks + 1) % profilListesi.length; profilRender(); }
+
+function profilRender() {
+  const alim = profilListesi[profilIndeks];
+  const a = ALANLAR[alim.alan] || {};
+  const initials = alim.ad.split(' ').slice(-2).map(w => w[0]).join('').toUpperCase().slice(0,2);
+
+  document.getElementById('profil-avatar').innerHTML = `
+    <div class="ph-border"></div>
+    <div style="font-size:2.8rem;opacity:.2;position:absolute;top:10px;right:10px">${a.ikon||'☽'}</div>
+    <div class="ph-initials" style="font-size:2.6rem;font-weight:800;background:linear-gradient(135deg,#c8a46e,#e8d09a);-webkit-background-clip:text;-webkit-text-fill-color:transparent">${initials}</div>`;
+
+  document.getElementById('profil-ad').textContent = alim.ad;
+  document.getElementById('profil-lakap').textContent = '"' + alim.lakap + '"';
+  document.getElementById('profil-meta').innerHTML = `
+    <div class="profil-badge">${a.ikon} ${a.ad}</div>
+    <div class="profil-badge">📅 ${alim.yasadi}</div>
+    <div class="profil-badge">📍 ${alim.dogum}</div>`;
+
+  document.getElementById('profil-body').innerHTML = `
+    <div class="profil-section">
+      <h3>📖 Biyografi</h3>
+      <p>${alim.biyografi}</p>
+    </div>
+    <div class="profil-section">
+      <h3>📚 Önemli Eserleri</h3>
+      <ul>${alim.eserler.map(e => `<li>${e}</li>`).join('')}</ul>
+    </div>
+    <div class="profil-section">
+      <h3>⭐ Önemli Olaylar</h3>
+      <ul>${alim.onemliOlaylar.map(o => `<li>${o}</li>`).join('')}</ul>
+    </div>
+    <div class="profil-section">
+      <h3>🔬 Katkısı</h3>
+      <p>${alim.katki}</p>
+    </div>
+    <div class="profil-fun">
+      <div class="fun-label">💡 Biliyor muydun?</div>
+      <p>${alim.biliyorMuydun}</p>
+    </div>`;
+  xpKazan(2);
+}
+
+/* ═══════════════════════════════════════════════════
+   KRONOLOJİ
+═══════════════════════════════════════════════════ */
+function timelineBaslat() {
+  const sirali = [...ALIMLER].sort((a, b) => {
+    const ay = parseInt(a.yasadi.split('–')[0]) || 9999;
+    const by = parseInt(b.yasadi.split('–')[0]) || 9999;
+    return ay - by;
+  });
+  const liste = document.getElementById('timeline-liste');
+  liste.innerHTML = '';
+  sirali.forEach(alim => {
+    const a = ALANLAR[alim.alan] || {};
+    const el = document.createElement('div');
+    el.className = 'tl-item';
+    el.innerHTML = `
+      <div class="tl-yil">
+        <span class="tl-alan-dot" style="background:${a.renk||'#888'}"></span>${alim.yasadi}
+      </div>
+      <div class="tl-ad">${alim.ad}</div>
+      <div class="tl-lakap">${a.ikon||''} ${a.ad||''} · ${alim.dogum}</div>`;
+    el.onclick = () => profilAc(alim.id);
+    liste.appendChild(el);
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   QUIZ
+═══════════════════════════════════════════════════ */
+let quizSorular = [];
+let quizIndeks = 0;
+let quizSkor = 0;
+let quizSecilenAdet = 10;
+
+function quizSetupBaslat() {
+  const grid = document.getElementById('quiz-config');
+  grid.innerHTML = '';
+  [5, 10, 15, 20].forEach(adet => {
+    const el = document.createElement('div');
+    el.className = 'quiz-config-item' + (adet === quizSecilenAdet ? ' selected' : '');
+    el.innerHTML = `<div class="ci-icon">${adet <= 5 ? '⚡' : adet <= 10 ? '📖' : adet <= 15 ? '🎓' : '🏆'}</div>
+      <div class="ci-label">${adet} Soru</div>
+      <div class="ci-desc">${adet <= 5 ? 'Hızlı tur' : adet <= 10 ? 'Standart' : adet <= 15 ? 'Uzun' : 'Tam test'}</div>`;
+    el.onclick = () => {
+      quizSecilenAdet = adet;
+      grid.querySelectorAll('.quiz-config-item').forEach(x => x.classList.remove('selected'));
+      el.classList.add('selected');
+    };
+    grid.appendChild(el);
+  });
+}
+
+function baslatQuiz() {
+  const karistir = [...QUIZ_SORULARI].sort(() => Math.random() - .5).slice(0, quizSecilenAdet);
+  quizSorular = karistir;
+  quizIndeks = 0;
+  quizSkor = 0;
+  goster('scr-quiz');
+  quizSoruGoster();
+}
+
+function quizSoruGoster() {
+  if (quizIndeks >= quizSorular.length) { quizBitis(); return; }
+  const s = quizSorular[quizIndeks];
+  const pct = (quizIndeks / quizSorular.length) * 100;
+  document.getElementById('quiz-bar-fill').style.width = pct + '%';
+  document.getElementById('quiz-count').textContent = (quizIndeks+1) + '/' + quizSorular.length;
+  document.getElementById('quiz-skor-hdr').textContent = quizSkor + ' puan';
+  document.getElementById('quiz-question').textContent = s.soru;
+  document.getElementById('quiz-explain').className = 'quiz-explain';
+  document.getElementById('quiz-next').className = 'quiz-next';
+
+  const secs = [...s.secenekler].sort(() => Math.random() - .5);
+  const answersEl = document.getElementById('quiz-answers');
+  answersEl.innerHTML = '';
+  secs.forEach(secId => {
+    const alim = ALIMLER.find(a => a.id === secId);
+    if (!alim) return;
+    const btn = document.createElement('button');
+    btn.className = 'quiz-ans';
+    btn.textContent = alim.ad;
+    btn.onclick = () => quizCevap(secId, s.dogru);
+    answersEl.appendChild(btn);
+  });
+}
+
+function quizCevap(secilen, dogru) {
+  const s = quizSorular[quizIndeks];
+  const dogruAlim = ALIMLER.find(a => a.id === dogru);
+  document.querySelectorAll('.quiz-ans').forEach(btn => {
+    btn.classList.add('answered');
+    const alim = ALIMLER.find(a => a.ad === btn.textContent);
+    if (alim && alim.id === dogru) btn.classList.add('correct');
+    else if (alim && alim.id === secilen) btn.classList.add('wrong');
+  });
+  const dogru_mu = secilen === dogru;
+  if (dogru_mu) { quizSkor += 10; xpKazan(10); }
+  const explainEl = document.getElementById('quiz-explain');
+  explainEl.textContent = dogru_mu
+    ? `✓ Doğru! ${dogruAlim?.ad} — ${dogruAlim?.katki?.slice(0,100)}...`
+    : `✗ Yanlış. Doğru cevap: ${dogruAlim?.ad}`;
+  explainEl.className = 'quiz-explain show';
+  document.getElementById('quiz-next').className = 'quiz-next show';
+}
+
+function quizSonraki() { quizIndeks++; quizSoruGoster(); }
+
+function quizBitis() {
+  const pct = Math.round((quizSkor / (quizSorular.length * 10)) * 100);
+  const msg = pct >= 90 ? '🏆 Mükemmel!' : pct >= 70 ? '🎓 Çok İyi!' : pct >= 50 ? '📖 İyi' : '💪 Tekrar Dene';
+  document.getElementById('quiz-sonuc-puan').textContent = quizSkor;
+  document.getElementById('quiz-sonuc-msg').textContent = msg;
+  document.getElementById('quiz-sonuc-sub').textContent = `${quizSorular.length} sorudan %${pct} başarı`;
+  goster('scr-quiz-sonuc');
+}
+
+/* ═══════════════════════════════════════════════════
+   HIZLI TUR
+═══════════════════════════════════════════════════ */
+let hizliTimer = null;
+let hizliKalan = 60;
+let hizliSkorVal = 0;
+let hizliYanlislar = 0;
+let hizliMevcutSoru = null;
+let hizliSorular = [];
+let hizliSoruIdx = 0;
+let hizliCevapVerildi = false;
+
+function baslatHizliTur() {
+  clearInterval(hizliTimer);
+  hizliKalan = 60;
+  hizliSkorVal = 0;
+  hizliYanlislar = 0;
+  hizliSorular = [...QUIZ_SORULARI].sort(() => Math.random() - .5);
+  hizliSoruIdx = 0;
+  hizliCevapVerildi = false;
+  document.getElementById('hizli-skor').textContent = '0';
+  document.getElementById('hizli-timer').textContent = '60';
+  document.getElementById('hizli-timer').className = 'hizli-timer';
+  document.getElementById('hizli-feedback').textContent = '';
+  goster('scr-hizli');
+  hizliSonrakiSoru();
+  hizliTimer = setInterval(() => {
+    hizliKalan--;
+    document.getElementById('hizli-timer').textContent = hizliKalan;
+    if (hizliKalan <= 10) document.getElementById('hizli-timer').className = 'hizli-timer uyari';
+    if (hizliKalan <= 0) { clearInterval(hizliTimer); hizliBitis(); }
+  }, 1000);
+}
+
+function hizliSonrakiSoru() {
+  hizliCevapVerildi = false;
+  document.querySelectorAll('.hizli-btn').forEach(b => { b.disabled = false; b.style.opacity = '1'; });
+  const s = hizliSorular[hizliSoruIdx % hizliSorular.length];
+  const dogruAlim = ALIMLER.find(a => a.id === s.dogru);
+  hizliMevcutSoru = { dogru: true };
+  // Rastgele doğru/yanlış ver
+  const gosterDogru = Math.random() > .4;
+  if (gosterDogru) {
+    document.getElementById('hizli-question').textContent = `"${s.soru.split('?')[0]}?" sorusunun cevabı: ${dogruAlim?.ad}`;
+    hizliMevcutSoru = { dogru: true };
+  } else {
+    const yanlis = ALIMLER.filter(a => a.id !== s.dogru)[Math.floor(Math.random() * (ALIMLER.length-1))];
+    document.getElementById('hizli-question').textContent = `"${s.soru.split('?')[0]}?" sorusunun cevabı: ${yanlis?.ad}`;
+    hizliMevcutSoru = { dogru: false };
+  }
+  document.getElementById('hizli-feedback').textContent = '';
+  hizliSoruIdx++;
+}
+
+function hizliCevap(secim) {
+  if (hizliCevapVerildi) return;
+  hizliCevapVerildi = true;
+  document.querySelectorAll('.hizli-btn').forEach(b => { b.disabled = true; b.style.opacity = '.5'; });
+  const dogru_mu = secim === hizliMevcutSoru.dogru;
+  if (dogru_mu) {
+    hizliSkorVal++;
+    document.getElementById('hizli-skor').textContent = hizliSkorVal;
+    document.getElementById('hizli-feedback').textContent = '✓';
+    xpKazan(5);
+  } else {
+    hizliYanlislar++;
+    document.getElementById('hizli-feedback').textContent = '✗';
+  }
+  setTimeout(hizliSonrakiSoru, 600);
+}
+
+function hizliBitis() {
+  const pct = hizliSkorVal + hizliYanlislar > 0
+    ? Math.round((hizliSkorVal / (hizliSkorVal + hizliYanlislar)) * 100) : 0;
+  document.getElementById('hizli-sonuc-puan').textContent = hizliSkorVal;
+  document.getElementById('hizli-sonuc-msg').textContent = pct >= 80 ? '🏆 Harika!' : pct >= 60 ? '📖 İyi gidiyorsun' : '💪 Pratik yaparsan olur';
+  document.getElementById('hizli-sonuc-sub').textContent = `${hizliSkorVal} doğru, ${hizliYanlislar} yanlış · %${pct} başarı`;
+  goster('scr-hizli-sonuc');
+}
+
+/* ═══════════════════════════════════════════════════
+   EŞLEŞTİRME
+═══════════════════════════════════════════════════ */
+let eslesAcik = [];
+let eslesHamle = 0;
+let eslesEslesen = 0;
+let eslesKilitli = false;
+
+function baslatEslestirme() {
+  // 8 alim-eser çifti seç
+  const seciliAlimler = [...ALIMLER].filter(a => a.eserler.length > 0)
+    .sort(() => Math.random() - .5).slice(0, 8);
+  const kartlar = [];
+  seciliAlimler.forEach(a => {
+    kartlar.push({ tip: 'alim', id: a.id, metin: a.ad.split(' ').slice(-2).join(' ') });
+    kartlar.push({ tip: 'eser', id: a.id, metin: a.eserler[0].split(' ').slice(0,5).join(' ') });
+  });
+  kartlar.sort(() => Math.random() - .5);
+
+  eslesAcik = [];
+  eslesHamle = 0;
+  eslesEslesen = 0;
+  eslesKilitli = false;
+  document.getElementById('esles-hamle').textContent = '0';
+  document.getElementById('esles-esles').textContent = '0';
+
+  const grid = document.getElementById('eslestirme-grid');
+  grid.innerHTML = '';
+  kartlar.forEach((k, i) => {
+    const el = document.createElement('div');
+    el.className = 'esles-card';
+    el.dataset.idx = i;
+    el.dataset.id = k.id;
+    el.dataset.metin = k.metin;
+    el.onclick = () => eslesKartTikla(el, k);
+    grid.appendChild(el);
+  });
+  goster('scr-eslestirme');
+}
+
+function eslesKartTikla(el, k) {
+  if (eslesKilitli) return;
+  if (el.classList.contains('eslesti') || el.classList.contains('acik')) return;
+  el.classList.add('acik');
+  el.textContent = k.metin;
+  eslesAcik.push({ el, k });
+  if (eslesAcik.length === 2) {
+    eslesHamle++;
+    document.getElementById('esles-hamle').textContent = eslesHamle;
+    eslesKilitli = true;
+    setTimeout(() => {
+      const [a, b] = eslesAcik;
+      if (a.k.id === b.k.id) {
+        a.el.classList.replace('acik','eslesti');
+        b.el.classList.replace('acik','eslesti');
+        eslesEslesen++;
+        document.getElementById('esles-esles').textContent = eslesEslesen;
+        xpKazan(15);
+        if (eslesEslesen === 8) {
+          setTimeout(() => {
+            const msg = eslesHamle <= 10 ? '🏆 Mükemmel hafıza!' : eslesHamle <= 16 ? '👍 Çok iyi!' : '💪 Daha az hamlede deneyebilirsin';
+            document.getElementById('esles-sonuc-hamle').textContent = eslesHamle;
+            document.getElementById('esles-sonuc-msg').textContent = msg;
+            goster('scr-esles-sonuc');
+          }, 600);
+        }
+      } else {
+        a.el.classList.add('yanlis-esles');
+        b.el.classList.add('yanlis-esles');
+        setTimeout(() => {
+          a.el.classList.remove('acik','yanlis-esles'); a.el.textContent = '';
+          b.el.classList.remove('acik','yanlis-esles'); b.el.textContent = '';
+        }, 500);
+      }
+      eslesAcik = [];
+      eslesKilitli = false;
+    }, 700);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   BAŞLAT
+═══════════════════════════════════════════════════ */
+anaBaslat();
+galeriBaslat();
+timelineBaslat();
+quizSetupBaslat();
+</script>
+</body>
+</html>
