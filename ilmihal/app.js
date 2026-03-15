@@ -418,9 +418,16 @@ function loadSozluk(filterKat, filterText) {
   // Alfabetik sırala
   filtered.sort((a, b) => a.kelime.localeCompare(b.kelime, 'tr'));
 
+  const katLabels = {
+    akaid: 'Akâid/Kelâm', ibadet: 'İbadet/Taharet', tasavvuf: 'Tasavvuf/Ahlâk',
+    fikih: 'Fıkıh/Usûl', muamelat: 'Muâmelât/Ticaret', siyer: 'Siyer/Tarih',
+    hadis: 'Hadis/Sünnet', kuran: "Kur'an/Tefsir", mezhepler: 'Mezhepler/Fırkalar',
+    aile: 'Aile/Nikâh', dil: 'Dil/Edebiyat', miras: 'Miras/Ferâiz', osmanli: 'Osmanlı/Kurumlar'
+  };
   let html = '';
   filtered.forEach(s => {
     const osmanli = s.osmanli ? `<div class="sozluk-osmanli">${s.osmanli}</div>` : '';
+    const katLabel = katLabels[s.kategori] || s.kategori;
     html += `
       <div class="sozluk-item">
         <div class="sozluk-kelime-row">
@@ -428,7 +435,7 @@ function loadSozluk(filterKat, filterText) {
           ${osmanli}
         </div>
         <div class="sozluk-anlam">${s.anlam}</div>
-        <span class="sozluk-kat kat-${s.kategori}">${s.kategori}</span>
+        <span class="sozluk-kat kat-${s.kategori}">${katLabel}</span>
       </div>
     `;
   });
