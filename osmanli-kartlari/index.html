@@ -766,10 +766,21 @@ function initSoyAgaci() {
       ${renderBranch(root.id)}
     </div>`;
 
-  requestAnimationFrame(() => requestAnimationFrame(() => {
+  setTimeout(() => {
     drawSoyLines();
-    setTimeout(drawSoyLines, 300);
-  }));
+    setTimeout(() => { drawSoyLines(); centerSoyRoot(); }, 300);
+  }, 50);
+}
+
+function centerSoyRoot() {
+  const wrap = document.getElementById('soyagaci-content');
+  const container = document.getElementById('soy-tree-container');
+  if (!wrap || !container) return;
+  const rootCard = container.querySelector('.soy-card[data-id]');
+  if (!rootCard) return;
+  let left = 0, el = rootCard;
+  while (el && el !== container) { left += el.offsetLeft; el = el.offsetParent; }
+  wrap.scrollLeft = Math.max(0, left + rootCard.offsetWidth / 2 - wrap.clientWidth / 2);
 }
 
 function drawSoyLines() {
