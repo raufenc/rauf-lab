@@ -502,7 +502,7 @@ const SULTANLAR = [
     eserler: [],
     ilkler: ["En kısa süre tahtta kalan padişahlardan"],
     istatistik: { saltanatYil: 0.25, fetihler: 0 },
-    baba: "abdulaziz",
+    baba: "abdulmecid",
     biliyorMuydun: "V. Murad, batı müziğine çok düşkündü ve piyano çalardı. Meşrutiyet yanlısıydı ancak ruhsal sorunları nedeniyle tahtta kalamamıştır."
   },
   {
