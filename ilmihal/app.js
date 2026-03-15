@@ -1,8 +1,17 @@
 // ===== Se'âdet-i Ebediyye - İnteraktif İlmihâl =====
-const PDF_BASE = 'https://www.hakikatkitabevi.net/downloads/001.pdf';
 function sayfaLink(sayfa, label) {
   if (!label) label = 's. ' + sayfa;
-  return `<a href="${PDF_BASE}#page=${sayfa}" target="_blank" class="sayfa-link" title="Kitabın bu sayfasını aç">${label}</a>`;
+  return `<a href="#" onclick="openSayfa(${sayfa});return false" class="sayfa-link" title="Kitabın bu sayfasını aç">${label}</a>`;
+}
+
+function openSayfa(sayfa) {
+  // Bu sayfayı kapsayan maddeyi bul
+  const madde = window.tocData?.find(m =>
+    m.sayfa_no <= sayfa && (m.sayfa_bitis || m.sayfa_no) >= sayfa
+  );
+  if (madde) {
+    openMadde(madde.kisim, madde.madde_no);
+  }
 }
 
 // Navigation
