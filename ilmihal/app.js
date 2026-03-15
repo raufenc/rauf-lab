@@ -1,17 +1,56 @@
 // ===== Se'âdet-i Ebediyye - İnteraktif İlmihâl =====
+const PDF_URL = 'https://www.hakikatkitabevi.net/downloads/001.pdf';
+
 function sayfaLink(sayfa, label) {
   if (!label) label = 's. ' + sayfa;
   return `<a href="#" onclick="openSayfa(${sayfa});return false" class="sayfa-link" title="Kitabın bu sayfasını aç">${label}</a>`;
 }
 
+// Madde detayı içindeki sayfa linki: PDF gösterir
+function sayfaLinkPdf(sayfa, label) {
+  if (!label) label = 'Sayfa ' + sayfa;
+  return `<a href="#" onclick="showPdfPage(${sayfa});return false" class="sayfa-link" title="PDF sayfasını göster">${label}</a>`;
+}
+
 function openSayfa(sayfa) {
-  // Bu sayfayı kapsayan maddeyi bul
   const madde = window.tocData?.find(m =>
     m.sayfa_no <= sayfa && (m.sayfa_bitis || m.sayfa_no) >= sayfa
   );
   if (madde) {
     openMadde(madde.kisim, madde.madde_no);
   }
+}
+
+function showPdfPage(sayfa) {
+  // Mevcut PDF viewer varsa kapat
+  let viewer = document.getElementById('pdf-viewer');
+  if (viewer) viewer.remove();
+
+  viewer = document.createElement('div');
+  viewer.id = 'pdf-viewer';
+  viewer.innerHTML = `
+    <div class="pdf-viewer-header">
+      <span>Sayfa ${sayfa}</span>
+      <div class="pdf-nav">
+        <button onclick="changePdfPage(-1)">◀</button>
+        <span id="pdf-page-num">${sayfa}</span>
+        <button onclick="changePdfPage(1)">▶</button>
+      </div>
+      <button onclick="document.getElementById('pdf-viewer').remove()" class="pdf-close">✕</button>
+    </div>
+    <iframe src="${PDF_URL}#page=${sayfa}" id="pdf-iframe"></iframe>
+  `;
+  document.querySelector('.madde-detail-body')?.appendChild(viewer);
+}
+
+function changePdfPage(delta) {
+  const numEl = document.getElementById('pdf-page-num');
+  const iframe = document.getElementById('pdf-iframe');
+  if (!numEl || !iframe) return;
+  const newPage = parseInt(numEl.textContent) + delta;
+  if (newPage < 1 || newPage > 1248) return;
+  numEl.textContent = newPage;
+  iframe.src = `${PDF_URL}#page=${newPage}`;
 }
 
 // Navigation
@@ -184,7 +223,7 @@ async function openMadde(kisim, maddeNo) {
       <h3>${madde.baslik}</h3>
       <div class="madde-detail-meta">
         <span>${kisimLabels[madde.kisim]}, Madde ${madde.madde_no}</span>
-        <span>${sayfaLink(madde.sayfa_no, 'Sayfa ' + madde.sayfa_no + (madde.sayfa_bitis ? '-' + madde.sayfa_bitis : ''))}</span>
+        <span>${sayfaLinkPdf(madde.sayfa_no, 'Sayfa ' + madde.sayfa_no + (madde.sayfa_bitis ? '-' + madde.sayfa_bitis : ''))}</span>
         ${madde.mektup_ref ? `<span>Mektup: ${madde.mektup_ref}</span>` : ''}
       </div>
     </div>
@@ -205,11 +244,12 @@ async function openMadde(kisim, maddeNo) {
       <h3>${madde.baslik}</h3>
       <div class="madde-detail-meta">
         <span>${kisimLabels[madde.kisim]}, Madde ${madde.madde_no}</span>
-        <span>${sayfaLink(madde.sayfa_no, 'Sayfa ' + madde.sayfa_no + (madde.sayfa_bitis ? '-' + madde.sayfa_bitis : ''))}</span>
+        <span>${sayfaLinkPdf(madde.sayfa_no, 'Sayfa ' + madde.sayfa_no + (madde.sayfa_bitis ? '-' + madde.sayfa_bitis : ''))}</span>
         ${madde.mektup_ref ? `<span>Mektup: ${madde.mektup_ref}</span>` : ''}
       </div>
     </div>
     <div class="madde-text">${metin}</div>
+    ${getRelatedTables(kisim, maddeNo)}
   `;
 
   // Tooltip events
@@ -217,6 +257,24 @@ async function openMadde(kisim, maddeNo) {
     el.addEventListener('mouseenter', showTooltip);
     el.addEventListener('mouseleave', hideTooltip);
   });
+}
+
+function getRelatedTables(kisim, maddeNo) {
+  if (!window.tablolarData) return '';
+  const ref = `K${kisim}/M${maddeNo}`;
+  const related = window.tablolarData.filter(t => t.kaynak_madde === ref);
+  if (related.length === 0) return '';
+  const tipIcons = {tablo:'▦', liste:'▤', iki_liste:'⇄', flowchart:'▥', agac:'◈'};
+  const items = related.map(t =>
+    `<a href="#" onclick="navigateTo('tablolar');setTimeout(()=>{document.getElementById('tablo-${t.id}')?.scrollIntoView({behavior:'smooth'})},300);closeMadde();return false" class="related-tablo-link">
+      <span class="rt-icon">${tipIcons[t.tip] || '▦'}</span>
+      <span>${t.baslik}</span>
+    </a>`
+  ).join('');
+  return `<div class="related-tablolar">
+    <div class="related-tablolar-title">İlgili Tablo ve Diyagramlar</div>
+    ${items}
+  </div>`;
 }
 
 function closeMadde() {
@@ -384,30 +442,41 @@ document.querySelectorAll('.kat-btn').forEach(btn => {
 // ===== TABLOLAR =====
 let tablolarLoaded = false;
 
+const tabloKatLabels = {
+  itikat: 'İman ve İtikat', temizlik: 'Temizlik', namaz: 'Namaz',
+  oruc: 'Oruç', zekat: 'Zekât', hac: 'Hac ve Umre',
+  aile: 'Aile Hukuku', tasavvuf: 'Tasavvuf', genel: 'Diğer Konular'
+};
+const tabloKatOrder = ['itikat','temizlik','namaz','oruc','zekat','hac','aile','tasavvuf','genel'];
+
 function loadTablolar() {
   tablolarLoaded = true;
   const grid = document.getElementById('tablolar-grid');
   if (!window.tablolarData) { grid.innerHTML = '<div class="loading">Tablolar yükleniyor...</div>'; return; }
 
   let html = '';
-  window.tablolarData.forEach(tablo => {
-    if (tablo.id === 'konu_haritasi') return; // Konu haritası ayrı gösterilir
-
-    html += `
-      <div class="tablo-card">
-        <div class="tablo-card-header">
-          <h4>${tablo.baslik}</h4>
-          <div class="tablo-card-ref">Kaynak: ${tablo.kaynak_madde} · ${sayfaLink(tablo.sayfa_no, 'Sayfa ' + tablo.sayfa_no)}</div>
-        </div>
-        <div class="tablo-card-body">
-          ${renderTabloBody(tablo)}
-          <div class="tablo-kaynak">
-            <strong>Kitaptan:</strong> ${tablo.kaynak_metin}
+  // Kategoriye göre grupla ama kitap sırası koru (data zaten sayfa_no'ya göre sıralı)
+  for (const kat of tabloKatOrder) {
+    const items = window.tablolarData.filter(t => t.kategori === kat && t.id !== 'konu_haritasi');
+    if (items.length === 0) continue;
+    html += `<div class="tablo-kategori-baslik tablo-kat-${kat}"><span>${tabloKatLabels[kat]}</span><span class="tablo-kat-count">${items.length}</span></div>`;
+    items.forEach(tablo => {
+      html += `
+        <div class="tablo-card tablo-kat-${kat}" id="tablo-${tablo.id}">
+          <div class="tablo-card-header">
+            <h4>${tablo.baslik}</h4>
+            <div class="tablo-card-ref">Kaynak: ${tablo.kaynak_madde} · ${sayfaLink(tablo.sayfa_no, 'Sayfa ' + tablo.sayfa_no)}</div>
+          </div>
+          <div class="tablo-card-body">
+            ${renderTabloBody(tablo)}
+            <div class="tablo-kaynak">
+              <strong>Kitaptan:</strong> ${tablo.kaynak_metin}
+            </div>
           </div>
         </div>
-      </div>
-    `;
-  });
+      `;
+    });
+  }
 
   grid.innerHTML = html;
 }
