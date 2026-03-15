@@ -420,9 +420,13 @@ function loadSozluk(filterKat, filterText) {
 
   let html = '';
   filtered.forEach(s => {
+    const osmanli = s.osmanli ? `<div class="sozluk-osmanli">${s.osmanli}</div>` : '';
     html += `
       <div class="sozluk-item">
-        <div class="sozluk-kelime">${s.kelime}</div>
+        <div class="sozluk-kelime-row">
+          <div class="sozluk-kelime">${s.kelime}</div>
+          ${osmanli}
+        </div>
         <div class="sozluk-anlam">${s.anlam}</div>
         <span class="sozluk-kat kat-${s.kategori}">${s.kategori}</span>
       </div>
