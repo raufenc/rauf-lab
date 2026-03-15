@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elveda Endülüs</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg:       #080604;
+  --surface:  #120d09;
+  --surface2: #1c1410;
+  --border:   #2e2016;
+  --gold:     #c4952a;
+  --gold-dim: #7a5c18;
+  --gold-soft:rgba(196,149,42,0.12);
+  --red:      #8b2020;
+  --red-soft: rgba(139,32,32,0.15);
+  --green:    #2a5e40;
+  --text:     #e0cead;
+  --muted:    #6b5840;
+  --muted2:   #9c8060;
+  --white:    #f5ead8;
+}
+
+html { font-size: 16px; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Georgia', 'Times New Roman', serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ── Arka plan desen ── */
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(196,149,42,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 20% 80%, rgba(139,32,32,0.05) 0%, transparent 50%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* Geometrik desen overlay */
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23c4952a' stroke-width='0.3' opacity='0.08'%3E%3Cpolygon points='30,2 58,16 58,44 30,58 2,44 2,16'/%3E%3Cpolygon points='30,8 52,19 52,41 30,52 8,41 8,19'/%3E%3Cline x1='30' y1='2' x2='30' y2='8'/%3E%3Cline x1='58' y1='16' x2='52' y2='19'/%3E%3Cline x1='58' y1='44' x2='52' y2='41'/%3E%3Cline x1='30' y1='58' x2='30' y2='52'/%3E%3Cline x1='2' y1='44' x2='8' y2='41'/%3E%3Cline x1='2' y1='16' x2='8' y2='19'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── Ekran ── */
+#screen {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 680px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 32px 24px 80px;
+}
+
+/* ── Karartma geçişi ── */
+#fade {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 100;
+  transition: opacity 0.6s ease;
+}
+#fade.dark { opacity: 1; pointer-events: all; }
+
+/* ── İstatistik çubuğu ── */
+#stats-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 10px 20px;
+  background: rgba(8,6,4,0.92);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+  font-size: 12px;
+  font-family: system-ui, sans-serif;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+#stats-bar.show { opacity: 1; }
+.stat-item { display: flex; align-items: center; gap: 6px; }
+.stat-label { color: var(--muted2); letter-spacing: 0.05em; }
+.stat-bar {
+  width: 60px; height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.stat-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}
+.fill-cesaret { background: #c44a2a; }
+.fill-hikmet  { background: #2a7ac4; }
+.fill-iman    { background: var(--gold); }
+.stat-num { color: var(--muted2); min-width: 18px; }
+
+/* ── Sahne içeriği ── */
+#scene-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Tarih / konum etiketi */
+.scene-label {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  opacity: 0;
+  animation: fadeIn 0.8s 0.2s ease both;
+}
+
+/* Başlık */
+.scene-title {
+  font-size: clamp(22px, 5vw, 30px);
+  font-weight: normal;
+  color: var(--white);
+  line-height: 1.3;
+  opacity: 0;
+  animation: fadeIn 0.8s 0.4s ease both;
+}
+.scene-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+/* Ayraç */
+.ornament {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  animation: fadeIn 0.6s 0.6s ease both;
+}
+.ornament::before, .ornament::after {
+  content:'';
+  flex:1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+}
+.ornament-diamond {
+  width: 8px; height: 8px;
+  background: var(--gold-dim);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* Hikaye metni */
+.scene-text {
+  font-size: clamp(15px, 2.5vw, 17px);
+  line-height: 1.9;
+  color: var(--text);
+  opacity: 0;
+  animation: fadeIn 0.8s 0.8s ease both;
+}
+.scene-text p { margin-bottom: 1.2em; }
+.scene-text p:last-child { margin-bottom: 0; }
+.scene-text .highlight { color: var(--white); font-style: italic; }
+.scene-text .name { color: var(--gold); }
+.scene-text .place { color: #9ca; font-style: italic; }
+.scene-text .emphasis { color: var(--white); font-weight: bold; }
+
+/* Seçenekler */
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0;
+  animation: fadeIn 0.8s 1.2s ease both;
+}
+
+.choice-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  color: var(--text);
+  font-family: 'Georgia', serif;
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.choice-btn::before {
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  background: var(--gold);
+  opacity:0;
+  transition:opacity 0.2s;
+}
+.choice-btn:hover {
+  border-color: var(--gold-dim);
+  background: rgba(196,149,42,0.08);
+  color: var(--white);
+  transform: translateX(4px);
+}
+.choice-btn:hover::before { opacity: 1; }
+.choice-btn:active { transform: translateX(2px) scale(0.99); }
+
+.choice-btn.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.choice-req {
+  display: block;
+  font-size: 11px;
+  font-family: system-ui, sans-serif;
+  color: var(--muted);
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* Devam butonu (tek seçenek) */
+.continue-btn {
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  border-radius: 6px;
+  padding: 12px 28px;
+  color: var(--gold);
+  font-family: 'Georgia', serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+  letter-spacing: 0.05em;
+}
+.continue-btn:hover {
+  background: var(--gold-soft);
+  border-color: var(--gold);
+  color: var(--white);
+}
+
+/* ── Ekran: başlık ekranı ── */
+#title-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  text-align: center;
+  padding: 32px;
+  transition: opacity 0.8s ease;
+}
+#title-screen.hidden { opacity: 0; pointer-events: none; }
+
+.title-arabic {
+  font-size: clamp(32px, 8vw, 56px);
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  text-shadow: 0 0 60px rgba(196,149,42,0.4);
+  direction: rtl;
+}
+.title-main {
+  font-size: clamp(28px, 6vw, 44px);
+  color: var(--white);
+  font-weight: normal;
+  margin-bottom: 6px;
+}
+.title-sub {
+  font-size: clamp(13px, 2vw, 16px);
+  color: var(--muted2);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-family: system-ui, sans-serif;
+  margin-bottom: 48px;
+}
+.title-sep {
+  width: 120px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  margin: 0 auto 48px;
+}
+.title-desc {
+  max-width: 420px;
+  font-size: 15px;
+  color: var(--muted2);
+  line-height: 1.8;
+  margin-bottom: 48px;
+}
+.start-btn {
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  padding: 14px 44px;
+  color: var(--gold);
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  transition: all 0.3s;
+}
+.start-btn:hover {
+  background: var(--gold-soft);
+  color: var(--white);
+  box-shadow: 0 0 30px rgba(196,149,42,0.2);
+}
+
+/* Son ekranı */
+.ending-badge {
+  font-family: system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 4px 14px;
+  border-radius: 100px;
+  margin-bottom: 12px;
+  display: inline-block;
+}
+.ending-iyi    { background: rgba(42,94,64,0.3);   color: #5dba88; border: 1px solid rgba(93,186,136,0.3); }
+.ending-kotu   { background: rgba(139,32,32,0.3);  color: #e06060; border: 1px solid rgba(224,96,96,0.3); }
+.ending-normal { background: rgba(196,149,42,0.15); color: var(--gold); border: 1px solid var(--gold-dim); }
+
+.restart-btn {
+  margin-top: 16px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 24px;
+  color: var(--muted2);
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+.restart-btn:hover { color: var(--text); border-color: var(--muted); }
+
+/* ── Animasyonlar ── */
+@keyframes fadeIn {
+  from { opacity:0; transform: translateY(10px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* ── Yazı makinesi efekti ── */
+.typewriter { visibility: hidden; }
+.typewriter.typed { visibility: visible; }
+
+/* Responsive */
+@media (max-width: 520px) {
+  #screen { padding: 24px 16px 60px; }
+  #stats-bar { gap: 14px; padding: 8px 14px; }
+  .stat-bar { width: 44px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Başlık ekranı -->
+<div id="title-screen">
+  <div class="title-arabic">وداعاً أندلس</div>
+  <h1 class="title-main">Elveda Endülüs</h1>
+  <p class="title-sub">896 H. / 1491 — Gırnata</p>
+  <div class="title-sep"></div>
+  <p class="title-desc">
+    Endülüs'ün son kalesi Gırnata kuşatma altında.<br>
+    Sen bir kâtipsin. Hocandan, şehirden, inancından<br>
+    ne alıp gideceksin?
+  </p>
+  <button class="start-btn" onclick="startGame()">Başla</button>
+</div>
+
+<!-- İstatistikler -->
+<div id="stats-bar">
+  <div class="stat-item">
+    <span class="stat-label">Cesaret</span>
+    <div class="stat-bar"><div class="stat-fill fill-cesaret" id="fill-cesaret" style="width:30%"></div></div>
+    <span class="stat-num" id="num-cesaret">3</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-label">Hikmet</span>
+    <div class="stat-bar"><div class="stat-fill fill-hikmet" id="fill-hikmet" style="width:30%"></div></div>
+    <span class="stat-num" id="num-hikmet">3</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-label">İman</span>
+    <div class="stat-bar"><div class="stat-fill fill-iman" id="fill-iman" style="width:30%"></div></div>
+    <span class="stat-num" id="num-iman">3</span>
+  </div>
+</div>
+
+<!-- Karartma -->
+<div id="fade"></div>
+
+<!-- Ana ekran -->
+<div id="screen">
+  <div id="scene-wrap"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// OYUN DURUMU
+// ══════════════════════════════════════════════════════════
+const state = {
+  cesaret: 3,
+  hikmet:  3,
+  iman:    3,
+  path:    null,  // 'ilim' | 'kilic' | 'hizmet'
+  flags:   {}
+};
+
+function mod(stat, val) {
+  state[stat] = Math.max(0, Math.min(10, state[stat] + val));
+  updateStats();
+}
+
+function updateStats() {
+  ['cesaret','hikmet','iman'].forEach(s => {
+    document.getElementById('fill-' + s).style.width = (state[s] * 10) + '%';
+    document.getElementById('num-' + s).textContent = state[s];
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// SAHNE VERİSİ
+// ══════════════════════════════════════════════════════════
+const scenes = {
+
+  // ── BÖLÜM 1: KUŞATMA ──────────────────────────────────
+
+  s1: {
+    label: 'Şevval 896 H. — Kasım 1491 · Gırnata, el-Hamrâ Sarayı yakınları',
+    title: 'Sabahın Erken Saatleri',
+    text: `
+      <p>Sabah namazından çıktığınızda havanın keskin soğuğu yüzünüzü yaladı. <span class="place">Gırnata</span> çarşısı ıssız, dükkanların pek çoğu kapalıydı. Uzaktan top sesleri duyuluyordu — Kastedilü ordusunun surların dibindeki siperlerinden geliyordu bu sesler, artık üç aydır.</p>
+      <p>Üstadınız <span class="name">İbrahim el-Endelüsî</span> dün bir haberci göndermiş, acele çağırmıştı. Ellili yaşlarında, gözleri daima kitap tozu ile bulanık, sesi az ama her kelimesi ağır basan bir âlimdi.</p>
+      <p>Medreseye varmadan önce <span class="place">Elvira Kapısı</span>'nın yanından geçmek zorundaydınız. Orada toplanan insanlar fısır fısır konuşuyordu.</p>
+    `,
+    choices: [
+      { text: '«Doğruca medreseye git, hoca bekliyor.»',
+        mods: { hikmet: 1 }, next: 's2' },
+      { text: '«Bir an dur, halkın ne söylediğini dinle.»',
+        mods: { cesaret: 1 }, next: 's2b' },
+    ]
+  },
+
+  s2: {
+    label: 'el-Hamrâ Medresesi',
+    title: 'İbrahim el-Endelüsî',
+    text: `
+      <p>Üstadı yazıhanesinde buldunuz. Önünde dağınık kâğıtlar, elinde yarı açık bir cilt. Sizi görünce kalktı — ki bu nadir olan bir şeydi.</p>
+      <p><span class="highlight">«Yusuf, otur. Sultân bugün müzakereye oturuyor. Kastedilü'den Rodrigo de Perea geldi, taraflar görüşecek.»</span></p>
+      <p>Bir an sustunuz. <span class="name">Sultân Muhammed</span>, yani halkın <span class="highlight">Boabdil</span> dediği, şehrin düşmeyeceğine söz vermişti. Ama o söz çoktan soluk bir umuda dönmüştü.</p>
+      <p><span class="highlight">«Teslim olurlarsa ne olacak?»</span> diye sordunuz.</p>
+      <p>İbrahim başını kaldırmadan cevapladı: <span class="highlight">«Onlar gittiğinde kitaplar da gider. Ya ateşle, ya denizle.»</span></p>
+    `,
+    choices: [
+      { text: '«Devam et.»', next: 's3' }
+    ],
+    isContinue: true
+  },
+
+  s2b: {
+    label: 'Elvira Kapısı',
+    title: 'Kapının Önündekiler',
+    text: `
+      <p>Kapının önünde üç dört kişi konuşuyordu. Biri yaşlı bir demirci, biri genç bir asker, biri de adını bilmediğiniz bir kadındı.</p>
+      <p><span class="highlight">«Teslim diyorlar. Sultân müzakereye oturmuş.»</span></p>
+      <p><span class="highlight">«Teslim olunmaz. Bu şehir sekiz yüz yıldır bizim.»</span></p>
+      <p>Genç asker, <span class="name">Nasır</span>, sizi tanıyordu. Seslendi: <span class="highlight">«Hey kâtip! Sen ne düşünüyorsun? Hocaların mı daha iyi biliyor, yoksa askerler mi?»</span></p>
+      <p>Cevap vermediniz. Gözlerinizi surlara çektiniz; Kastedilü sancaklarının rüzgarda durgunlaştığını fark ettiniz. Sonra hızlı adımlarla medreseye yürüdünüz.</p>
+    `,
+    choices: [
+      { text: '«Devam et.»', next: 's3', flags: { nasir_tanidik: true } }
+    ],
+    isContinue: true
+  },
+
+  s3: {
+    label: 'el-Hamrâ Medresesi',
+    title: 'Karar Zamanı',
+    text: `
+      <p>İbrahim durdu. Sizi gözlerine baktı, çok uzun. Sanki önünüzdeki yolu okuyordu.</p>
+      <p><span class="highlight">«Yusuf, senden bir şey isteyeceğim. Ama önce sen söyle — bu şehir düşerse, sen ne yaparsın?»</span></p>
+      <p>Pencereden bakıyordunuz. Kızıl surlar, sonbahar güneşinde tunç rengini alıyordu. <span class="place">el-Hamrâ</span>'nın burçlarından biri gün boyu bayrak çekecek, gün boyu şehre umut dağıtacaktı. Yarın o bayrak olur muydu, belli değildi.</p>
+      <p>Üç yol düşündünüz:</p>
+    `,
+    choices: [
+      {
+        text: '«Hocam, kitapları kurtaralım. Bilgi ateşten yavaş ölür; biz onu taşıyalım.»',
+        mods: { hikmet: 1 },
+        setPath: 'ilim',
+        next: 'a1'
+      },
+      {
+        text: '«Ben askerlerle savaşacağım. Bu şehir sekiz yüz yıldır Müslümanların; bırakmam.»',
+        mods: { cesaret: 1 },
+        setPath: 'kilic',
+        next: 'b1'
+      },
+      {
+        text: '«Sultânın yanında olmam gerek. Belki müzakerede halkın sesini duyurabilirim.»',
+        mods: { hikmet: 1, iman: 1 },
+        setPath: 'hizmet',
+        next: 'c1'
+      }
+    ]
+  },
+
+  // ══════════════════════════════════════════════════════
+  // PATH A — İLİM YOLU
+  // ══════════════════════════════════════════════════════
+
+  a1: {
+    label: 'İlim Yolu · Birinci Adım',
+    title: 'Gizli Oda',
+    text: `
+      <p>İbrahim gülümsedi — o ender gülüşlerden biri.</p>
+      <p><span class="highlight">«Bunu benden başka kimse söylemedi bu şehirde. Hepsi ya kaçtı ya da kılıç kuşandı. Gel.»</span></p>
+      <p>Sizi medresenin bodrum katına, taş merdivenlerin dibine götürdü. Orada, büyük bir dolabın ardında, çoğunun varlığından haberdar olmadığı bir oda vardı.</p>
+      <p>Gözleriniz alışana kadar beklediniz. Sonra rafları gördünüz — tavana kadar uzanan, eski ciltlerle dolu raflar. <span class="highlight">Yüzlerce eser.</span> Matematik, tıp, şiir, tefsir, felsefe, astronomi...</p>
+      <p><span class="highlight">«İbn Rüşd burada. İbn Sînâ burada. Gırnata tarihçileri burada. Bunların yarısı Avrupa'da yok. Belki hiç olmayacak.»</span></p>
+      <p>Sessizce baktınız. Sonra üstadınıza döndünüz: <span class="highlight">«Hepsini taşıyamayız.»</span></p>
+      <p><span class="highlight">«Biliyorum. Seç.»</span></p>
+    `,
+    choices: [
+      {
+        text: '«İbn Rüşd\'ün mantık ve felsefe eserleri — bunlar en az korunan.»',
+        mods: { hikmet: 2 },
+        next: 'a2',
+        flags: { kitap_felsefe: true }
+      },
+      {
+        text: '«Kur\'an nüshaları ve tefsirler — dini mirasımız asla yok olmamalı.»',
+        mods: { iman: 2 },
+        next: 'a2',
+        flags: { kitap_dini: true }
+      },
+      {
+        text: '«Her çeşitten alayım, elimden geldiğince — bilgi bütündür.»',
+        mods: { hikmet: 1, iman: 1 },
+        next: 'a2',
+        flags: { kitap_karma: true }
+      }
+    ]
+  },
+
+  a2: {
+    label: 'İlim Yolu · İkinci Adım',
+    title: 'Dışarıdan Sesler',
+    text: `
+      <p>Saatlerce çalıştınız. Ciltleri sardınız, sandıklara doldurdunuz. İbrahim Arapça yazıyordu, siz taşıyordunuz, ara ara okuyordunuz.</p>
+      <p>Gece yarısına yaklaşırken dışarıdan sert adım sesleri geldi. Üst kattaki kapı hızla açıldı.</p>
+      <p>Birisi: <span class="highlight">«Kitaplar sarayın mülkü! Sultânın emri olmadan taşınamazlar!»</span></p>
+      <p>İbrahim elinize baktı. Sandığın kapağı açıktı. Birkaç cilt sarılı, kaçmaya hazır.</p>
+      <p>Ne yapıyorsunuz?</p>
+    `,
+    choices: [
+      {
+        text: '«Sandığı kapatın, saklanın — askerler iner inmez kaçarız.»',
+        mods: { cesaret: 1 },
+        next: 'a3'
+      },
+      {
+        text: '«Yukarı çıkın, onlarla konuşun. Belki anlayabilirsiniz.»',
+        mods: { hikmet: 1 },
+        next: 'a3b'
+      }
+    ]
+  },
+
+  a3: {
+    label: 'İlim Yolu · Kaçış',
+    title: 'Gece Geçidi',
+    text: `
+      <p>Sandığı kapattınız. Karanlıkta bekliyordunuz, solukları tutarak. Askerler indi, kütüphaneyi gezdiler; ama gizli odanın kapısını fark etmediler.</p>
+      <p>Çıkan adam dışarı bağırdı: <span class="highlight">«Burada kimse yok!»</span> Sesler uzaklaştı.</p>
+      <p>İbrahim fısıldadı: <span class="highlight">«Allah muhafaza etti. Şimdi gidiyoruz. Güneye, denize.»</span></p>
+      <p>Sandıkları sürükleyerek çıktınız. Şehrin taşlı sokaklarında yürüdünüz, gece karanfil ve barut kokan sokaklarda. <span class="place">Gırnata</span>'ya baktınız. Uzaktan, <span class="place">el-Hamrâ</span>'nın burçları gökyüzünü yırtıyordu.</p>
+    `,
+    choices: [
+      { text: '«Devam et.»', next: 'a4' }
+    ],
+    isContinue: true
+  },
+
+  a3b: {
+    label: 'İlim Yolu · Yüzleşme',
+    title: 'Bahçe Komutanı',
+    text: `
+      <p>Yukarı çıktınız. Bir subay duruyordu — genç, yorgun bakışlı.</p>
+      <p><span class="highlight">«Kim izin verdi size?»</span></p>
+      <p>Öne çıktınız: <span class="highlight">«Ben İbrahim el-Endelüsî'nin talebesiyim. Bu kitaplar Gırnata'nın hafızasıdır. Kastedilü'ye teslim edersek yakılacaklar. Sen de biliyorsun.»</span></p>
+      <p>Subay sizi uzun süre inceledi. Sonra başını çevirdi.</p>
+      <p><span class="highlight">«Beş dakikan var. Gördüğüm hiçbir şey yok.»</span></p>
+      <p>İbrahim arkanızda, sessizce teşekkür etti. Sandıkları aldınız ve çıktınız.</p>
+    `,
+    mods: { hikmet: 1 },
+    choices: [
+      { text: '«Devam et.»', next: 'a4' }
+    ],
+    isContinue: true
+  },
+
+  a4: {
+    label: 'İlim Yolu · Son',
+    title: 'Kıyı',
+    text: `
+      <p><span class="emphasis">2 Ocak 1492.</span></p>
+      <p>Fecr vakti, <span class="place">Akdeniz</span> kıyısında bir teknede oturuyordunuz. Sandıklar güvertedeydi. İbrahim sizi izlemiyordu; gözleri ufukta, geriye dönüktü.</p>
+      <p>Uzaktan çanlar çalmaya başladı. <span class="place">Gırnata</span>'dan çanlar. Kastedilü sancakları surlardan yükselmişti.</p>
+      <p>İbrahim hiç konuşmadı. Siz de konuşmadınız. Tekne yavaşça hareket etti.</p>
+      <p>Sandıkların içinde ne taşıdığınızı biliyordunuz. Sekiz yüz yıllık düşüncenin bir kısmı, bir kaçış teknesinde, <span class="place">Mağrip</span>'e gidiyordu. Belki orada hayat bulacaktı. Belki öğrencilere ulaşacaktı. Belki yüzyıllar sonra birileri bu ciltleri açacaktı.</p>
+      <p><span class="highlight">«Hayır, demek ki bitmedi»</span>, diye düşündünüz. <span class="highlight">«Bilgi öldürülemez. Sadece yer değiştirir.»</span></p>
+    `,
+    isEnding: true,
+    endingType: 'iyi',
+    endingTitle: 'Kitaplar Konuşur',
+    endingDesc: 'Sen ve üstadın Gırnata\'nın yazılı mirasını kurtardınız. Mağrip\'te, İstanbul\'da, belki bir gün Semerkant\'ta — bu düşünceler yaşamaya devam etti.',
+    choices: []
+  },
+
+  // ══════════════════════════════════════════════════════
+  // PATH B — KILIC YOLU
+  // ══════════════════════════════════════════════════════
+
+  b1: {
+    label: 'Kılıç Yolu · Birinci Adım',
+    title: 'Kale Garnizonu',
+    text: `
+      <p>İbrahim sizi bırakmadı. Uzun baktı. Sonra: <span class="highlight">«Belki haklısın. Git. Ama dönersen, kitaplar seni bekler.»</span></p>
+      <p>Çıktınız. Şehrin doğu mahallesinde, surların dibindeki garnizona gittiniz. Orada kalabalık toplanmıştı — genç, yaşlı, esnaf, asker, hocanın öğrencileri. Kılıç tutan herkes oradaydı.</p>
+      <p>Kapıda <span class="name">Nasır</span>'ı gördünüz — daha önce kapıda gördüğünüz genç askeri. Sizi tanıdı, el uzattı:</p>
+      <p><span class="highlight">«Geldin demek. Doğru yaptın. Bu gece çıkış yapıyoruz — kuzeydoğu siperlerini basacağız.»</span></p>
+    `,
+    choices: [
+      {
+        text: '«Tamam. Bir silah ver, hazırım.»',
+        mods: { cesaret: 2 },
+        next: 'b2'
+      },
+      {
+        text: '«Bir an dur. Planı anlat — akılsız ölmek kahramanlık değil.»',
+        mods: { hikmet: 1, cesaret: 1 },
+        next: 'b2b'
+      }
+    ]
+  },
+
+  b2: {
+    label: 'Kılıç Yolu · Gece Baskını',
+    title: 'Gece Yarısı Çıkışı',
+    text: `
+      <p>Gece yarısı, surların küçük bir kapısından dışarı fırladınız. Otuzlar vardınız. Kastedilü siperlerine saldırdınız — beklenmedik, hızlı, gürültülü.</p>
+      <p>Nasır yanınızdaydı, bağırıyordu, ilerliyordu. Siz de ilerliyordunuz.</p>
+      <p>Bir anda top sesi geldi — yakından. Yan taraftan bir korkuluk yıkıldı. Nasır duraksadı; birisi yere düştü. Siz eğildiniz.</p>
+      <p><span class="highlight">«Geri! Geri!»</span> diye bağırdı birisi.</p>
+      <p>Koştunuz. Surların içine döndünüzde sayıyı saydınız: Dördu eksikti.</p>
+    `,
+    choices: [
+      { text: '«Devam et.»', next: 'b3' }
+    ],
+    isContinue: true
+  },
+
+  b2b: {
+    label: 'Kılıç Yolu · Stratejik Baskın',
+    title: 'Planı Sor',
+    text: `
+      <p>Nasır duraksadı. Sonra güldü: <span class="highlight">«Kâtiplerin hepsi böyle. Tamam, anlıyorum.»</span></p>
+      <p>Planı anlattı. Kuzeydoğu siperinde sadece üç nöbetçi varmış, değişim saati geceyarısından sonraymış. Avantajlı bir an.</p>
+      <p>Planı dinlerken birkaç eksik gördünüz — geri çekilme yolu belirsizdi. Önerdiniz. Nasır baktı, <span class="highlight">«iyi»</span> dedi.</p>
+      <p>Gece yarısı çıkışı yaptınız. Plan işe yaradı. Siperleri bastınız, geri döndünüz. Kayıp az oldu — iki yaralı, kayıp yok.</p>
+      <p>Nasır omzunuza vurdu: <span class="highlight">«Seninle çalışılır.»</span></p>
+    `,
+    mods: { hikmet: 1 },
+    choices: [
+      { text: '«Devam et.»', next: 'b3' }
+    ],
+    isContinue: true
+  },
+
+  b3: {
+    label: 'Kılıç Yolu · Üçüncü Adım',
+    title: 'Sur Yıkılıyor',
+    text: `
+      <p>Üç gün sonra, bir top mermisi doğu surlarından büyük bir parçayı söktü. Garnizon koştu. Siz de koştunuz.</p>
+      <p>Gedik büyüktü. Kastedilü askerleri içeri giriyordu.</p>
+      <p>Nasır yanınıza geldi: <span class="highlight">«Bir kişinin geçeceği yer var — orada durabilirsin, geçişi yavaşlatırsın. Ya da geride toplanma noktasına git.»</span></p>
+      <p>Baktınız. Gedik dar, ama öte taraf kalabalık. İçinizdeki ses: <span class="highlight">«Bu şehir benim.»</span></p>
+    `,
+    choices: [
+      {
+        text: '«Gedekte dur. Kimse geçmeyecek.»',
+        req: { cesaret: 5 },
+        reqText: 'Cesaret 5 gerekli',
+        mods: { cesaret: 1, iman: 1 },
+        next: 'b4_sehid'
+      },
+      {
+        text: '«Geride toplan. Şimdi ölmek zafer değil.»',
+        mods: { hikmet: 1 },
+        next: 'b4_geri'
+      }
+    ]
+  },
+
+  b4_sehid: {
+    label: 'Kılıç Yolu · Son',
+    title: 'Gedik',
+    text: `
+      <p>Gedikde durdunuz. Nasır arkanızda bağırdı ama duymadınız artık.</p>
+      <p>Geçmeye çalışan ilk birini geri ittiniz. İkincisi de. Üçüncüsü...</p>
+      <p>Sonra bir ses duyuldu. Sonra bir ağırlık hissettiniz.</p>
+      <p>Yere değil, duvara yaslandınız. Rüzgar geçti yüzünüzden. Şehrin kokusu — ardıç, tuz, taş — burnunuzu doldurdu.</p>
+      <p>Son düşünceniz çok basitti: <span class="highlight">«Bir an daha durdum. Belki yetti.»</span></p>
+      <p><br>Zira en büyük adalet, en küçük anların içindedir.</p>
+    `,
+    isEnding: true,
+    endingType: 'iyi',
+    endingTitle: 'Şehid',
+    endingDesc: 'Gedikde duran biri vardı. Bu, sonucu değiştirmedi belki. Ama o anı yaşayanlar unutmadı. Nasır o gece adını yazdı bir kâğıda.',
+    choices: []
+  },
+
+  b4_geri: {
+    label: 'Kılıç Yolu · Son',
+    title: 'Teslim Gecesi',
+    text: `
+      <p>Geri çekildiniz. Toplanma noktasında Nasır vardı, birkaç asker daha vardı.</p>
+      <p>Gece boyunca silahlı beklediler. Sabah, haberci geldi: <span class="highlight">«Sultân müzakereye oturdu. Teslimat şartları kabul edildi.»</span></p>
+      <p>Nasır elindeki kılıcı yere bıraktı. Sessiz kaldı.</p>
+      <p>Siz de sessiz kaldınız. Uzaktan <span class="place">el-Hamrâ</span>'nın bayrak direğine baktınız. Üzerinde Kastedilü sancağı yoktu henüz — ama artık meselenin sayılı saatler içinde biteceğini biliyordunuz.</p>
+      <p><span class="highlight">«Elimizden geleni yaptık»</span>, diye düşündünüz.</p>
+      <p>Belki bu yeterliydi. Belki değildi. Ama yapılması gerekenin yapıldığını bilmek, az değildi.</p>
+    `,
+    isEnding: true,
+    endingType: 'normal',
+    endingTitle: 'Elimizden Geleni Yaptık',
+    endingDesc: 'Şehir düştü. Ama sen hayatta kaldın, Nasır hayatta kaldı. Mağrip\'e gidecek olanların arasında yer aldınız. Gırnata geride kaldı, ama siz ileri gittiniz.',
+    choices: []
+  },
+
+  // ══════════════════════════════════════════════════════
+  // PATH C — HİZMET YOLU
+  // ══════════════════════════════════════════════════════
+
+  c1: {
+    label: 'Hizmet Yolu · Birinci Adım',
+    title: 'Sarayın Viziri',
+    text: `
+      <p>İbrahim başını salladı. <span class="highlight">«Umarım söz geçirirsin. Git.»</span></p>
+      <p>Saraya ulaşmak zor değildi — kâtip olarak tanınıyordunuz. Ama Sultânın huzuruna giremezdiniz. Onun yerine Vezir <span class="name">Yahya el-Neceyhî</span> sizi kabul etti.</p>
+      <p>Geniş bir oda, altın işlemeli kemerler, ama yüzü gergin bir adam. Sizi süzdü:</p>
+      <p><span class="highlight">«İbrahim'in talebesi misin? Söyle, ne istiyorsun?»</span></p>
+      <p>Duraksadınız. Ne istediğinizi tam olarak bilmiyordunuz — ama halkın sesini duyurmanız gerektiğini hissediyordunuz.</p>
+    `,
+    choices: [
+      {
+        text: '«Şartları sorun. Halk ne olacak? Mülkleri, ibadetleri, güvenceleri...»',
+        mods: { hikmet: 1, iman: 1 },
+        next: 'c2'
+      },
+      {
+        text: '«Müzakereyi durdurun. Halk teslimi istemiyor.»',
+        mods: { cesaret: 2 },
+        next: 'c2b'
+      }
+    ]
+  },
+
+  c2: {
+    label: 'Hizmet Yolu · Müzakere',
+    title: 'Şartlar',
+    text: `
+      <p>Yahya sizi beklediğinizden fazla dinledi. Elindeki kâğıttan birkaç madde okudu:</p>
+      <p><span class="highlight">«Halk can ve mal güvencesi alıyor. İbadet özgürlüğü tanınıyor. Mülkler korunacak. Göç edeceklere üç yıl...»</span></p>
+      <p><span class="highlight">«Güvence kim veriyor?»</span> diye sordunuz.</p>
+      <p>Yahya duraksadı. <span class="highlight">«Fernandolu ve İzabella.»</span></p>
+      <p>Birkaç saniye sessizlik oldu. <span class="emphasis">İkisi de kâfirdi</span> — bu kelimeyi düşünmek istediniz ama söylemediniz. Çünkü alternatif savaştı. Ve savaş zaten kaybedilmişti.</p>
+      <p><span class="highlight">«Ya sonra?»</span> diye sordunuz. <span class="highlight">«Beş yıl sonra? On yıl sonra?»</span></p>
+      <p>Yahya cevap vermedi.</p>
+    `,
+    choices: [
+      {
+        text: '«Şartları kabul edin — ama mümkün olan her güvenceyi yazılı alın.»',
+        mods: { hikmet: 2 },
+        next: 'c3'
+      },
+      {
+        text: '«Ben bu şartlara imza atmayı tavsiye edemem. Bunlar yeterli değil.»',
+        mods: { iman: 2 },
+        next: 'c3b'
+      }
+    ]
+  },
+
+  c2b: {
+    label: 'Hizmet Yolu · Yüzleşme',
+    title: 'Yahya\'nın Cevabı',
+    text: `
+      <p>Yahya sizi uzun süre baktı. Sonra kâğıtları masaya bıraktı.</p>
+      <p><span class="highlight">«Genç adam. Erzak kalmadı. Surlar delik. Ordumuzun yarısı yok. Savaşmak demek çocukları surların önünde öldürmek demek. Sen bunu mu istiyorsun?»</span></p>
+      <p>Cevap veremediniz. Çünkü haklıydı — ve aynı zamanda haksızdı.</p>
+      <p><span class="highlight">«Hayır»</span>, diyebildiniz sonunda, <span class="highlight">«bunu istemiyorum. Ama şartlar...»</span></p>
+      <p>Yahya elini kaldırdı: <span class="highlight">«Şartları biz müzakere ediyoruz. Sen de buradaysan, yardım et. Kulağıma gerek duyduğunu söyle.»</span></p>
+    `,
+    mods: { cesaret: -1, hikmet: 1 },
+    choices: [
+      { text: '«Devam et.»', next: 'c2' }
+    ],
+    isContinue: true
+  },
+
+  c3: {
+    label: 'Hizmet Yolu · Son',
+    title: 'İmza Günü',
+    text: `
+      <p><span class="emphasis">2 Ocak 1492.</span></p>
+      <p>Şartlar imzalandı. Sultân Muhammed, anahtarları teslim etmek üzere aşağıya indi. Halk surlarda izliyordu.</p>
+      <p>Siz müzakere odasının köşesinde duruyordunuz. Elinizde şartların Arapça kopyası — sizin yazdığınız, mümkün olan her güvenceyi kayıt altına aldığınız kopya.</p>
+      <p>Yahya yanınıza geldi: <span class="highlight">«Bu şartlara uymalarını sağlayamayız. Ama bu kopyalar tarihe kalacak. Ne yapıldığını, ne söz verildiğini bilecekler.»</span></p>
+      <p>Belgeye baktınız. Belki yıllar sonra birileri bunu okuyacak, şahitlik edecekti.</p>
+      <p>Bu yeterliydi. En azından bugün için.</p>
+    `,
+    isEnding: true,
+    endingType: 'normal',
+    endingTitle: 'Şahitlik',
+    endingDesc: 'Şartlar kâğıda geçti. Ne kadarı tutulacaktı, bilinmiyordu. Ama sen oradaydın ve her kelimeyi yazdın. Tarih şahidi en az kılıcı kadar önemlidir.',
+    choices: []
+  },
+
+  c3b: {
+    label: 'Hizmet Yolu · Son',
+    title: 'Kapıdan Çıkmak',
+    text: `
+      <p>Yahya sizi baktı. <span class="highlight">«O zaman git.»</span> dedi sade bir sesle. Ne kızgın, ne şaşkın.</p>
+      <p>Çıktınız. Sarayın mermer avlusunda ayak sesleriniz yankılandı.</p>
+      <p>Kapıya geldiğinizde döndünüz — bir son kez <span class="place">el-Hamrâ</span>'ya baktınız. Kırmızı surlar, yeşil bahçeler, su sesi.</p>
+      <p>Sonra medreseye döndünüz. İbrahim odasındaydı. Sizi görünce:<br><span class="highlight">«Kitaplarla gidiyoruz. Gel.»</span></p>
+      <p>Bu sefer itiraz etmediniz.</p>
+      <p>Bazen en dürüst şey, imzalamayı reddetmektir. Bunu yapan, tarih boyunca az olmuş ama hatırlanmıştır.</p>
+    `,
+    isEnding: true,
+    endingType: 'iyi',
+    endingTitle: 'Dürüstlük',
+    endingDesc: 'İmzalamayı reddettiniz. Ve bu ret, sizi İbrahim\'in yoluna döndürdü. Sonunda birlikte gittiniz — hem kitaplar, hem vicdan el-Hamrâ\'yı terk etti.',
+    choices: []
+  }
+};
+
+// ══════════════════════════════════════════════════════════
+// OYUN MOTORU
+// ══════════════════════════════════════════════════════════
+
+function startGame() {
+  const title = document.getElementById('title-screen');
+  title.classList.add('hidden');
+  setTimeout(() => { title.style.display = 'none'; }, 900);
+  document.getElementById('stats-bar').classList.add('show');
+  goTo('s1');
+}
+
+function goTo(sceneId, mods, flags, setPath) {
+  // Önce istatistikleri güncelle
+  if (mods) {
+    Object.entries(mods).forEach(([k, v]) => mod(k, v));
+  }
+  if (flags) {
+    Object.entries(flags).forEach(([k, v]) => { state.flags[k] = v; });
+  }
+  if (setPath) {
+    state.path = setPath;
+  }
+
+  // Karart
+  const fade = document.getElementById('fade');
+  fade.classList.add('dark');
+
+  setTimeout(() => {
+    renderScene(sceneId);
+    fade.classList.remove('dark');
+  }, 600);
+}
+
+function renderScene(sceneId) {
+  const scene = scenes[sceneId];
+  if (!scene) return;
+
+  // Sahne sırasında tanımlanan mods varsa (isContinue sahneleri için)
+  if (scene.mods) {
+    Object.entries(scene.mods).forEach(([k, v]) => mod(k, v));
+  }
+
+  const wrap = document.getElementById('scene-wrap');
+
+  if (scene.isEnding) {
+    renderEnding(scene);
+    return;
+  }
+
+  // Seçenek kilit kontrolü
+  const choices = scene.choices.map(c => {
+    const disabled = c.req && state[Object.keys(c.req)[0]] < Object.values(c.req)[0];
+    return { ...c, locked: disabled };
+  });
+
+  wrap.innerHTML = `
+    <div class="scene-label">${scene.label || ''}</div>
+    <h2 class="scene-title">${scene.title}</h2>
+    <div class="ornament"><div class="ornament-diamond"></div></div>
+    <div class="scene-text">${scene.text}</div>
+    <div class="choices">
+      ${scene.isContinue
+        ? `<button class="continue-btn" onclick="handleChoice(${JSON.stringify(choices[0])})">Devam →</button>`
+        : choices.map((c, i) => `
+          <button class="choice-btn ${c.locked ? 'disabled' : ''}" onclick="handleChoice(${escapeJson(c)})">
+            ${c.text}
+            ${c.req ? `<span class="choice-req">⚠ ${c.reqText}</span>` : ''}
+          </button>
+        `).join('')
+      }
+    </div>
+  `;
+
+  // Scroll en üste
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function escapeJson(obj) {
+  return JSON.stringify(obj).replace(/'/g, '&apos;').replace(/"/g, '&quot;');
+}
+
+function handleChoice(choice) {
+  if (typeof choice === 'string') {
+    try { choice = JSON.parse(choice.replace(/&quot;/g, '"').replace(/&apos;/g, "'")); } catch(e) {}
+  }
+  goTo(choice.next, choice.mods, choice.flags, choice.setPath);
+}
+
+function renderEnding(scene) {
+  const wrap = document.getElementById('scene-wrap');
+  document.getElementById('stats-bar').classList.remove('show');
+
+  wrap.innerHTML = `
+    <div class="scene-label" style="text-align:center">Endülüs · 1492 — Son</div>
+    <div style="text-align:center; margin: 8px 0;">
+      <span class="ending-badge ending-${scene.endingType}">${
+        scene.endingType === 'iyi' ? 'Şerefli Son' :
+        scene.endingType === 'kotu' ? 'Acı Son' : 'Belirsiz Son'
+      }</span>
+    </div>
+    <h2 class="scene-title" style="text-align:center">${scene.endingTitle}</h2>
+    <div class="ornament"><div class="ornament-diamond"></div></div>
+    <div class="scene-text">${scene.text}</div>
+    <div class="scene-text" style="margin-top:8px; padding: 16px; background: var(--surface2); border-radius: 8px; border: 1px solid var(--border); font-size: 14px; color: var(--muted2); font-family: system-ui, sans-serif; line-height: 1.7;">
+      ${scene.endingDesc}
+    </div>
+    <div style="display:flex; flex-direction:column; align-items:flex-start; gap:8px; margin-top:8px;">
+      <div style="font-family:system-ui,sans-serif; font-size:12px; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px;">İstatistiklerin</div>
+      <div style="display:flex; gap:20px; font-size:13px; font-family:system-ui,sans-serif;">
+        <span style="color:#c44a2a">Cesaret ${state.cesaret}/10</span>
+        <span style="color:#2a7ac4">Hikmet ${state.hikmet}/10</span>
+        <span style="color:var(--gold)">İman ${state.iman}/10</span>
+      </div>
+      <button class="restart-btn" onclick="restartGame()">↩ Yeniden başla</button>
+    </div>
+  `;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartGame() {
+  state.cesaret = 3;
+  state.hikmet  = 3;
+  state.iman    = 3;
+  state.path    = null;
+  state.flags   = {};
+  updateStats();
+
+  document.getElementById('stats-bar').classList.add('show');
+
+  const fade = document.getElementById('fade');
+  fade.classList.add('dark');
+  setTimeout(() => {
+    goTo('s1');
+    fade.classList.remove('dark');
+  }, 600);
+}
+
+// Sayfa yüklenince
+updateStats();
+</script>
+</body>
+</html>
