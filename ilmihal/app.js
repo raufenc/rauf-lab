@@ -72,6 +72,8 @@ function navigateTo(page) {
   if (target) target.classList.add('active');
   const navBtn = document.querySelector(`.nav-btn[data-page="${page}"]`);
   if (navBtn) navBtn.classList.add('active');
+  // Close mobile menu
+  document.querySelector('.main-nav')?.classList.remove('open');
   window.scrollTo(0, 0);
 
   // Lazy load content
