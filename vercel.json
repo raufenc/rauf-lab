@@ -1,20 +1,3 @@
 {
-  "trailingSlash": true,
-  "redirects": [
-    {
-      "source": "/neuroterbiye-adalet",
-      "destination": "https://youtu.be/mZLrfNy2la8?si=CezKBI3rqqR6RYId",
-      "permanent": true
-    },
-    {
-      "source": "/neuroterbiye-mhrs",
-      "destination": "https://www.mhrs.gov.tr",
-      "permanent": true
-    },
-    {
-      "source": "/neuroterbiye-nasilbuhalegeldik",
-      "destination": "https://youtu.be/LBsY-GBSQwQ?si=qujOjHaC3z8Oh5Lq",
-      "permanent": true
-    }
-  ]
+  "trailingSlash": true
 }
