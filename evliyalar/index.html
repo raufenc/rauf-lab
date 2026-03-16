@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Özbekistan Evliyaları ve Âlimleri</title>
+  <meta name="description" content="Özbekistan'da yetişen evliya ve âlimlerin interaktif haritası. Buhara, Semerkant, Taşkent evliyaları.">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- HEADER / NAV -->
+  <header id="main-header">
+    <div class="header-inner">
+      <div class="logo-area">
+        <div class="logo-icon">&#9733;</div>
+        <div class="logo-text">
+          <span class="logo-title" data-tr="Özbekistan Evliyaları" data-uz="O'zbekiston Avliyolari">Özbekistan Evliyaları</span>
+          <span class="logo-subtitle" data-tr="ve Âlimleri" data-uz="va Olimlari">ve Âlimleri</span>
+        </div>
+      </div>
+      <nav>
+        <a href="#hero" data-tr="Ana Sayfa" data-uz="Bosh sahifa">Ana Sayfa</a>
+        <a href="#map-section" data-tr="Harita" data-uz="Xarita">Harita</a>
+        <a href="#timeline-section" data-tr="Zaman Çizelgesi" data-uz="Vaqt chizig'i">Zaman Çizelgesi</a>
+        <a href="#silsile-section" data-tr="Silsile" data-uz="Silsila">Silsile</a>
+        <a href="#about-section" data-tr="Hakkında" data-uz="Haqida">Hakkında</a>
+      </nav>
+      <div class="header-controls">
+        <div class="search-box">
+          <input type="text" id="search-input" placeholder="Âlim ara..." data-tr-placeholder="Âlim ara..." data-uz-placeholder="Olim qidirish...">
+          <div id="search-results" class="search-results"></div>
+        </div>
+        <button id="lang-toggle" class="lang-btn" title="Dil Değiştir">
+          <span class="lang-current">TR</span>
+        </button>
+        <button id="mobile-menu-btn" class="mobile-menu-btn">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section id="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-pattern"></div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span data-tr="Istanbul İslami İlimler Akademisi" data-uz="Istanbul Islomiy Ilmlar Akademiyasi">Istanbul İslami İlimler Akademisi</span>
+      </div>
+      <h1>
+        <span class="hero-line1" data-tr="Özbekistan'da Yetişen" data-uz="O'zbekistonda Yetishib Chiqqan">Özbekistan'da Yetişen</span>
+        <span class="hero-line2" data-tr="Evliya ve Âlimler" data-uz="Avliyolar va Olimlar">Evliya ve Âlimler</span>
+      </h1>
+      <p class="hero-desc" data-tr="Buhara, Semerkant ve Taşkent'te doğup büyüyen, İslam medeniyetine yön veren büyük şahsiyetlerin interaktif haritası" data-uz="Buxoro, Samarqand va Toshkentda tug'ilib o'sgan, Islom sivilizatsiyasiga yo'nalish bergan buyuk shaxsiyatlarning interaktiv xaritasi">Buhara, Semerkant ve Taşkent'te doğup büyüyen, İslam medeniyetine yön veren büyük şahsiyetlerin interaktif haritası</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">55</span>
+          <span class="stat-label" data-tr="Âlim ve Evliya" data-uz="Olim va Avliyo">Âlim ve Evliya</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">4</span>
+          <span class="stat-label" data-tr="Şehir" data-uz="Shahar">Şehir</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">12</span>
+          <span class="stat-label" data-tr="Asır" data-uz="Asr">Asır</span>
+        </div>
+      </div>
+      <a href="#map-section" class="hero-cta" data-tr="Keşfet" data-uz="Kashf qiling">Keşfet</a>
+    </div>
+    <div class="scroll-indicator">
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- MAP SECTION -->
+  <section id="map-section">
+    <div class="section-header">
+      <h2 data-tr="İnteraktif Harita" data-uz="Interaktiv Xarita">İnteraktif Harita</h2>
+      <p data-tr="Şehirlere tıklayarak o bölgede yetişen evliya ve âlimleri keşfedin" data-uz="Shaharlarga bosib, o mintaqada yetishgan avliyo va olimlarni kashf qiling">Şehirlere tıklayarak o bölgede yetişen evliya ve âlimleri keşfedin</p>
+    </div>
+    <div class="map-container">
+      <div id="map"></div>
+      <div id="city-panel" class="city-panel hidden">
+        <button id="panel-close" class="panel-close">&times;</button>
+        <h3 id="panel-city-name"></h3>
+        <p id="panel-city-count"></p>
+        <div class="filter-chips">
+          <button class="chip active" data-filter="all" data-tr="Tümü" data-uz="Barchasi">Tümü</button>
+          <button class="chip" data-filter="mutasavvıf" data-tr="Mutasavvıf" data-uz="Mutasavvif">Mutasavvıf</button>
+          <button class="chip" data-filter="âlim" data-tr="Âlim" data-uz="Olim">Âlim</button>
+          <button class="chip" data-filter="muhaddis" data-tr="Muhaddis" data-uz="Muhaddis">Muhaddis</button>
+        </div>
+        <div id="panel-scholars" class="panel-scholars"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE SECTION -->
+  <section id="timeline-section">
+    <div class="section-header">
+      <h2 data-tr="Zaman Çizelgesi" data-uz="Vaqt Chizig'i">Zaman Çizelgesi</h2>
+      <p data-tr="7. yüzyıldan 18. yüzyıla, asırlar boyunca parlayan yıldızlar" data-uz="7-asrdan 18-asrgacha, asrlar davomida porlab turgan yulduzlar">7. yüzyıldan 18. yüzyıla, asırlar boyunca parlayan yıldızlar</p>
+    </div>
+    <div class="timeline-filters">
+      <button class="era-btn active" data-era="all" data-tr="Tümü" data-uz="Barchasi">Tümü</button>
+      <button class="era-btn" data-era="early" data-tr="7-10. yy" data-uz="7-10 asr">7-10. yy</button>
+      <button class="era-btn" data-era="mid" data-tr="11-14. yy" data-uz="11-14 asr">11-14. yy</button>
+      <button class="era-btn" data-era="late" data-tr="15-18. yy" data-uz="15-18 asr">15-18. yy</button>
+    </div>
+    <div class="timeline-wrapper">
+      <div id="timeline" class="timeline"></div>
+    </div>
+  </section>
+
+  <!-- SILSILE SECTION -->
+  <section id="silsile-section">
+    <div class="section-header">
+      <h2 data-tr="Nakşibendî Silsilesi" data-uz="Naqshbandiya Silsilasi">Nakşibendî Silsilesi</h2>
+      <p data-tr="Hoca-talebe bağlantılarıyla oluşan manevî zincir" data-uz="Ustoz-shogird aloqalari bilan shakllanган ma'naviy zanjir">Hoca-talebe bağlantılarıyla oluşan manevî zincir</p>
+    </div>
+    <div class="silsile-wrapper">
+      <div id="silsile" class="silsile"></div>
+    </div>
+  </section>
+
+  <!-- ABOUT SECTION -->
+  <section id="about-section">
+    <div class="section-header">
+      <h2 data-tr="Bu Eser Hakkında" data-uz="Ushbu Asar Haqida">Bu Eser Hakkında</h2>
+    </div>
+    <div class="about-content">
+      <div class="about-text" id="about-text"></div>
+      <div class="about-info">
+        <div class="info-card">
+          <h4 data-tr="Hazırlayan" data-uz="Tayyorlovchi">Hazırlayan</h4>
+          <p>Prof. Dr. Ramazan Ayvallı</p>
+          <p class="info-sub" data-tr="İstanbul İslami İlimler Akademisi Başkanı" data-uz="Istanbul Islomiy Ilmlar Akademiyasi Raisi">İstanbul İslami İlimler Akademisi Başkanı</p>
+        </div>
+        <div class="info-card">
+          <h4 data-tr="Yayın" data-uz="Nashr">Yayın</h4>
+          <p data-tr="İstanbul Eğitim Kültür Sosyal Hizmetler Vakfı" data-uz="Istanbul Ta'lim Madaniyat Ijtimoiy Xizmatlar Vaqfi">İstanbul Eğitim Kültür Sosyal Hizmetler Vakfı</p>
+          <p class="info-sub">İstanbul, 2026</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <p data-tr="Özbekistan Evliyaları ve Âlimleri" data-uz="O'zbekiston Avliyolari va Olimlari">Özbekistan Evliyaları ve Âlimleri</p>
+      <p class="footer-sub" data-tr="İstanbul İslami İlimler Akademisi &bull; 2026" data-uz="Istanbul Islomiy Ilmlar Akademiyasi &bull; 2026">İstanbul İslami İlimler Akademisi &bull; 2026</p>
+    </div>
+  </footer>
+
+  <!-- SCHOLAR MODAL -->
+  <div id="scholar-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <button class="modal-close">&times;</button>
+      <div class="modal-header">
+        <div class="modal-city-badge" id="modal-city"></div>
+        <h2 id="modal-name"></h2>
+        <div class="modal-meta">
+          <span id="modal-death" class="meta-death"></span>
+          <div id="modal-cats" class="meta-cats"></div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-tabs">
+          <button class="tab active" data-tab="bio" data-tr="Hayatı" data-uz="Hayoti">Hayatı</button>
+          <button class="tab" data-tab="miracles" data-tr="Kerâmetleri" data-uz="Karomatlari">Kerâmetleri</button>
+        </div>
+        <div id="modal-bio" class="tab-content active"></div>
+        <div id="modal-miracles" class="tab-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
