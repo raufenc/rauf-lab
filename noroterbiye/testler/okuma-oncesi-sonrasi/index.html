@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Okuma Öncesi/Sonrası Fark Testi — NöroTerbiye</title>
+  <meta name="description" content="NöroTerbiye kitabını okumadan önce ve sonra farkındalık düzeyindeki değişimi ölç.">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Testi</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">🔄 Okuma Öncesi/Sonrası Fark Testi</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Kitabı okumadan önce ve sonra bu testi çöz, farkındalık değişimini gör. 10 soru, 3 dakika.
+      </p>
+      <div id="test-area" class="nt-card nt-fade-in" style="padding:32px;animation-delay:0.2s"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script src="/noroterbiye/js/test-engine.js"></script>
+  <script>
+    TestEngine.init({
+      containerId: 'test-area',
+      title: 'Okuma Öncesi/Sonrası Fark Testi',
+      slug: 'okuma-oncesi-sonrasi',
+      questions: [
+        {
+          soru: 'Dopaminin beyindeki asıl işlevi nedir biliyor musun?',
+          secenekler: [
+            { text: 'Hiç bilmiyorum, ilk kez duyuyorum', puan: 4 },
+            { text: 'Mutluluk hormonu diye biliyorum', puan: 3 },
+            { text: 'Ödül beklentisi ile ilgili olduğunu biliyorum', puan: 1 },
+            { text: 'Ödül beklentisi, arzu ve bağımlılık döngüsündeki rolünü biliyorum', puan: 0 },
+          ],
+          aciklama: 'Dopamin "mutluluk hormonu" değil, "beklenti ve arzu" kimyasalıdır. Bu ayrımı bilmek, tüm nefs mücadelesinin anahtarıdır.'
+        },
+        {
+          soru: 'Nefs kavramını beyin kimyası ile ilişkilendirebilir misin?',
+          secenekler: [
+            { text: 'Hayır, nefs dini bir kavram, bilimle ilgisi yok diye düşünürdüm', puan: 4 },
+            { text: 'Belki bir ilişki vardır ama bilmiyorum', puan: 3 },
+            { text: 'Nefsin dürtülerinin kimyasal karşılıklarını biliyorum', puan: 1 },
+            { text: 'Şehvet-dopamin, şöhret-serotonin, gadab-kortizol bağlantısını kurabiliyorum', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Bir alışkanlığı bırakmak istediğinde nasıl bir yöntem izlersin?',
+          secenekler: [
+            { text: 'Sadece irade gücüyle, "artık yapmayacağım" derim', puan: 4 },
+            { text: 'Deneme yanılma, bazen bırakırım bazen geri dönerim', puan: 3 },
+            { text: 'Tetikleyicileri tespit edip alternatif arıyorum', puan: 1 },
+            { text: '"Alternatifini ikame et" prensibini uyguluyorum', puan: 0 },
+          ],
+          aciklama: 'Sadece iradeyle bırakmak genellikle başarısız olur. Beyin boşluk sevmez — kaldırılan alışkanlığın yerine bir alternatif konmalıdır.'
+        },
+        {
+          soru: '"Homeostatik denge" kavramı sana ne ifade ediyor?',
+          secenekler: [
+            { text: 'Hiçbir şey, ilk defa duyuyorum', puan: 4 },
+            { text: 'Vücudun dengesi gibi bir şey galiba', puan: 3 },
+            { text: 'Haz sonrası düşüşü ve dengeyi biliyorum', puan: 1 },
+            { text: 'Haz-acı sarkaç modelini ve tolerans gelişimini anlıyorum', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Modern dünyanın "hileleri" deyince aklına ne gelir?',
+          secenekler: [
+            { text: 'Pek bir şey gelmiyor', puan: 4 },
+            { text: 'Sosyal medya, reklam gibi genel şeyler', puan: 3 },
+            { text: 'Dopamin korsanlığı yapan sistemlerin farkındayım', puan: 1 },
+            { text: 'Yemek, ekran, müzik, oyun, para, sosyal medya — hepsinin beyin kimyasını nasıl hacklediğini biliyorum', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Nefs mertebelerini (emmare, levvame, mülheme, mutmainne) ne kadar tanıyorsun?',
+          secenekler: [
+            { text: 'İlk defa duyuyorum', puan: 4 },
+            { text: 'İsimlerini biliyorum ama detay yok', puan: 3 },
+            { text: 'Her birinin özelliklerini biliyorum', puan: 1 },
+            { text: 'Mertebeleri, kimyasal karşılıklarını ve geçiş dinamiklerini biliyorum', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Öfke anında beyninde ne olduğunu biliyor musun?',
+          secenekler: [
+            { text: 'Hiç düşünmedim', puan: 4 },
+            { text: 'Sinirleniyorum, o kadar', puan: 3 },
+            { text: 'Kortizol ve adrenalin yükseldiğini biliyorum', puan: 1 },
+            { text: 'Amigdala kaçırması, prefrontal korteksin devre dışı kalması ve 90 saniye kuralını biliyorum', puan: 0 },
+          ],
+          aciklama: 'Öfke kimyasalları 90 saniyede vücuttan atılır. Bu süreyi atlatmak, gadab dürtüsünü yönetmenin anahtarıdır.'
+        },
+        {
+          soru: 'Çevrenin davranışları üzerindeki etkisini ne kadar ciddiye alıyorsun?',
+          secenekler: [
+            { text: 'Ben güçlü biriyim, çevre beni etkilemez', puan: 4 },
+            { text: 'Belki biraz etkiler', puan: 3 },
+            { text: 'Çevrenin önemli olduğunu biliyorum', puan: 1 },
+            { text: 'Ayna nöronlar ve çevre tasarımının irade üzerindeki etkisini biliyorum', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Sabır ve şükrün beyin kimyası ile ilişkisini biliyor musun?',
+          secenekler: [
+            { text: 'Hayır, bunlar sadece ahlaki kavramlar diye düşünürdüm', puan: 4 },
+            { text: 'Bir ilişki olabilir ama bilmiyorum', puan: 3 },
+            { text: 'Sabrın prefrontal korteksle ilgisini biliyorum', puan: 1 },
+            { text: 'Sabır = prefrontal güçlendirme, şükür = serotonin/endorfin dengesi olduğunu biliyorum', puan: 0 },
+          ]
+        },
+        {
+          soru: 'NöroTerbiye yaklaşımını başkasına anlatabilir misin?',
+          secenekler: [
+            { text: 'Hayır, ne olduğunu bilmiyorum', puan: 4 },
+            { text: 'Kabaca — nefs ve beyin bilimi birleşimi', puan: 3 },
+            { text: 'Evet, temel prensiplerini anlatabilirim', puan: 1 },
+            { text: 'Evet, somut örneklerle açıklayabilirim', puan: 0 },
+          ]
+        },
+      ],
+      resultRanges: [
+        { min: 0, max: 20, label: 'Derin Kavrayış', text: 'NöroTerbiye kavramlarını çok iyi içselleştirmişsin. Bu bilgiyi eyleme dönüştürmeye devam et — bilmek ile yapmak arasındaki köprüyü kur.', emoji: '🎓' },
+        { min: 21, max: 45, label: 'İyi Farkındalık', text: 'Temel kavramları biliyorsun. Derinleştirmek için kitabı tekrar gözden geçir ve araçları kullan.', emoji: '📖' },
+        { min: 46, max: 70, label: 'Başlangıç Seviyesi', text: 'Bazı kavramlarla tanıştın ama henüz yüzeyde. Kitabı okumak (veya tekrar okumak) büyük fark yaratacak.', emoji: '🔄' },
+        { min: 71, max: 100, label: 'Keşif Öncesi', text: 'NöroTerbiye dünyasına henüz adım atmamışsın. Kitabı okuduktan sonra bu testi tekrar çöz — farkı göreceksin.', emoji: '🌅' },
+      ]
+    });
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

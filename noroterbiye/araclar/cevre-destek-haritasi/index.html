@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Çevre Destek Haritası — NöroTerbiye</title>
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .circle-map { position:relative; width:100%; max-width:500px; aspect-ratio:1; margin:0 auto 32px; }
+    .circle-ring { position:absolute; border-radius:50%; border:2px dashed var(--border); display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:6px; padding:8px; }
+    .circle-ring.inner { width:40%; height:40%; top:30%; left:30%; background:var(--nt-green-soft); border-color:var(--nt-green); z-index:3; }
+    .circle-ring.middle { width:70%; height:70%; top:15%; left:15%; background:var(--nt-amber-soft); border-color:var(--nt-amber); z-index:2; }
+    .circle-ring.outer { width:100%; height:100%; top:0; left:0; background:var(--nt-red-soft); border-color:var(--nt-red); z-index:1; }
+    .circle-label { position:absolute; font-size:0.65rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; z-index:4; }
+    .circle-label.lbl-inner { top:28%; left:50%; transform:translateX(-50%); color:var(--nt-green); }
+    .circle-label.lbl-middle { top:13%; left:50%; transform:translateX(-50%); color:var(--nt-amber); }
+    .circle-label.lbl-outer { top:0; left:50%; transform:translate(-50%,-120%); color:var(--nt-red); }
+    .person-chip { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-full); font-size:0.72rem; font-weight:500; cursor:pointer; z-index:5; position:relative; white-space:nowrap; }
+    .person-chip:hover { border-color:var(--nt-primary); }
+    .person-chip .remove { margin-left:4px; opacity:0.5; }
+    .person-chip .remove:hover { opacity:1; color:var(--nt-red); }
+    .score-box { text-align:center; padding:24px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); margin-bottom:24px; }
+    .score-num { font-size:3rem; font-weight:800; line-height:1; }
+    .zone-section { margin-bottom:16px; }
+    .zone-title { font-size:0.85rem; font-weight:700; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Araç</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">🗺️ Çevre Destek Haritası</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Hayatındaki insanları destekleyici, nötr ve riskli olarak sınıflandır. Çevreni görselleştir.
+      </p>
+
+      <!-- Add person -->
+      <div class="nt-card nt-fade-in" style="padding:24px;margin-bottom:32px;animation-delay:0.15s">
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:16px">Kişi Ekle</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="nt-form-group">
+            <label class="nt-form-label">İsim</label>
+            <input class="nt-input" id="f-name" placeholder="Ahmet, Ayşe...">
+          </div>
+          <div class="nt-form-group">
+            <label class="nt-form-label">Bölge</label>
+            <select class="nt-select" id="f-zone">
+              <option value="inner">İç Çevre (Destekleyen)</option>
+              <option value="middle">Orta Çevre (Nötr)</option>
+              <option value="outer">Dış Çevre (Riskli)</option>
+            </select>
+          </div>
+        </div>
+        <button class="nt-btn nt-btn-primary nt-btn-sm" onclick="addPerson()">Ekle</button>
+      </div>
+
+      <!-- Visual map -->
+      <div class="circle-map nt-fade-in" style="animation-delay:0.2s" id="map-container">
+        <div class="circle-label lbl-outer">Dış Çevre (Riskli)</div>
+        <div class="circle-label lbl-middle">Orta (Nötr)</div>
+        <div class="circle-label lbl-inner">İç Çevre (Destek)</div>
+        <div class="circle-ring outer" id="zone-outer"></div>
+        <div class="circle-ring middle" id="zone-middle"></div>
+        <div class="circle-ring inner" id="zone-inner"></div>
+      </div>
+
+      <!-- Score -->
+      <div class="score-box nt-fade-in" style="animation-delay:0.25s" id="score-box">
+        <div class="score-num" id="score-val">—</div>
+        <div style="font-size:0.85rem;color:var(--text-secondary);margin-top:4px" id="score-label">Denge Skoru</div>
+        <p style="font-size:0.78rem;color:var(--muted);margin-top:8px" id="score-tip"></p>
+      </div>
+
+      <!-- List view -->
+      <div class="nt-fade-in" style="animation-delay:0.3s">
+        <div class="zone-section">
+          <div class="zone-title" style="color:var(--nt-green)">✅ İç Çevre</div>
+          <div id="list-inner" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        </div>
+        <div class="zone-section">
+          <div class="zone-title" style="color:var(--nt-amber)">⚖️ Orta Çevre</div>
+          <div id="list-middle" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        </div>
+        <div class="zone-section">
+          <div class="zone-title" style="color:var(--nt-red)">⚠️ Dış Çevre</div>
+          <div id="list-outer" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;display:flex;gap:10px">
+        <button class="nt-btn nt-btn-secondary nt-btn-sm" onclick="saveMap()">💾 Kaydet</button>
+        <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="clearMap()">Temizle</button>
+      </div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    let people = NT.load('cevre_haritasi', []);
+
+    function addPerson() {
+      const name = document.getElementById('f-name').value.trim();
+      if (!name) { NT.toast('İsim gir'); return; }
+      const zone = document.getElementById('f-zone').value;
+      people.push({ id: Date.now(), name, zone });
+      document.getElementById('f-name').value = '';
+      renderMap();
+    }
+
+    function removePerson(id) {
+      people = people.filter(p => p.id !== id);
+      renderMap();
+    }
+
+    function moveZone(id) {
+      const p = people.find(x => x.id === id);
+      if (!p) return;
+      const zones = ['inner','middle','outer'];
+      const idx = zones.indexOf(p.zone);
+      p.zone = zones[(idx + 1) % zones.length];
+      renderMap();
+    }
+
+    function renderMap() {
+      const zones = { inner: [], middle: [], outer: [] };
+      people.forEach(p => zones[p.zone].push(p));
+
+      // Render circles
+      ['inner','middle','outer'].forEach(z => {
+        const container = document.getElementById('zone-' + z);
+        // Keep only the ring div, clear chips
+        container.querySelectorAll('.person-chip').forEach(c => c.remove());
+        zones[z].forEach(p => {
+          const chip = document.createElement('span');
+          chip.className = 'person-chip';
+          chip.innerHTML = `<span onclick="moveZone(${p.id})">${p.name}</span><span class="remove" onclick="removePerson(${p.id})">×</span>`;
+          container.appendChild(chip);
+        });
+      });
+
+      // Render lists
+      ['inner','middle','outer'].forEach(z => {
+        const list = document.getElementById('list-' + z);
+        list.innerHTML = zones[z].length === 0
+          ? '<span style="font-size:0.78rem;color:var(--muted)">Henüz kimse eklenmedi</span>'
+          : zones[z].map(p => `<span class="person-chip" onclick="moveZone(${p.id})">${p.name}</span>`).join('');
+      });
+
+      // Score
+      const innerCount = zones.inner.length;
+      const outerCount = zones.outer.length;
+      const total = people.length;
+      const scoreEl = document.getElementById('score-val');
+      const tipEl = document.getElementById('score-tip');
+
+      if (total === 0) {
+        scoreEl.textContent = '—';
+        scoreEl.style.color = 'var(--text)';
+        tipEl.textContent = 'Kişi ekleyerek başla.';
+        return;
+      }
+
+      const score = Math.round(((innerCount - outerCount) / total) * 100);
+      scoreEl.textContent = (score > 0 ? '+' : '') + score;
+      if (score > 30) { scoreEl.style.color = 'var(--nt-green)'; tipEl.textContent = 'Çevren güçlü bir destek ağı oluşturuyor.'; }
+      else if (score >= 0) { scoreEl.style.color = 'var(--nt-amber)'; tipEl.textContent = 'Denge durumunda. İç çevreni güçlendirmeye çalış.'; }
+      else { scoreEl.style.color = 'var(--nt-red)'; tipEl.textContent = 'Dikkat! Riskli çevre ağırlıkta. Destek ağını güçlendir.'; }
+
+      saveMap();
+    }
+
+    function saveMap() {
+      NT.save('cevre_haritasi', people);
+    }
+
+    function clearMap() {
+      if (!confirm('Tüm veriler silinecek!')) return;
+      people = [];
+      NT.save('cevre_haritasi', people);
+      renderMap();
+    }
+
+    renderMap();
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

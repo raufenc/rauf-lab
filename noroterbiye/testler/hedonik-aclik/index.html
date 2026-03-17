@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hedonik Açlık Testi — NöroTerbiye</title>
+  <meta name="description" content="Açlığın gerçek mi yoksa haz kaynaklı mı? Hedonik açlık testini çöz, yeme alışkanlıklarını tanı.">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Testi</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">🍔 Hedonik Açlık Testi</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Karnın tok ama yine yemek istiyor musun? 10 soru ile hedonik açlığını keşfet.
+      </p>
+      <div id="test-area" class="nt-card nt-fade-in" style="padding:32px;animation-delay:0.2s"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script src="/noroterbiye/js/test-engine.js"></script>
+  <script>
+    TestEngine.init({
+      containerId: 'test-area',
+      title: 'Hedonik Açlık Testi',
+      slug: 'hedonik-aclik',
+      questions: [
+        {
+          soru: 'Tok olduğun halde güzel kokular duyunca ne olur?',
+          secenekler: [
+            { text: 'Dayanamam, bir şey yerim', puan: 4 },
+            { text: 'İsteğim artar ama çoğunlukla dayanırım', puan: 2 },
+            { text: 'Fark ederim ama etkilenmem', puan: 0 },
+          ],
+          aciklama: 'Koku, dopaminin en hızlı tetikleyicilerinden biridir. Gerçek açlık değil, beklenti açlığı devreye girer.'
+        },
+        {
+          soru: 'Tatlı yemekten sonra "bir de tatlı olsa" der misin?',
+          secenekler: [
+            { text: 'Neredeyse her zaman', puan: 4 },
+            { text: 'Bazen', puan: 2 },
+            { text: 'Nadiren veya hiç', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Stresli veya üzgün olduğunda yemek yer misin?',
+          secenekler: [
+            { text: 'Evet, yemek beni rahatlatır', puan: 4 },
+            { text: 'Bazen farkında olmadan', puan: 2 },
+            { text: 'Hayır, başka yollarla başa çıkarım', puan: 0 },
+          ],
+          aciklama: 'Duygusal yeme, beynin stres-dopamin kısayolunu kullanmasıdır.'
+        },
+        {
+          soru: 'Yemek yerken tabağındaki son lokmayı bırakabilir misin?',
+          secenekler: [
+            { text: 'Hayır, tabağı bitirmeden kalkmam', puan: 4 },
+            { text: 'Zor ama bazen', puan: 2 },
+            { text: 'Evet, tok olunca bırakırım', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Gece geç saatte atıştırır mısın?',
+          secenekler: [
+            { text: 'Evet, sık sık', puan: 4 },
+            { text: 'Bazen, özellikle ekran başındayken', puan: 3 },
+            { text: 'Nadiren', puan: 1 },
+            { text: 'Hayır', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Kola, gazlı içecek veya şekerli içeceklere ne sıklıkla ihtiyaç duyarsın?',
+          secenekler: [
+            { text: 'Her gün', puan: 4 },
+            { text: 'Haftada birkaç kez', puan: 2 },
+            { text: 'Nadiren', puan: 1 },
+            { text: 'İçmem', puan: 0 },
+          ],
+          aciklama: 'Şekerli içecekler, en hızlı dopamin yükselticilerdendir. Beyin kısa sürede bunu "normal" kabul eder.'
+        },
+        {
+          soru: 'Yemek fotoğrafı veya yemek videosu gördüğünde ne olur?',
+          secenekler: [
+            { text: 'İştahım kabartır, bir şey yemek isterim', puan: 4 },
+            { text: 'Hoşuma gider ama her zaman eyleme geçmem', puan: 2 },
+            { text: 'Fark etmez', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Bir yemeği "hak ettim" diye mi yoksa gerçekten acıktığın için mi yersin?',
+          secenekler: [
+            { text: 'Çoğunlukla ödül olarak', puan: 4 },
+            { text: 'Karışık, bazen ödül bazen açlık', puan: 2 },
+            { text: 'Genellikle açlık hissiyle', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Doyduğun bir yemekten sonra meyve veya atıştırmalık teklif edilse?',
+          secenekler: [
+            { text: 'Alırım, meyve zararsız değil mi?', puan: 3 },
+            { text: 'Düşünürüm, tokluğuma göre karar veririm', puan: 1 },
+            { text: 'Hayır, tokum derim', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Açlığı "sabır" olarak mı yoksa "acı" olarak mı algılarsın?',
+          secenekler: [
+            { text: 'Kesinlikle acı, hemen giderilmesi gereken bir şey', puan: 4 },
+            { text: 'Rahatsız edici ama dayanılabilir', puan: 2 },
+            { text: 'Açlıkta bir hikmet olduğunu düşünürüm', puan: 0 },
+          ],
+          aciklama: 'Atalarımız açlığı terbiye aracı olarak kullanmış. Oruç, nefse "hayır" deme antrenmanıdır.'
+        },
+      ],
+      resultRanges: [
+        { min: 0, max: 20, label: 'Kontrollü Beslenme', text: 'Açlık ve tokluk sinyallerini iyi okuyorsun. Hedonik açlık seni fazla etkilemiyor.', emoji: '🥗' },
+        { min: 21, max: 45, label: 'Hedonik Eğilim Var', text: 'Zaman zaman gerçek açlık ile haz açlığını karıştırıyorsun. Tetikleyicilerini tanımak sana yardımcı olacak.', emoji: '🍕' },
+        { min: 46, max: 70, label: 'Hedonik Açlık Aktif', text: 'Beynin haz için yemeye sık başvuruyor. Bu farkındalık çok değerli — alternatif haz kaynaklarını keşfetme zamanı.', emoji: '🍰' },
+        { min: 71, max: 100, label: 'Güçlü Hedonik Baskı', text: 'Yemek, senin için birincil haz ve kaçış kaynağı haline gelmiş. Ama her farkındalık bir dönüşüm başlangıcıdır.', emoji: '⚠️' },
+      ]
+    });
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

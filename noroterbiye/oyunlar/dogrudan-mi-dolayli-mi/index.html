@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doğrudan mı Dolaylı mı? — NöroTerbiye</title>
+  <meta name="description" content="Madde ve davranışları doğrudan vs dolaylı etkileyen olarak sınıflandır.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .classify-item { text-align: center; margin: 20px 0; }
+    .classify-item .emoji { font-size: 3rem; margin-bottom: 8px; }
+    .classify-item .name { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
+    .classify-item .hint { font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 16px; }
+    .classify-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .classify-btn { padding: 14px 24px; border-radius: var(--radius-lg); border: 2px solid var(--border); background: var(--surface); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all var(--transition-fast); font-family: var(--font-sans); min-width: 180px; color: var(--text); }
+    .classify-btn:hover { transform: translateY(-1px); }
+    .classify-btn.direct:hover { border-color: var(--nt-red); background: var(--nt-red-soft); }
+    .classify-btn.indirect:hover { border-color: var(--nt-amber); background: var(--nt-amber-soft); }
+    .classify-btn.correct { border-color: var(--nt-green); background: var(--nt-green-soft); }
+    .classify-btn.wrong { border-color: var(--nt-red); background: var(--nt-red-soft); }
+    .tally { display: flex; gap: 24px; justify-content: center; margin: 16px 0; }
+    .tally-box { text-align: center; padding: 12px 20px; border-radius: var(--radius-md); }
+    .tally-box.direct-box { background: var(--nt-red-soft); }
+    .tally-box.indirect-box { background: var(--nt-amber-soft); }
+    .tally-count { font-size: 1.5rem; font-weight: 800; }
+    .tally-label { font-size: 0.7rem; }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+
+      <div id="intro" class="nt-fade-in">
+        <h1 class="nt-title" style="font-size:2rem;margin-bottom:12px">🎯 Doğrudan mı Dolaylı mı?</h1>
+        <p class="nt-subtitle" style="margin-bottom:20px">Beyni etkileyen madde ve davranışları sınıflandır!</p>
+        <div class="nt-card" style="margin-bottom:24px">
+          <h3 style="font-weight:700;margin-bottom:8px">Nasıl Oynanır?</h3>
+          <ul style="font-size:0.88rem;color:var(--text-secondary);line-height:1.8;padding-left:20px">
+            <li>Her turda bir madde veya davranış gösterilir</li>
+            <li><strong>Doğrudan Etkileyen</strong>: Beyin kimyasını direkt değiştiren maddeler (nikotin, alkol, kafein vb.)</li>
+            <li><strong>Dolaylı Etkileyen</strong>: Davranış yoluyla beyin kimyasını değiştiren alışkanlıklar (sosyal medya, kumar, oyun vb.)</li>
+            <li>12 madde, hızlı sınıflandır!</li>
+          </ul>
+        </div>
+        <button class="nt-btn nt-btn-primary nt-btn-lg" onclick="startGame()">Oyna</button>
+      </div>
+
+      <div id="game" style="display:none">
+        <div class="nt-quiz-progress"><div class="nt-quiz-progress-bar" id="progress"></div></div>
+        <div style="text-align:center;font-size:0.8rem;color:var(--muted);margin-bottom:8px" id="counter"></div>
+        <div class="tally">
+          <div class="tally-box direct-box"><div class="tally-count" id="direct-count" style="color:var(--nt-red)">0</div><div class="tally-label" style="color:var(--nt-red)">Doğrudan</div></div>
+          <div class="tally-box indirect-box"><div class="tally-count" id="indirect-count" style="color:var(--nt-amber)">0</div><div class="tally-label" style="color:var(--nt-amber)">Dolaylı</div></div>
+        </div>
+        <div class="nt-card" style="padding:28px" id="item-card"></div>
+      </div>
+
+      <div id="result" style="display:none">
+        <div class="nt-card nt-result">
+          <div class="nt-result-score" id="final-score"></div>
+          <div class="nt-result-label" id="final-label"></div>
+          <div class="nt-result-text" id="final-text"></div>
+          <div class="nt-result-actions">
+            <button class="nt-btn nt-btn-primary" onclick="location.reload()">Tekrar Oyna</button>
+            <a href="/noroterbiye/oyunlar/" class="nt-btn nt-btn-secondary">Diğer Oyunlar</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const items = [
+      { emoji: '🚬', name: 'Nikotin (sigara/e-sigara)', answer: 'dogrudan', hint: 'Vücuda giren bir madde', info: 'Nikotin doğrudan beyin reseptörlerine bağlanarak dopamin salgılatır. Kimyasal bağımlılık oluşturur.' },
+      { emoji: '📱', name: 'Sosyal medya', answer: 'dolayli', hint: 'Bir davranış/alışkanlık', info: 'Sosyal medya davranış yoluyla dopamin sistemini hackler. Madde girmez ama beyin aynı döngüye girer.' },
+      { emoji: '☕', name: 'Kafein', answer: 'dogrudan', hint: 'İçilen bir madde', info: 'Kafein adenozin reseptörlerini bloke ederek doğrudan beyin kimyasını değiştirir.' },
+      { emoji: '🎰', name: 'Kumar / bahis', answer: 'dolayli', hint: 'Bir davranış', info: 'Kumar madde değildir ama beklenti-ödül döngüsü aynı beyin devrelerini aktive eder.' },
+      { emoji: '🍺', name: 'Alkol', answer: 'dogrudan', hint: 'İçilen bir madde', info: 'Alkol GABA reseptörlerini aktive eder ve doğrudan beyin kimyasını değiştirir.' },
+      { emoji: '🎮', name: 'Video oyunları', answer: 'dolayli', hint: 'Bir aktivite', info: 'Oyunlar davranışsal dopamin döngüleri kurar. Madde girişi yoktur ama bağımlılık mekanizması benzerdir.' },
+      { emoji: '🍫', name: 'Şeker / işlenmiş gıda', answer: 'dogrudan', hint: 'Yenen bir madde', info: 'Şeker doğrudan opioid ve dopamin sistemlerini aktive eder. Beyin kimyasını fiziksel olarak değiştirir.' },
+      { emoji: '🛒', name: 'Alışveriş bağımlılığı', answer: 'dolayli', hint: 'Bir davranış', info: 'Alışveriş davranışsal bir bağımlılıktır. Satın alma anı dopamin salgılatır ama madde girişi yoktur.' },
+      { emoji: '💊', name: 'Uyuşturucu maddeler', answer: 'dogrudan', hint: 'Alınan bir madde', info: 'Uyuşturucular beyin reseptörlerine doğrudan müdahale eder. En güçlü kimyasal bağımlılık kategorisi.' },
+      { emoji: '📺', name: 'Dizi/film maratonu (binge)', answer: 'dolayli', hint: 'Bir davranış', info: 'Binge watching davranışsal bir döngüdür. Cliffhanger dopamin beklentisini tetikler.' },
+      { emoji: '🍩', name: 'Fast food / yüksek yağ-tuz', answer: 'dogrudan', hint: 'Yenen bir madde', info: 'Yüksek yağ-tuz-şeker kombinasyonu "bliss point" denilen noktada beyin kimyasını doğrudan değiştirir.' },
+      { emoji: '📊', name: 'Beğeni/takipçi takibi', answer: 'dolayli', hint: 'Bir davranış', info: 'Sosyal onay arayışı davranışsal bir bağımlılıktır. Beğeni sayısı dopamini davranış yoluyla tetikler.' },
+    ];
+
+    let current = 0, score = 0, directCount = 0, indirectCount = 0, shuffled = [];
+
+    function startGame() {
+      document.getElementById('intro').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+      shuffled = [...items].sort(() => Math.random() - 0.5);
+      showItem();
+    }
+
+    function showItem() {
+      if (current >= shuffled.length) return endGame();
+      document.getElementById('progress').style.width = (current / shuffled.length * 100) + '%';
+      document.getElementById('counter').textContent = `${current + 1} / ${shuffled.length}`;
+      const item = shuffled[current];
+      document.getElementById('item-card').innerHTML = `
+        <div class="classify-item">
+          <div class="emoji">${item.emoji}</div>
+          <div class="name">${item.name}</div>
+          <div class="hint">İpucu: ${item.hint}</div>
+          <div class="classify-btns">
+            <button class="classify-btn direct" onclick="classify('dogrudan')">💉 Doğrudan Etkileyen</button>
+            <button class="classify-btn indirect" onclick="classify('dolayli')">🔄 Dolaylı Etkileyen</button>
+          </div>
+          <div id="feedback" style="margin-top:16px"></div>
+        </div>
+      `;
+    }
+
+    function classify(answer) {
+      const item = shuffled[current];
+      const correct = item.answer === answer;
+      if (correct) {
+        score++;
+        if (answer === 'dogrudan') directCount++;
+        else indirectCount++;
+      }
+      document.getElementById('direct-count').textContent = directCount;
+      document.getElementById('indirect-count').textContent = indirectCount;
+
+      const btns = document.querySelectorAll('.classify-btn');
+      btns.forEach(b => { b.disabled = true; });
+      const fb = document.getElementById('feedback');
+      fb.innerHTML = `<div class="nt-quiz-explanation">${correct ? '✅ Doğru!' : '❌ Yanlış!'} ${item.info}</div>
+        <button class="nt-btn nt-btn-primary nt-btn-sm" style="margin-top:12px" onclick="current++;showItem()">Sonraki →</button>`;
+    }
+
+    function endGame() {
+      document.getElementById('game').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      const r = NT.calcScore(score, shuffled.length);
+      document.getElementById('final-score').textContent = r.pct + '%';
+      document.getElementById('final-label').textContent = r.label;
+      document.getElementById('final-text').textContent = r.text + ' Doğrudan etkileyen maddeler beyin kimyasını fiziksel olarak değiştirir. Dolaylı etkileyenler ise davranış döngüleriyle aynı sonucu yaratır.';
+      NT.save('dogrudan_dolayli', { score, total: shuffled.length, pct: r.pct, date: new Date().toISOString() });
+    }
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

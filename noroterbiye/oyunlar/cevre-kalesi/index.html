@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Çevre Kalesi — NöroTerbiye</title>
+  <meta name="description" content="Çevre kalesini kur! Destekçileri ekle, kötü etkileri reddet, surlarını güçlendir.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .castle-display { text-align: center; padding: 24px; margin-bottom: 16px; }
+    .castle-icon { font-size: 4rem; margin-bottom: 8px; }
+    .castle-walls { display: flex; gap: 4px; justify-content: center; margin: 12px 0; flex-wrap: wrap; }
+    .wall-block { width: 28px; height: 20px; border-radius: 3px; transition: all 0.3s; }
+    .wall-block.strong { background: var(--nt-green); }
+    .wall-block.weak { background: var(--nt-red); }
+    .wall-block.neutral { background: var(--surface2); border: 1px solid var(--border); }
+    .castle-stats { display: flex; gap: 16px; justify-content: center; margin: 16px 0; flex-wrap: wrap; }
+    .castle-stat { text-align: center; }
+    .castle-stat-val { font-size: 1.5rem; font-weight: 800; }
+    .castle-stat-label { font-size: 0.7rem; color: var(--text-secondary); }
+    .visitor-card { padding: 24px; text-align: center; margin-bottom: 12px; }
+    .visitor-emoji { font-size: 3rem; margin-bottom: 8px; }
+    .visitor-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+    .visitor-desc { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5; }
+    .visitor-btns { display: flex; gap: 12px; justify-content: center; }
+    .accept-btn, .reject-btn { padding: 12px 28px; border-radius: var(--radius-full); border: 2px solid var(--border); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all var(--transition-fast); font-family: var(--font-sans); background: var(--surface); color: var(--text); }
+    .accept-btn:hover { border-color: var(--nt-green); background: var(--nt-green-soft); }
+    .reject-btn:hover { border-color: var(--nt-red); background: var(--nt-red-soft); }
+    .garrison { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 12px 0; min-height: 40px; }
+    .garrison-member { padding: 4px 10px; border-radius: var(--radius-full); font-size: 0.75rem; }
+    .garrison-good { background: var(--nt-green-soft); color: var(--nt-green); }
+    .garrison-bad { background: var(--nt-red-soft); color: var(--nt-red); }
+    .visitor-consequence { padding: 12px; border-radius: var(--radius-md); font-size: 0.82rem; margin-top: 12px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+
+      <div id="intro" class="nt-fade-in">
+        <h1 class="nt-title" style="font-size:2rem;margin-bottom:12px">🏰 Çevre Kalesi</h1>
+        <p class="nt-subtitle" style="margin-bottom:20px">Çevreni tasarla, kalesini güçlendir!</p>
+        <div class="nt-card" style="margin-bottom:24px">
+          <h3 style="font-weight:700;margin-bottom:8px">Nasıl Oynanır?</h3>
+          <ul style="font-size:0.88rem;color:var(--text-secondary);line-height:1.8;padding-left:20px">
+            <li>Kalen 10 duvar bloğuyla başlıyor (nötr)</li>
+            <li>Her turda kapına bir "ziyaretçi" gelir</li>
+            <li><strong>Kabul et</strong>: Ziyaretçi kaleye yerleşir</li>
+            <li><strong>Reddet</strong>: Ziyaretçi gönderilir</li>
+            <li>İyi etkiler duvarları güçlendirir, kötü etkiler zayıflatır</li>
+            <li>12 ziyaretçi, kalenin gücünü koru!</li>
+          </ul>
+        </div>
+        <button class="nt-btn nt-btn-primary nt-btn-lg" onclick="startGame()">Oyna</button>
+      </div>
+
+      <div id="game" style="display:none">
+        <div class="nt-card castle-display">
+          <div class="castle-icon">🏰</div>
+          <div class="castle-walls" id="walls"></div>
+          <div class="castle-stats">
+            <div class="castle-stat"><div class="castle-stat-val" id="strength-val" style="color:var(--nt-green)">50</div><div class="castle-stat-label">Kale Gücü</div></div>
+            <div class="castle-stat"><div class="castle-stat-val" id="round-val" style="color:var(--nt-primary)">1</div><div class="castle-stat-label">Tur</div></div>
+          </div>
+          <div style="font-size:0.75rem;color:var(--muted)">Garnizon:</div>
+          <div class="garrison" id="garrison"></div>
+        </div>
+        <div class="nt-card visitor-card" id="visitor-card"></div>
+      </div>
+
+      <div id="result" style="display:none">
+        <div class="nt-card nt-result">
+          <div class="nt-result-score" id="final-score"></div>
+          <div class="nt-result-label" id="final-label"></div>
+          <div class="nt-result-text" id="final-text"></div>
+          <div id="final-garrison" style="margin:16px auto;max-width:400px"></div>
+          <div class="nt-result-actions">
+            <button class="nt-btn nt-btn-primary" onclick="location.reload()">Tekrar Oyna</button>
+            <a href="/noroterbiye/oyunlar/" class="nt-btn nt-btn-secondary">Diğer Oyunlar</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const visitors = [
+      { emoji: '👨‍🏫', name: 'Bilge Mentor', desc: 'Sana ilim öğretir, yol gösterir, hatalarını nazikçe düzeltir.', type: 'good', power: 12, acceptInfo: 'Mentor kalenin temel taşıdır. İlim ve hikmetle duvarlar güçlenir.', rejectInfo: 'İlim ehli çevreyi reddettin. Rehbersiz kalmak kalenin en büyük zafiyetidir.' },
+      { emoji: '🧑‍🤝‍🧑', name: 'Dürüst Arkadaş', desc: 'Yüzüne doğruyu söyler, arkandan konuşmaz, seni geliştirmek ister.', type: 'good', power: 10, acceptInfo: 'Sadık dost ayna gibidir. Seni senden iyi görür.', rejectInfo: 'Dürüst dostları kaybetmek, dalkavukları kazanmak demektir.' },
+      { emoji: '📱', name: 'Sosyal Medya Fenomeni', desc: 'Sürekli gösteriş, kıyaslama, yüzeysel ilişki. Takipçi sayısı = değer.', type: 'bad', power: -10, acceptInfo: 'Gösteriş kültürü kaleye sızdı. Şöhret dürtüsü güçlendi.', rejectInfo: 'Yüzeysel ilişkileri reddettin. Kale derinlikle güçlenir.' },
+      { emoji: '👵', name: 'Bilge Büyükanne', desc: 'Tecrübesiyle nasihat verir, duasıyla korur, sabır öğretir.', type: 'good', power: 8, acceptInfo: 'Tecrübe ve dua kalenin görünmez kalkanıdır.', rejectInfo: 'Büyüklerin tecrübesini reddetmek, aynı hataları tekrarlamak demektir.' },
+      { emoji: '🎭', name: 'Dedikodu Mahfili', desc: 'Herkesin arkasından konuşur, seni de çeker. "Gül duy ama söyleme."', type: 'bad', power: -12, acceptInfo: 'Gıybet kaleyi içten çürütür. Güven duvarları çatladı.', rejectInfo: 'Gıybetten uzak durdun. Kale güven üzerine inşa ediliyor.' },
+      { emoji: '📚', name: 'Kitap Kulübü', desc: 'Birlikte okuma, tartışma, düşünce geliştirme ortamı.', type: 'good', power: 10, acceptInfo: 'İlim meclisi kalenin kütüphanesidir. Zihinsel duvarlar güçlendi.', rejectInfo: 'Kitap ortamını reddettin. Bilgi olmadan kale savunulamaz.' },
+      { emoji: '🍻', name: 'Parti Grubu', desc: '"Hayatın tadını çıkar, yarın düşünülür." İsraf ve gevşeklik hakim.', type: 'bad', power: -10, acceptInfo: 'İsraf ve gevşeklik kaleye sızdı. Disiplin duvarları çöktü.', rejectInfo: 'Sefahat ortamını reddettin. Disiplin kalenin harçıdır.' },
+      { emoji: '🤝', name: 'Gönüllü Topluluğu', desc: 'Birlikte iyilik yapar, topluma katkı sağlar, aidiyet hissi verir.', type: 'good', power: 10, acceptInfo: 'İyilik yapmak kalenin en güçlü surlarını örer.', rejectInfo: 'İyilik topluluğunu reddettin. Tek başına kale savunulmaz.' },
+      { emoji: '🎰', name: 'Kolay Para Vaadçisi', desc: '"Hızlı kazan, risk al, herkes yapıyor." Kısa yol vaadi.', type: 'bad', power: -8, acceptInfo: 'Haram kazanç şüphesi kaleyi zehirledi.', rejectInfo: 'Kolay para tuzağını reddettin. Helal kazanç kalenin temeli.' },
+      { emoji: '🏋️', name: 'Spor Arkadaşı', desc: 'Birlikte spor yapar, disiplin aşılar, sağlıklı rekabet kurar.', type: 'good', power: 8, acceptInfo: 'Beden disiplini ruh disiplinini güçlendirir.', rejectInfo: 'Sağlıklı rekabeti reddettin. Beden kalenin bedeni.' },
+      { emoji: '😈', name: 'Kıskançlık Yayan', desc: 'Başkalarının başarısını küçümser, seni de kıskançlığa çeker.', type: 'bad', power: -10, acceptInfo: 'Haset kaleyi kemiren bir kurttur.', rejectInfo: 'Kıskançlıktan uzak durdun. Kalenin havası temiz.' },
+      { emoji: '🌙', name: 'Cami/Cemaat Topluluğu', desc: 'Birlikte ibadet, sohbet, manevi destek. Topluluk gücü.', type: 'good', power: 12, acceptInfo: 'Cemaat kalenin surlarını katlıyor. Birlikten kuvvet doğar.', rejectInfo: 'Manevi topluluğu reddettin. Tek başına kale soğuk kalır.' },
+    ];
+
+    let strength = 50, round = 0, shuffled = [], garrison = [];
+
+    function startGame() {
+      document.getElementById('intro').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+      shuffled = [...visitors].sort(() => Math.random() - 0.5);
+      updateCastle();
+      showVisitor();
+    }
+
+    function updateCastle() {
+      strength = Math.max(0, Math.min(100, strength));
+      document.getElementById('strength-val').textContent = strength;
+      document.getElementById('round-val').textContent = round + 1;
+      const wallCount = 10;
+      const greenCount = Math.round(strength / 10);
+      let html = '';
+      for (let i = 0; i < wallCount; i++) {
+        if (i < greenCount) html += '<div class="wall-block strong"></div>';
+        else html += '<div class="wall-block neutral"></div>';
+      }
+      document.getElementById('walls').innerHTML = html;
+      document.getElementById('garrison').innerHTML = garrison.map(g =>
+        `<span class="garrison-member ${g.type === 'good' ? 'garrison-good' : 'garrison-bad'}">${g.emoji} ${g.name}</span>`
+      ).join('');
+    }
+
+    function showVisitor() {
+      if (round >= shuffled.length) return endGame();
+      const v = shuffled[round];
+      document.getElementById('visitor-card').innerHTML = `
+        <div class="visitor-emoji">${v.emoji}</div>
+        <div class="visitor-name">${v.name}</div>
+        <div class="visitor-desc">${v.desc}</div>
+        <div class="visitor-btns">
+          <button class="accept-btn" onclick="decide('accept')">✅ Kabul Et</button>
+          <button class="reject-btn" onclick="decide('reject')">❌ Reddet</button>
+        </div>
+        <div id="consequence"></div>
+      `;
+    }
+
+    function decide(action) {
+      const v = shuffled[round];
+      const cons = document.getElementById('consequence');
+      document.querySelectorAll('.accept-btn,.reject-btn').forEach(b => b.disabled = true);
+
+      if (action === 'accept') {
+        strength += v.power;
+        garrison.push({ emoji: v.emoji, name: v.name, type: v.type });
+        const good = v.type === 'good';
+        cons.innerHTML = `<div class="visitor-consequence" style="background:${good ? 'var(--nt-green-soft)' : 'var(--nt-red-soft)'};color:${good ? 'var(--nt-green)' : 'var(--nt-red)'}">
+          ${good ? '✅' : '⚠️'} ${v.acceptInfo} (${v.power > 0 ? '+' : ''}${v.power} güç)
+        </div><button class="nt-btn nt-btn-primary nt-btn-sm" style="margin-top:12px" onclick="nextRound()">Sonraki →</button>`;
+      } else {
+        const good = v.type === 'bad';
+        const rejPower = v.type === 'bad' ? 5 : -3;
+        strength += rejPower;
+        cons.innerHTML = `<div class="visitor-consequence" style="background:${good ? 'var(--nt-green-soft)' : 'var(--nt-amber-soft)'};color:${good ? 'var(--nt-green)' : 'var(--nt-amber)'}">
+          ${good ? '🛡️' : '🤔'} ${v.rejectInfo} (${rejPower > 0 ? '+' : ''}${rejPower} güç)
+        </div><button class="nt-btn nt-btn-primary nt-btn-sm" style="margin-top:12px" onclick="nextRound()">Sonraki →</button>`;
+      }
+      round++;
+      updateCastle();
+    }
+
+    function nextRound() { showVisitor(); }
+
+    function endGame() {
+      document.getElementById('game').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      let label, text;
+      if (strength >= 80) { label = 'Demir Kale!'; text = 'Çevreni mükemmel tasarladın. Doğru insanlarla çevrili güçlü bir kale kurdun.'; }
+      else if (strength >= 60) { label = 'Sağlam Kale'; text = 'İyi bir çevre oluşturdun. Birkaç zayıf nokta var ama genel yapı sağlam.'; }
+      else if (strength >= 40) { label = 'Çatırdayan Kale'; text = 'Kalen tehlikede. Bazı zararlı etkiler sızmış. Çevreni gözden geçir.'; }
+      else { label = 'Yıkık Kale'; text = 'Kale çökmek üzere. Çevre tasarımı hayati önem taşır. Kimlerle vakit geçirdiğin, kim olacağını belirler.'; }
+      document.getElementById('final-score').textContent = strength;
+      document.getElementById('final-label').textContent = label;
+      document.getElementById('final-text').textContent = text;
+      const fg = document.getElementById('final-garrison');
+      if (garrison.length > 0) {
+        fg.innerHTML = `<p style="font-size:0.82rem;color:var(--text-secondary);text-align:center;margin-bottom:8px">Kaledeki kişiler:</p>
+          <div class="garrison" style="justify-content:center">${garrison.map(g => `<span class="garrison-member ${g.type === 'good' ? 'garrison-good' : 'garrison-bad'}">${g.emoji} ${g.name}</span>`).join('')}</div>`;
+      }
+      NT.save('cevre_kalesi', { strength, garrison: garrison.length, date: new Date().toISOString() });
+    }
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

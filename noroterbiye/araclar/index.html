@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Araçlar — NöroTerbiye</title>
+  <meta name="description" content="NöroTerbiye araçları: Yapılacaklar listesi, alışkanlık kanvası, nefs günlüğü ve daha fazlası. Pratik dönüşüm araçları.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap">
+      <h1 class="nt-title nt-fade-in" style="font-size:2rem;margin-bottom:8px">🛠️ Araçlar</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:8px">
+        Bilgiyi eyleme çeviren pratik araçlar. Planla, kaydet, dönüştür.
+      </p>
+      <p class="nt-fade-in" style="animation-delay:0.15s;font-size:0.78rem;color:var(--muted);margin-bottom:32px">
+        Tüm veriler tarayıcında kalır, hiçbir bilgi dışarı gönderilmez.
+      </p>
+
+      <div class="nt-filters nt-fade-in" style="animation-delay:0.18s" id="filters">
+        <button class="nt-filter-btn active" data-filter="all">Tümü</button>
+        <button class="nt-filter-btn" data-filter="Okuyan">Okuyan</button>
+        <button class="nt-filter-btn" data-filter="Genel">Genel</button>
+        <button class="nt-filter-btn" data-filter="Genç">Genç</button>
+        <button class="nt-filter-btn" data-filter="Aile">Aile</button>
+      </div>
+
+      <div class="nt-grid nt-grid-2 nt-stagger" id="arac-list"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/data/araclar.js"></script>
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const ikonlar = {
+      'AP01':'📝','AP02':'🔄','AP03':'⏰','AP04':'🤝','AP05':'📓',
+      'AP06':'🎯','AP07':'🗺️','AP08':'🧘','AP09':'📖','AP10':'👨‍👩‍👧‍👦',
+      'AP11':'🥗','AP12':'💊','AP13':'📵','AP14':'🆘','AP15':'🔄',
+      'AP16':'🌟','AP17':'📊','AP18':'🏆'
+    };
+
+    const slugMap = {
+      'AP01':'yapilacaklar-listesi','AP02':'aliskanlik-kanvasi','AP03':'guclu-zaman-planlayici',
+      'AP04':'caydirici-anlasma','AP05':'nefs-gunlugu','AP06':'tetikleyici-kaydi',
+      'AP07':'cevre-destek-haritasi','AP08':'mikro-tefekkur','AP13':'ekran-suresi-sozlesmesi',
+      'AP14':'dipten-donus','AP15':'bir-yanlis-bir-dogru','AP16':'rol-model-kutuphanesi',
+      'AP17':'ssg-haftalik-rapor','AP11':'beslenme-zihin-checklist'
+    };
+
+    const container = document.getElementById('arac-list');
+    let activeFilter = 'all';
+
+    function render() {
+      container.innerHTML = '';
+      ARACLAR_DATA.forEach(t => {
+        if (t.id === 'ID') return;
+        const slug = slugMap[t.id];
+        if (!slug) return;
+        if (activeFilter !== 'all' && !t.kitle.includes(activeFilter)) return;
+        container.innerHTML += `
+          <a href="/noroterbiye/araclar/${slug}/" class="nt-card nt-card-clickable" style="text-decoration:none;color:var(--text)">
+            <div style="display:flex;gap:16px;align-items:start">
+              <div style="font-size:2.2rem;flex-shrink:0">${ikonlar[t.id] || '🛠️'}</div>
+              <div style="flex:1">
+                <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:6px">${t.ad}</h3>
+                <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.5;margin-bottom:10px">${t.amac}</p>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <span class="nt-tag">${t.kitle}</span>
+                  <span class="nt-tag nt-tag-primary">${t.tema}</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        `;
+      });
+    }
+
+    document.getElementById('filters').addEventListener('click', e => {
+      if (!e.target.classList.contains('nt-filter-btn')) return;
+      document.querySelectorAll('.nt-filter-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      activeFilter = e.target.dataset.filter;
+      render();
+    });
+
+    render();
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

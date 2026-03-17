@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayna Nöron Aynası — NöroTerbiye</title>
+  <meta name="description" content="Bu sahneyi izlersen beynin ne yapar? Ayna nöronların etkisini keşfet.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪞</text></svg>">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .scene-card { padding: 28px; margin-bottom: 16px; }
+    .scene-emoji { font-size: 3.5rem; text-align: center; margin-bottom: 16px; }
+    .scene-title { font-size: 1.1rem; font-weight: 700; text-align: center; margin-bottom: 8px; }
+    .scene-desc { font-size: 0.9rem; color: var(--text-secondary); text-align: center; line-height: 1.6; margin-bottom: 20px; }
+    .brain-reveal { padding: 20px; border-radius: var(--radius-lg); margin-top: 16px; }
+    .brain-reveal h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; }
+    .brain-reveal p { font-size: 0.85rem; line-height: 1.6; color: var(--text-secondary); }
+    .brain-reveal .effect { display: inline-block; padding: 4px 10px; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600; margin: 8px 4px 0 0; }
+    .effect-bad { background: var(--nt-red-soft); color: var(--nt-red); }
+    .effect-good { background: var(--nt-green-soft); color: var(--nt-green); }
+    .effect-neutral { background: var(--nt-amber-soft); color: var(--nt-amber); }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+
+      <div id="intro" class="nt-fade-in">
+        <h1 class="nt-title" style="font-size:2rem;margin-bottom:12px">🪞 Ayna Nöron Aynası</h1>
+        <p class="nt-subtitle" style="margin-bottom:20px">Bu sahneyi izlersen beynin ne yapar?</p>
+        <div class="nt-card" style="margin-bottom:24px">
+          <h3 style="font-weight:700;margin-bottom:8px">Nasıl Oynanır?</h3>
+          <ul style="font-size:0.88rem;color:var(--text-secondary);line-height:1.8;padding-left:20px">
+            <li>Bir sahne/ekran içeriği gösterilecek</li>
+            <li>"Bu sahneyi izlersen beynin ne yapar?" sorusuna cevap ver</li>
+            <li>3 seçenekten doğru beyin tepkisini tahmin et</li>
+            <li>Ayna nöronlar gördüğümüzü içselleştirir — farkında ol!</li>
+            <li>8 sahne, her doğru cevap puan kazandırır</li>
+          </ul>
+        </div>
+        <button class="nt-btn nt-btn-primary nt-btn-lg" onclick="startGame()">Oyna</button>
+      </div>
+
+      <div id="game" style="display:none">
+        <div class="nt-quiz-progress"><div class="nt-quiz-progress-bar" id="progress"></div></div>
+        <div style="text-align:center;font-size:0.8rem;color:var(--muted);margin-bottom:16px" id="counter"></div>
+        <div class="nt-card scene-card" id="scene"></div>
+      </div>
+
+      <div id="result" style="display:none">
+        <div class="nt-card nt-result">
+          <div class="nt-result-score" id="final-score"></div>
+          <div class="nt-result-label" id="final-label"></div>
+          <div class="nt-result-text" id="final-text"></div>
+          <div class="nt-result-actions">
+            <button class="nt-btn nt-btn-primary" onclick="location.reload()">Tekrar Oyna</button>
+            <a href="/noroterbiye/oyunlar/" class="nt-btn nt-btn-secondary">Diğer Oyunlar</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const scenes = [
+      { emoji: '🎬', title: 'Şiddet içeren aksiyon filmi', desc: 'Sürekli dövüş, patlama ve intikam sahneleri izliyorsun.',
+        question: 'Beynin bu sahneleri izlerken ne yapar?',
+        options: [
+          { text: 'Ayna nöronlar şiddeti prova eder, kortizol ve adrenalin yükselir', correct: true },
+          { text: 'Beyin sadece izler, hiçbir etki olmaz', correct: false },
+          { text: 'Beyin uyur, çünkü gerçek değil bilir', correct: false },
+        ],
+        reveal: 'Ayna nöronlar gördüğümüz hareketi zihinsel olarak "prova eder." Şiddet izlemek beyne şiddet yapıyormuş gibi gelir. Kortizol yükselir, saldırganlık eşiği düşer.',
+        effects: [{ text: 'Saldırganlık ↑', type: 'bad' }, { text: 'Kortizol ↑', type: 'bad' }, { text: 'Empati ↓', type: 'bad' }]
+      },
+      { emoji: '🤱', title: 'Anne-bebek videosu', desc: 'Bir anne bebeğini sevgiyle tutup gülümsüyor.',
+        question: 'Bu sahne beyninizi nasıl etkiler?',
+        options: [
+          { text: 'Hiçbir etki olmaz, kendi bebeğim değil ki', correct: false },
+          { text: 'Ayna nöronlar aktive olur, oksitosin salgılanır, bağlanma hissi uyanır', correct: true },
+          { text: 'Sadece görsel hafızaya kaydedilir', correct: false },
+        ],
+        reveal: 'Sevgi dolu sahneler ayna nöronları olumlu şekilde aktive eder. Oksitosin (bağlanma hormonu) salgılanır, empatik bağ güçlenir.',
+        effects: [{ text: 'Oksitosin ↑', type: 'good' }, { text: 'Empati ↑', type: 'good' }, { text: 'Huzur ↑', type: 'good' }]
+      },
+      { emoji: '🛍️', title: 'Lüks yaşam influencer videosu', desc: 'Influencer son model arabasını, villasını, markalarını gösteriyor.',
+        question: 'Bu içerik beyninde hangi reaksiyonu tetikler?',
+        options: [
+          { text: 'İlham verir, motive eder', correct: false },
+          { text: 'Ayna nöronlar kıyaslama başlatır; yetersizlik hissi, şöhret dürtüsü aktive olur', correct: true },
+          { text: 'Beyin reddeder, etkilenmez', correct: false },
+        ],
+        reveal: 'Lüks yaşam içerikleri sosyal kıyaslamayı tetikler. Ayna nöronlar "ben de istiyorum" hissi yaratır. Şöhret (statü) dürtüsü aktive olur, memnuniyetsizlik artar.',
+        effects: [{ text: 'Kıskançlık ↑', type: 'bad' }, { text: 'Şöhret dürtüsü ↑', type: 'bad' }, { text: 'Tatminsizlik ↑', type: 'bad' }]
+      },
+      { emoji: '😢', title: 'Ağlayan birinin videosu', desc: 'Biri acı bir olayı anlatıyor ve ağlıyor.',
+        question: 'Beynin bu anı nasıl işler?',
+        options: [
+          { text: 'Ayna nöronlar empati kurar, aynı duyguyu hissettir, gözyaşı gelebilir', correct: true },
+          { text: 'Beyin sadece "o ağlıyor" der, kendi duygunu korur', correct: false },
+          { text: 'Merak duyarsın ama empati oluşmaz', correct: false },
+        ],
+        reveal: 'Ayna nöronların en güçlü etkisi duygusal sahnelerdedir. Ağlayan birini izlerken aynı sinirsel devreler aktive olur. "Bulaşıcı ağlama" bu yüzden olur.',
+        effects: [{ text: 'Empati ↑', type: 'good' }, { text: 'Duygusal rezonans', type: 'neutral' }]
+      },
+      { emoji: '🍔', title: 'Yemek ASMR videosu', desc: 'Birisi çıtır çıtır, fıs fıs seslerle yemek yiyor.',
+        question: 'Bu video izlerken beyninde ne olur?',
+        options: [
+          { text: 'Sadece ses duyarsın, iştah etkilenmez', correct: false },
+          { text: 'Beyin kafein salgılar, uyanıklık artar', correct: false },
+          { text: 'Ayna nöronlar yeme eylemini prova eder, tükürük salgısı ve iştah artar', correct: true },
+        ],
+        reveal: 'Yeme sahneleri izlemek beynin yeme merkezlerini aktive eder. Ayna nöronlar çiğneme ve yutma hareketini prova eder. Bu yüzden yemek videoları izlerken canın çeker.',
+        effects: [{ text: 'İştah ↑', type: 'bad' }, { text: 'Dopamin beklentisi ↑', type: 'bad' }]
+      },
+      { emoji: '📿', title: 'Kuran tilaveti / zikir', desc: 'Güzel sesli bir tilavet dinliyorsun.',
+        question: 'Beynin bu deneyime nasıl yanıt verir?',
+        options: [
+          { text: 'Sadece işitsel korteks çalışır', correct: false },
+          { text: 'Beyin sakinleşir, serotonin artar, parasempatik sistem aktive olur', correct: true },
+          { text: 'Hiçbir nörolojik etki olmaz', correct: false },
+        ],
+        reveal: 'Ritmik, melodik ve anlam yüklü sesler beynin ödül ve sakinleşme merkezlerini aktive eder. Serotonin artar, kortizol düşer. Manevi pratikler doğal bir nöro-terbiye aracıdır.',
+        effects: [{ text: 'Serotonin ↑', type: 'good' }, { text: 'Kortizol ↓', type: 'good' }, { text: 'Huzur ↑', type: 'good' }]
+      },
+      { emoji: '🎮', title: 'Hızlı tempolu oyun', desc: 'Sürekli patlama, ödül sesi, level atlama.',
+        question: 'Bu oyun beynin hangi sistemini hackler?',
+        options: [
+          { text: 'Hiçbirini, sadece eğlence', correct: false },
+          { text: 'Hızlı ödül döngüsü dopamin sistemini hackler, gerçek hayat sıkıcı gelmeye başlar', correct: true },
+          { text: 'Sadece refleksleri geliştirir', correct: false },
+        ],
+        reveal: 'Hızlı ödül veren oyunlar dopamin sistemini sürekli tetikler. Beyin bu yoğunluğa alışınca gerçek hayatın yavaş ödülleri yetersiz gelir. Dikkat süresi kısalır.',
+        effects: [{ text: 'Dopamin toleransı ↑', type: 'bad' }, { text: 'Dikkat süresi ↓', type: 'bad' }, { text: 'Sabırsızlık ↑', type: 'bad' }]
+      },
+      { emoji: '🤝', title: 'Yardımlaşma sahnesi', desc: 'Biri yaşlı komşusunun alışverişini taşıyor.',
+        question: 'Bu sahneyi izlemenin nörolojik etkisi nedir?',
+        options: [
+          { text: 'Ayna nöronlar iyilik yapma dürtüsünü aktive eder, "elevation" (yükselme) duygusu yaşatır', correct: true },
+          { text: 'Beyin kayıtsız kalır, kendi işi değil', correct: false },
+          { text: 'Suçluluk duygusu oluşur', correct: false },
+        ],
+        reveal: '"Moral elevation" (ahlaki yükselme) denilen bu duygu, iyilik sahnelerini izlediğimizde ortaya çıkar. Ayna nöronlar benzer davranışı tekrarlama motivasyonu yaratır.',
+        effects: [{ text: 'İyilik motivasyonu ↑', type: 'good' }, { text: 'Oksitosin ↑', type: 'good' }]
+      },
+    ];
+
+    let current = 0, score = 0, shuffled = [];
+
+    function startGame() {
+      document.getElementById('intro').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+      shuffled = [...scenes].sort(() => Math.random() - 0.5);
+      showScene();
+    }
+
+    function showScene() {
+      if (current >= shuffled.length) return endGame();
+      document.getElementById('progress').style.width = (current / shuffled.length * 100) + '%';
+      document.getElementById('counter').textContent = `${current + 1} / ${shuffled.length}`;
+      const s = shuffled[current];
+      document.getElementById('scene').innerHTML = `
+        <div class="scene-emoji">${s.emoji}</div>
+        <div class="scene-title">${s.title}</div>
+        <div class="scene-desc">${s.desc}</div>
+        <p style="font-size:0.95rem;font-weight:600;margin-bottom:12px">${s.question}</p>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          ${s.options.map((o, i) => `<button class="nt-quiz-option" onclick="answer(${i})">${o.text}</button>`).join('')}
+        </div>
+        <div id="reveal-box"></div>
+      `;
+    }
+
+    function answer(i) {
+      const s = shuffled[current];
+      const correct = s.options[i].correct;
+      if (correct) score++;
+      const btns = document.querySelectorAll('.nt-quiz-option');
+      btns.forEach((b, j) => {
+        b.disabled = true;
+        b.onclick = null;
+        if (s.options[j].correct) b.classList.add('correct');
+        else if (j === i) b.classList.add('wrong');
+      });
+      document.getElementById('reveal-box').innerHTML = `
+        <div class="brain-reveal" style="background:var(--surface2);border-left:3px solid var(--nt-primary)">
+          <h4>${correct ? '✅ Doğru!' : '❌ Yanlış!'}</h4>
+          <p>${s.reveal}</p>
+          <div style="margin-top:8px">${s.effects.map(e => `<span class="effect effect-${e.type}">${e.text}</span>`).join('')}</div>
+          <button class="nt-btn nt-btn-primary nt-btn-sm" style="margin-top:12px" onclick="current++;showScene()">Sonraki Sahne →</button>
+        </div>
+      `;
+    }
+
+    function endGame() {
+      document.getElementById('game').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      const r = NT.calcScore(score, shuffled.length);
+      document.getElementById('final-score').textContent = r.pct + '%';
+      document.getElementById('final-label').textContent = r.label;
+      document.getElementById('final-text').textContent = r.text + ' Ayna nöronlar gördüğümüzü içselleştirir. Ne izlediğimiz, kim olduğumuzu şekillendirir.';
+      NT.save('ayna_noron', { score, total: shuffled.length, pct: r.pct, date: new Date().toISOString() });
+    }
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

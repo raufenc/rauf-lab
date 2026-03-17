@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ŞŞG Haftalık Rapor — NöroTerbiye</title>
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .week-grid { display:grid; grid-template-columns:100px repeat(7,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:24px; }
+    .week-header { background:var(--surface2); padding:10px 6px; font-size:0.72rem; font-weight:700; text-align:center; color:var(--text-secondary); }
+    .week-label { background:var(--surface2); padding:10px 8px; font-size:0.8rem; font-weight:600; display:flex; align-items:center; gap:6px; }
+    .week-cell { background:var(--surface); padding:8px; text-align:center; cursor:pointer; transition:all 0.15s; font-size:0.82rem; font-weight:600; }
+    .week-cell:hover { background:var(--surface-hover); }
+    .week-cell[data-val="1"] { background:var(--nt-green-soft); color:var(--nt-green); }
+    .week-cell[data-val="2"] { background:rgba(16,185,129,0.2); color:var(--nt-green); }
+    .week-cell[data-val="3"] { background:var(--nt-amber-soft); color:var(--nt-amber); }
+    .week-cell[data-val="4"] { background:rgba(239,68,68,0.15); color:var(--nt-red); }
+    .week-cell[data-val="5"] { background:var(--nt-red-soft); color:var(--nt-red); }
+    .chart-section { margin-top:32px; }
+    .bar-chart { display:flex; align-items:flex-end; gap:8px; height:200px; padding:16px 0; }
+    .bar-group { flex:1; display:flex; gap:3px; align-items:flex-end; height:100%; }
+    .bar { flex:1; border-radius:4px 4px 0 0; transition:height 0.4s; min-width:0; position:relative; }
+    .bar-label { text-align:center; font-size:0.65rem; color:var(--muted); margin-top:4px; }
+    .avg-box { display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-full); font-size:0.85rem; margin:4px; }
+    .avg-val { font-weight:800; font-size:1.1rem; }
+    .summary-card { padding:24px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); margin-top:24px; text-align:center; }
+    @media(max-width:600px) { .week-grid { grid-template-columns:80px repeat(7,1fr); } .week-header,.week-label { font-size:0.65rem; padding:6px 4px; } }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Araç</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">📊 Şehvet-Şöhret-Gadab Haftalık Raporu</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Her gün 3 kategoriyi puanla (1-5). Hafta sonunda eğilimleri gör.
+      </p>
+
+      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:12px">Hücrelere tıklayarak puan ver (1=düşük, 5=yüksek). Tekrar tıkla = sıfırla.</p>
+
+      <div class="week-grid nt-fade-in" style="animation-delay:0.15s" id="week-grid"></div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+        <button class="nt-btn nt-btn-primary nt-btn-sm" onclick="saveWeek()">💾 Haftayı Kaydet</button>
+        <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="resetWeek()">Sıfırla</button>
+      </div>
+
+      <!-- Averages -->
+      <div style="text-align:center;margin-top:24px" id="averages"></div>
+
+      <!-- Bar Chart -->
+      <div class="chart-section nt-fade-in" style="animation-delay:0.2s">
+        <h3 class="nt-section-title">📈 Haftalık Grafik</h3>
+        <div style="display:flex;align-items:flex-end;position:relative">
+          <div style="display:flex;flex-direction:column;justify-content:space-between;height:200px;padding-right:8px;font-size:0.65rem;color:var(--muted)">
+            <span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
+          </div>
+          <div class="bar-chart" id="bar-chart"></div>
+        </div>
+        <div style="display:flex;gap:16px;justify-content:center;margin-top:12px;font-size:0.78rem">
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:2px;background:var(--nt-orange)"></span> Şehvet</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:2px;background:var(--nt-purple)"></span> Şöhret</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:2px;background:var(--nt-red)"></span> Gadab</span>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary-card" id="summary"></div>
+
+      <!-- History -->
+      <h3 class="nt-section-title" style="margin-top:40px">📁 Geçmiş Haftalar</h3>
+      <div id="history-list"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const days = ['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+    const cats = [
+      { key:'sehvet', label:'🔥 Şehvet', color:'var(--nt-orange)' },
+      { key:'sohret', label:'👑 Şöhret', color:'var(--nt-purple)' },
+      { key:'gadab', label:'💢 Gadab', color:'var(--nt-red)' }
+    ];
+
+    let weekData = NT.load('ssg_current_week', null);
+    if (!weekData) {
+      weekData = {};
+      cats.forEach(c => { weekData[c.key] = new Array(7).fill(0); });
+    }
+
+    let weekHistory = NT.load('ssg_history', []);
+
+    function renderGrid() {
+      const grid = document.getElementById('week-grid');
+      grid.innerHTML = '<div class="week-header"></div>' + days.map(d => `<div class="week-header">${d}</div>`).join('');
+
+      cats.forEach(cat => {
+        grid.innerHTML += `<div class="week-label">${cat.label}</div>`;
+        for (let d = 0; d < 7; d++) {
+          const val = weekData[cat.key][d];
+          grid.innerHTML += `<div class="week-cell" data-val="${val}" data-cat="${cat.key}" data-day="${d}" onclick="cycleVal('${cat.key}',${d})">${val || '—'}</div>`;
+        }
+      });
+    }
+
+    function cycleVal(cat, day) {
+      const current = weekData[cat][day];
+      weekData[cat][day] = current >= 5 ? 0 : current + 1;
+      renderGrid();
+      renderChart();
+      renderAverages();
+    }
+
+    function renderChart() {
+      const chart = document.getElementById('bar-chart');
+      chart.innerHTML = '';
+      for (let d = 0; d < 7; d++) {
+        let groupHtml = '<div class="bar-group">';
+        cats.forEach(cat => {
+          const val = weekData[cat.key][d];
+          const h = val > 0 ? (val / 5) * 100 : 0;
+          groupHtml += `<div class="bar" style="height:${h}%;background:${cat.color}" title="${cat.label}: ${val}"></div>`;
+        });
+        groupHtml += '</div>';
+        chart.innerHTML += groupHtml;
+      }
+      // Day labels
+      chart.innerHTML += '';
+    }
+
+    function renderAverages() {
+      const container = document.getElementById('averages');
+      let html = '';
+      cats.forEach(cat => {
+        const vals = weekData[cat.key].filter(v => v > 0);
+        const avg = vals.length > 0 ? (vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(1) : '—';
+        html += `<div class="avg-box"><span>${cat.label}</span> <span class="avg-val" style="color:${cat.color}">${avg}</span></div>`;
+      });
+      container.innerHTML = html;
+
+      // Summary
+      const summary = document.getElementById('summary');
+      const allVals = cats.flatMap(c => weekData[c.key].filter(v => v > 0));
+      if (allVals.length === 0) {
+        summary.innerHTML = '<p style="color:var(--muted);font-size:0.85rem">Puanlama yaptıktan sonra özet burada görünecek.</p>';
+        return;
+      }
+      const overallAvg = (allVals.reduce((a,b) => a+b, 0) / allVals.length).toFixed(1);
+      let message = '';
+      if (overallAvg <= 2) message = 'Bu hafta nefsinle iyi başa çıkmışsın. Devam et!';
+      else if (overallAvg <= 3) message = 'Orta seviye. Tetikleyicilerine dikkat et.';
+      else message = 'Yoğun bir hafta geçirmişsin. Destek al ve planını gözden geçir.';
+
+      // Find dominant
+      const catAvgs = cats.map(c => {
+        const v = weekData[c.key].filter(x => x > 0);
+        return { ...c, avg: v.length > 0 ? v.reduce((a,b)=>a+b,0)/v.length : 0 };
+      }).sort((a,b) => b.avg - a.avg);
+
+      summary.innerHTML = `
+        <div style="font-size:2.5rem;font-weight:800;color:${overallAvg<=2?'var(--nt-green)':overallAvg<=3?'var(--nt-amber)':'var(--nt-red)'}">${overallAvg}</div>
+        <div style="font-size:0.95rem;font-weight:600;margin-top:4px">Genel Ortalama</div>
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin-top:8px">${message}</p>
+        ${catAvgs[0].avg > 0 ? `<p style="font-size:0.78rem;color:var(--muted);margin-top:8px">En baskın: ${catAvgs[0].label} (${catAvgs[0].avg.toFixed(1)})</p>` : ''}
+      `;
+    }
+
+    function saveWeek() {
+      const allVals = cats.flatMap(c => weekData[c.key]);
+      if (allVals.every(v => v === 0)) { NT.toast('En az bir gün puanla'); return; }
+      weekHistory.push({
+        id: Date.now(),
+        tarih: new Date().toLocaleDateString('tr-TR'),
+        data: JSON.parse(JSON.stringify(weekData))
+      });
+      NT.save('ssg_history', weekHistory);
+      resetWeek();
+      renderHistory();
+      NT.toast('Hafta kaydedildi!');
+    }
+
+    function resetWeek() {
+      cats.forEach(c => { weekData[c.key] = new Array(7).fill(0); });
+      NT.save('ssg_current_week', weekData);
+      renderGrid();
+      renderChart();
+      renderAverages();
+    }
+
+    function renderHistory() {
+      const list = document.getElementById('history-list');
+      if (weekHistory.length === 0) {
+        list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem">Henüz kaydedilmiş hafta yok.</p>';
+        return;
+      }
+      list.innerHTML = [...weekHistory].reverse().map(w => {
+        const avgs = cats.map(c => {
+          const v = w.data[c.key].filter(x => x > 0);
+          return v.length > 0 ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : '—';
+        });
+        return `<div class="nt-card" style="margin-bottom:8px;padding:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-weight:600;font-size:0.88rem">${w.tarih}</span>
+            <span style="font-size:0.78rem;color:var(--text-secondary)">🔥${avgs[0]} 👑${avgs[1]} 💢${avgs[2]}</span>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    renderGrid();
+    renderChart();
+    renderAverages();
+    renderHistory();
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dopamin Dedektifi — NöroTerbiye</title>
+  <meta name="description" content="Gerçek ödül ile sahte ödül beklentisini ayırt edebilir misin? Sürükle-bırak ile test et.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .game-zones { display: flex; gap: 20px; margin-top: 24px; flex-wrap: wrap; }
+    .game-zones .nt-drop-zone { flex: 1; min-width: 200px; min-height: 140px; flex-direction: column; align-items: center; justify-content: flex-start; }
+    .zone-label { font-weight: 700; font-size: 0.9rem; margin-bottom: 8px; text-align: center; width: 100%; }
+    .zone-real { border-color: var(--nt-green); }
+    .zone-fake { border-color: var(--nt-red); }
+    .zone-real.over { background: var(--nt-green-soft); }
+    .zone-fake.over { background: var(--nt-red-soft); }
+    .current-item { display: flex; justify-content: center; margin: 24px 0; }
+    .current-item .nt-drag-item { font-size: 1.1rem; padding: 18px 28px; text-align: center; touch-action: none; }
+    .dropped-item { padding: 6px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 0.8rem; margin: 3px; }
+    .dropped-item.correct { border-color: var(--nt-green); background: var(--nt-green-soft); }
+    .dropped-item.wrong { border-color: var(--nt-red); background: var(--nt-red-soft); }
+    .score-display { text-align: center; font-size: 0.85rem; color: var(--text-secondary); margin-top: 12px; }
+    .item-counter { text-align: center; font-size: 0.8rem; color: var(--muted); margin-bottom: 8px; }
+    @media (max-width: 640px) { .game-zones { flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+
+      <!-- INTRO -->
+      <div id="intro" class="nt-fade-in">
+        <h1 class="nt-title" style="font-size:2rem;margin-bottom:12px">🔍 Dopamin Dedektifi</h1>
+        <p class="nt-subtitle" style="margin-bottom:20px">Gerçek ödül ile sahte ödül beklentisini ayırt edebilir misin?</p>
+        <div class="nt-card" style="margin-bottom:24px">
+          <h3 style="font-weight:700;margin-bottom:8px">Nasıl Oynanır?</h3>
+          <ul style="font-size:0.88rem;color:var(--text-secondary);line-height:1.8;padding-left:20px">
+            <li>Ekranda bir madde/aktivite belirecek</li>
+            <li>Bu maddeyi <strong>"Gerçek Ödül"</strong> veya <strong>"Sahte Ödül / Beklenti"</strong> kutusuna sürükle</li>
+            <li>Gerçek ödül: Kalıcı tatmin sağlayan, doğal dopamin kaynağı</li>
+            <li>Sahte ödül: Anlık haz veren ama bağımlılık döngüsü kuran</li>
+            <li>12 madde, her doğru cevap 1 puan</li>
+          </ul>
+        </div>
+        <button class="nt-btn nt-btn-primary nt-btn-lg" onclick="startGame()">Oyna</button>
+      </div>
+
+      <!-- GAME -->
+      <div id="game" style="display:none">
+        <div class="nt-quiz-progress"><div class="nt-quiz-progress-bar" id="progress"></div></div>
+        <div class="item-counter" id="counter"></div>
+        <div class="current-item" id="current-item"></div>
+        <div class="game-zones">
+          <div class="nt-drop-zone zone-real" id="zone-real"
+               ondragover="e(event)" ondragleave="l(event)" ondrop="d(event,'gercek')">
+            <div class="zone-label" style="color:var(--nt-green)">✅ Gerçek Ödül</div>
+            <div id="real-items"></div>
+          </div>
+          <div class="nt-drop-zone zone-fake" id="zone-fake"
+               ondragover="e(event)" ondragleave="l(event)" ondrop="d(event,'sahte')">
+            <div class="zone-label" style="color:var(--nt-red)">❌ Sahte Ödül / Beklenti</div>
+            <div id="fake-items"></div>
+          </div>
+        </div>
+        <div class="score-display" id="score-display"></div>
+      </div>
+
+      <!-- RESULT -->
+      <div id="result" style="display:none">
+        <div class="nt-card nt-result">
+          <div class="nt-result-score" id="final-score"></div>
+          <div class="nt-result-label" id="final-label"></div>
+          <div class="nt-result-text" id="final-text"></div>
+          <div class="nt-result-actions">
+            <button class="nt-btn nt-btn-primary" onclick="location.reload()">Tekrar Oyna</button>
+            <a href="/noroterbiye/oyunlar/" class="nt-btn nt-btn-secondary">Diğer Oyunlar</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const items = [
+      { text: '📱 Sosyal medya bildirimleri', answer: 'sahte', info: 'Bildirimler dopamin beklentisi yaratır ama gerçek tatmin vermez.' },
+      { text: '🏃 Düzenli spor yapmak', answer: 'gercek', info: 'Spor doğal endorfin ve dopamin üretir, kalıcı iyi hissettirir.' },
+      { text: '🍫 Şekerli atıştırmalıklar', answer: 'sahte', info: 'Şeker anlık dopamin verir ama hızla düşer, daha fazlasını istersin.' },
+      { text: '📖 Bir kitap bitirmek', answer: 'gercek', info: 'Başarma hissi uzun süreli ve gerçek bir tatmindir.' },
+      { text: '🎰 Kumar/bahis heyecanı', answer: 'sahte', info: 'Beklenti heyecanı sahte dopamindir, asıl ödül neredeyse hiç gelmez.' },
+      { text: '👨‍👩‍👧 Aile ile vakit geçirmek', answer: 'gercek', info: 'Oksitosin ve serotonin salgılar, derin bağ kurar.' },
+      { text: '🎮 Saatlerce online oyun', answer: 'sahte', info: 'Oyun döngüleri sahte başarı hissi yaratır, gerçek beceri geliştirmez.' },
+      { text: '🤲 Birine yardım etmek', answer: 'gercek', info: 'Yardım etmek "helper\'s high" denilen doğal dopamin kaynağıdır.' },
+      { text: '🛒 Dürtüsel online alışveriş', answer: 'sahte', info: 'Satın alma beklentisi dopamin verir; ürün gelince heyecan biter.' },
+      { text: '🎵 Müzik aleti çalmayı öğrenmek', answer: 'gercek', info: 'Beceri geliştirme süreci sağlıklı dopamin döngüsü kurar.' },
+      { text: '📺 Dizi maratonu (binge watching)', answer: 'sahte', info: '"Bir bölüm daha" dürtüsü klasik sahte ödül beklentisidir.' },
+      { text: '🌱 Bahçe/bitki yetiştirmek', answer: 'gercek', info: 'Sabır gerektiren doğal süreçler derin tatmin sağlar.' },
+    ];
+
+    let current = 0, score = 0, shuffled = [];
+
+    function startGame() {
+      document.getElementById('intro').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+      shuffled = [...items].sort(() => Math.random() - 0.5);
+      showItem();
+    }
+
+    function showItem() {
+      if (current >= shuffled.length) return endGame();
+      document.getElementById('progress').style.width = (current / shuffled.length * 100) + '%';
+      document.getElementById('counter').textContent = `${current + 1} / ${shuffled.length}`;
+      const item = shuffled[current];
+      const el = document.createElement('div');
+      el.className = 'nt-drag-item';
+      el.draggable = true;
+      el.textContent = item.text;
+      el.ondragstart = ev => ev.dataTransfer.setData('text/plain', current);
+      // Touch support
+      let touchZone = null;
+      el.ontouchstart = ev => { el.style.opacity = '0.7'; };
+      el.ontouchmove = ev => {
+        ev.preventDefault();
+        const touch = ev.touches[0];
+        el.style.position = 'fixed';
+        el.style.left = (touch.clientX - el.offsetWidth/2) + 'px';
+        el.style.top = (touch.clientY - el.offsetHeight/2) + 'px';
+        el.style.zIndex = '100';
+        const realZ = document.getElementById('zone-real').getBoundingClientRect();
+        const fakeZ = document.getElementById('zone-fake').getBoundingClientRect();
+        if (touch.clientX >= realZ.left && touch.clientX <= realZ.right && touch.clientY >= realZ.top && touch.clientY <= realZ.bottom) touchZone = 'gercek';
+        else if (touch.clientX >= fakeZ.left && touch.clientX <= fakeZ.right && touch.clientY >= fakeZ.top && touch.clientY <= fakeZ.bottom) touchZone = 'sahte';
+        else touchZone = null;
+      };
+      el.ontouchend = ev => {
+        el.style.position = ''; el.style.left = ''; el.style.top = ''; el.style.zIndex = ''; el.style.opacity = '';
+        if (touchZone) handleDrop(touchZone);
+        touchZone = null;
+      };
+      const container = document.getElementById('current-item');
+      container.innerHTML = '';
+      container.appendChild(el);
+      document.getElementById('score-display').textContent = `Puan: ${score} / ${shuffled.length}`;
+    }
+
+    function e(ev) { ev.preventDefault(); ev.currentTarget.classList.add('over'); }
+    function l(ev) { ev.currentTarget.classList.remove('over'); }
+    function d(ev, zone) {
+      ev.preventDefault();
+      ev.currentTarget.classList.remove('over');
+      handleDrop(zone);
+    }
+
+    function handleDrop(zone) {
+      const item = shuffled[current];
+      const correct = item.answer === zone;
+      if (correct) score++;
+      const targetId = zone === 'gercek' ? 'real-items' : 'fake-items';
+      const dropped = document.createElement('div');
+      dropped.className = 'dropped-item ' + (correct ? 'correct' : 'wrong');
+      dropped.textContent = item.text;
+      dropped.title = item.info;
+      document.getElementById(targetId).appendChild(dropped);
+      current++;
+      setTimeout(showItem, 300);
+    }
+
+    function endGame() {
+      document.getElementById('game').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      const r = NT.calcScore(score, shuffled.length);
+      document.getElementById('final-score').textContent = r.pct + '%';
+      document.getElementById('final-label').textContent = r.label;
+      document.getElementById('final-text').textContent = r.text + ' Dopamin beklentisi ile gerçek ödülü ayırt etmek nefsi terbiye etmenin ilk adımıdır.';
+      NT.save('dopamin_dedektifi', { score, total: shuffled.length, pct: r.pct, date: new Date().toISOString() });
+    }
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

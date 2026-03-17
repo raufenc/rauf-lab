@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bireyci mi Kolektivist mi? — NöroTerbiye</title>
+  <meta name="description" content="Kültürel eğilimini keşfet. Bireyci mi kolektivist mi yaklaşıyorsun? Nefsin bu dengeyi nasıl kullanıyor?">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Testi</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">🌍 Bireyci mi Kolektivist mi?</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Kültürel eğilimini ve nefsin bunu nasıl kullandığını keşfet. 10 soru, 3 dakika.
+      </p>
+      <div id="test-area" class="nt-card nt-fade-in" style="padding:32px;animation-delay:0.2s"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script src="/noroterbiye/js/test-engine.js"></script>
+  <script>
+    TestEngine.init({
+      containerId: 'test-area',
+      title: 'Bireyci mi Kolektivist mi?',
+      slug: 'bireyci-kolektivist',
+      questions: [
+        {
+          soru: 'Önemli bir karar alırken kime danışırsın?',
+          secenekler: [
+            { text: 'Kimseye, kendi kararımı kendim veririm', puan: 4 },
+            { text: 'Belki bir-iki yakın arkadaşıma', puan: 2 },
+            { text: 'Aileme ve büyüklerime', puan: 1 },
+            { text: 'Geniş bir istişare yaparım', puan: 0 },
+          ],
+          aciklama: 'Bireyci kültür "kendi kararını kendin ver" der; kolektivist kültür istişareyi esas alır. İslami gelenek istişareyi (meşveret) önemser.'
+        },
+        {
+          soru: 'Başarı senin için ne anlama gelir?',
+          secenekler: [
+            { text: 'Kişisel hedeflerime ulaşmak', puan: 4 },
+            { text: 'Hem kişisel hem çevreme katkı', puan: 1 },
+            { text: 'Ailemi ve çevremi gururlandırmak', puan: 1 },
+            { text: 'Topluma fayda sağlamak', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Aile büyüklerin senin hayat tarzına müdahale etse ne hissedersin?',
+          secenekler: [
+            { text: 'Çok rahatsız olurum, sınırlarıma saygı göstersinler', puan: 4 },
+            { text: 'İlk tepkim olumsuz ama dinlerim', puan: 2 },
+            { text: 'Normal karşılarım, niyetleri iyi', puan: 1 },
+            { text: 'Büyüklerin tecrübesine değer veririm', puan: 0 },
+          ]
+        },
+        {
+          soru: '"Herkes yapıyor" argümanı seni nasıl etkiler?',
+          secenekler: [
+            { text: 'Hiç etkilemez, kendi yolumu çizerim', puan: 3 },
+            { text: 'Etkilemez ama bazen düşündürür', puan: 2 },
+            { text: 'Bazen uyum sağlarım', puan: 2 },
+            { text: 'Toplumla uyum önemli, dikkate alırım', puan: 1 },
+          ],
+          aciklama: 'Aşırı bireycilik nefsin "ben bilirim"ine, aşırı kolektivizm ise "sürü psikolojisi"ne zemin hazırlar. Denge, ilkeli duruştur.'
+        },
+        {
+          soru: 'Komşun veya akraban zor durumda olsa ne yaparsın?',
+          secenekler: [
+            { text: 'Kendi işime bakarım, herkes kendi sorununu çözsün', puan: 4 },
+            { text: 'Yakınsa yardım ederim, uzaksa ilgilenmem', puan: 3 },
+            { text: 'Elimden geleni yaparım', puan: 1 },
+            { text: 'Koşarım, toplumsal sorumluluk hissederim', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Toplumsal normlara uymak mı, bireysel özgürlük mü?',
+          secenekler: [
+            { text: 'Bireysel özgürlük her şeyin üstünde', puan: 4 },
+            { text: 'Özgürlük ama toplumsal ahlak çerçevesinde', puan: 1 },
+            { text: 'Toplumsal düzen genelde doğru yolu gösterir', puan: 1 },
+            { text: 'İlahi ölçü ikisinin de üstünde', puan: 0 },
+          ],
+          aciklama: 'Ne sınırsız bireycilik ne de körü körüne kolektivizm. NöroTerbiye yaklaşımı: İlahi ölçüye bağlı bilinçli bireysellik.'
+        },
+        {
+          soru: 'Yemek seçerken ne etkili?',
+          secenekler: [
+            { text: 'Sadece kendi damak zevkim', puan: 3 },
+            { text: 'Kendi tercihim ama başkalarını da düşünürüm', puan: 1 },
+            { text: 'Sofrada ne varsa onu yerim', puan: 1 },
+            { text: 'Birlikte yeme kültürüne önem veririm', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Evlenme kararında ailenin rolü ne olmalı?',
+          secenekler: [
+            { text: 'Sıfır, tamamen kişisel karar', puan: 4 },
+            { text: 'Görüşlerini alırım ama son karar bende', puan: 2 },
+            { text: 'Ailenin onayı önemli', puan: 1 },
+            { text: 'Aile rızası olmazsa olmaz', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Bir başarı elde ettiğinde ilk ne yaparsın?',
+          secenekler: [
+            { text: 'Kendi kendime kutlarım', puan: 3 },
+            { text: 'Sosyal medyada paylaşırım', puan: 4 },
+            { text: 'Yakınlarımla paylaşırım', puan: 1 },
+            { text: 'Şükrederim ve alçakgönüllü kalırım', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Aşağıdaki cümlelerden hangisi sana en yakın?',
+          secenekler: [
+            { text: '"Ben kendim için yaşarım"', puan: 4 },
+            { text: '"Kendi hayatım ama başkalarını da düşünürüm"', puan: 2 },
+            { text: '"Ailem ve çevrem için yaşarım"', puan: 1 },
+            { text: '"Allah rızası için yaşar, insanlara faydalı olurum"', puan: 0 },
+          ],
+          aciklama: 'İslami perspektif, bireyi yok saymaz ama onu ümmetin bir parçası olarak konumlar. Sağlıklı denge: Sorumluluk bilinci olan bireysellik.'
+        },
+      ],
+      resultRanges: [
+        { min: 0, max: 20, label: 'Dengeli Yaklaşım', text: 'Bireysel sorumluluk ile toplumsal bağı güzel dengeliyorsun. Bu İslami anlayışa yakın bir duruş — bireysel irade, kolektif sorumluluk.', emoji: '🤝' },
+        { min: 21, max: 45, label: 'Hafif Bireyci Eğilim', text: 'Kendi kararlarını önemsersin ama toplumsal bağı da kopartmamışsın. Nefsin bireycilik kılığında bencilliğe yönelmemesine dikkat et.', emoji: '🌍' },
+        { min: 46, max: 70, label: 'Belirgin Bireyci', text: 'Güçlü bir bireysellik eğilimin var. Bu irade gücü olabilir ama nefs "kendi çıkarın önce gelsin" diyerek bunu istismar edebilir.', emoji: '⚠️' },
+        { min: 71, max: 100, label: 'Aşırı Bireyci', text: 'Çok güçlü bir bireycilik eğilimin var. Toplumsal bağlar zayıflamış olabilir. Nefs, yalnızlıkta daha kolay hüküm sürer — bağlarını güçlendir.', emoji: '🚨' },
+      ]
+    });
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

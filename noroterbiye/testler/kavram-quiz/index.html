@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kavram Quizi — NöroTerbiye</title>
+  <meta name="description" content="NöroTerbiye kavramlarını ne kadar biliyorsun? 101 sorudan rastgele 10 soru ile bilgini test et.">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Quiz</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">📝 Kavram Quizi</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:12px">
+        101 sorudan rastgele 10 tanesi. Her seferinde farklı bir quiz.
+      </p>
+      <div class="nt-fade-in" style="animation-delay:0.15s;margin-bottom:32px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="nt-btn nt-btn-secondary nt-btn-sm" onclick="KavramQuiz.init(SORU_BANKASI_DATA, 10)">10 Soru</button>
+        <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="KavramQuiz.init(SORU_BANKASI_DATA, 20)">20 Soru</button>
+        <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="KavramQuiz.init(SORU_BANKASI_DATA, 50)">50 Soru</button>
+      </div>
+      <div id="quiz-area" class="nt-card nt-fade-in" style="padding:32px;animation-delay:0.2s"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/data/sorular.js"></script>
+  <script src="/noroterbiye/js/common.js"></script>
+  <script src="/noroterbiye/js/test-engine.js"></script>
+  <script>
+    KavramQuiz.init(SORU_BANKASI_DATA, 10);
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

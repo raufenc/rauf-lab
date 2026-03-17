@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savsaklama Kaçışı — NöroTerbiye</title>
+  <meta name="description" content="Erteleme tuzağından kaçabilir misin? Zaman baskısı altında doğru kararı ver.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏃</text></svg>">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .timer-bar { height: 6px; background: var(--surface2); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+    .timer-fill { height: 100%; border-radius: 3px; transition: width 0.1s linear; background: var(--nt-primary); }
+    .timer-fill.warning { background: var(--nt-amber); }
+    .timer-fill.danger { background: var(--nt-red); }
+    .task-card { padding: 28px; text-align: center; margin-bottom: 16px; }
+    .task-emoji { font-size: 3rem; margin-bottom: 12px; }
+    .task-text { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+    .task-context { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px; }
+    .decision-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .decision-btn { padding: 16px 28px; border-radius: var(--radius-lg); border: 2px solid var(--border); background: var(--surface); font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all var(--transition-fast); font-family: var(--font-sans); min-width: 180px; }
+    .decision-btn:hover { transform: translateY(-1px); }
+    .do-now:hover { border-color: var(--nt-green); background: var(--nt-green-soft); }
+    .postpone:hover { border-color: var(--nt-red); background: var(--nt-red-soft); }
+    .energy-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 0.85rem; }
+    .energy-meter { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+    .energy-fill { height: 100%; border-radius: 4px; background: var(--nt-cyan); transition: width 0.4s; }
+    .streak-display { text-align: center; font-size: 0.85rem; margin-bottom: 8px; }
+    .consequence { padding: 14px; border-radius: var(--radius-md); font-size: 0.85rem; margin-top: 12px; line-height: 1.5; }
+    .consequence.good { background: var(--nt-green-soft); color: var(--nt-green); border-left: 3px solid var(--nt-green); }
+    .consequence.bad { background: var(--nt-red-soft); color: var(--nt-red); border-left: 3px solid var(--nt-red); }
+    .consequence.timeout { background: var(--nt-amber-soft); color: var(--nt-amber); border-left: 3px solid var(--nt-amber); }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+
+      <div id="intro" class="nt-fade-in">
+        <h1 class="nt-title" style="font-size:2rem;margin-bottom:12px">🏃 Savsaklama Kaçışı</h1>
+        <p class="nt-subtitle" style="margin-bottom:20px">Erteleme tuzağından kaçabilir misin?</p>
+        <div class="nt-card" style="margin-bottom:24px">
+          <h3 style="font-weight:700;margin-bottom:8px">Nasıl Oynanır?</h3>
+          <ul style="font-size:0.88rem;color:var(--text-secondary);line-height:1.8;padding-left:20px">
+            <li>Her turda bir görev/karar belirir</li>
+            <li><strong>7 saniye</strong> içinde karar ver!</li>
+            <li>"Şimdi Yap" veya "Ertele" seçeneklerinden birini seç</li>
+            <li>Şimdi yapmak enerji harcar ama puan kazandırır</li>
+            <li>Ertelemek kısa vadede rahatlatır ama ileride sorun büyür</li>
+            <li>Süre dolarsa otomatik ertelenir!</li>
+            <li>10 görev, enerjini yönet!</li>
+          </ul>
+        </div>
+        <button class="nt-btn nt-btn-primary nt-btn-lg" onclick="startGame()">Oyna</button>
+      </div>
+
+      <div id="game" style="display:none">
+        <div class="energy-bar">
+          <span>⚡ Enerji:</span>
+          <div class="energy-meter"><div class="energy-fill" id="energy-fill"></div></div>
+          <span id="energy-val"></span>
+        </div>
+        <div class="streak-display" id="streak"></div>
+        <div class="nt-quiz-progress"><div class="nt-quiz-progress-bar" id="progress"></div></div>
+        <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
+        <div class="nt-card task-card" id="task-card"></div>
+      </div>
+
+      <div id="result" style="display:none">
+        <div class="nt-card nt-result">
+          <div class="nt-result-score" id="final-score"></div>
+          <div class="nt-result-label" id="final-label"></div>
+          <div class="nt-result-text" id="final-text"></div>
+          <div style="margin:20px auto;max-width:400px;text-align:left" id="summary"></div>
+          <div class="nt-result-actions">
+            <button class="nt-btn nt-btn-primary" onclick="location.reload()">Tekrar Oyna</button>
+            <a href="/noroterbiye/oyunlar/" class="nt-btn nt-btn-secondary">Diğer Oyunlar</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const tasks = [
+      { emoji: '📚', text: 'Sınav yarın. Çalışmaya başlamalısın.', context: 'Ama telefonda yeni bir dizi çıkmış...',
+        doReward: 'Hazırlıklı girdin, güven yüksek!', skipPenalty: 'Sınava hazırlıksız girdin, stres tavan.', energyCost: 15 },
+      { emoji: '🧹', text: 'Odan dağınık. Toparlamalısın.', context: '"Sonra yaparım" diye düşünüyorsun.',
+        doReward: 'Temiz ortam zihinsel netlik sağladı.', skipPenalty: 'Dağınıklık kaygıyı artırdı.', energyCost: 10 },
+      { emoji: '💪', text: 'Spor zamanı geldi.', context: 'Kanepe çok rahat, motivasyon düşük.',
+        doReward: 'Endorfin patladı, harika hissediyorsun!', skipPenalty: 'Hareket etmemek tembellik döngüsünü güçlendirdi.', energyCost: 20 },
+      { emoji: '📧', text: 'Önemli bir e-posta yazmalısın.', context: 'Zor bir konu, yazmak istemiyorsun.',
+        doReward: 'İş bitti, zihinsel yük kalktı!', skipPenalty: 'Geciktikçe kaygı büyüdü.', energyCost: 12 },
+      { emoji: '🙏', text: 'Namaz vakti geldi.', context: 'Biraz daha bekleyeyim diyorsun.',
+        doReward: 'Vaktinde kıldın, huzur doldu.', skipPenalty: 'Erteleme alışkanlığı manevi hayatı zayıflattı.', energyCost: 8 },
+      { emoji: '🥗', text: 'Sağlıklı yemek hazırlamalısın.', context: 'Sipariş vermek çok daha kolay...',
+        doReward: 'Kendin hazırladın, hem sağlıklı hem tatmin!', skipPenalty: 'Fast food sipariş ettin, mide şikayeti.', energyCost: 15 },
+      { emoji: '📞', text: 'Uzun süredir aramadığın akrabayı aramalısın.', context: '"Ne diyeceğim ki?" diye düşünüyorsun.',
+        doReward: 'Güzel bir sohbet oldu, bağ güçlendi.', skipPenalty: 'İlişki biraz daha soğudu.', energyCost: 8 },
+      { emoji: '📝', text: 'Proje ödevini teslim etmelisin.', context: 'Daha 3 gün var, sonra da yapılır.',
+        doReward: 'Erken teslim ettin, kalite yüksek!', skipPenalty: 'Son gece aceleyle yaptın, kalitesiz.', energyCost: 18 },
+      { emoji: '😴', text: 'Erken yatmalısın (saat 22:30).', context: 'Ama bir bölüm daha izleyebilirsin.',
+        doReward: 'Erken yattın, sabah zinde uyandın!', skipPenalty: 'Gece 2\'ye kadar izledin, sabah perişan.', energyCost: 5 },
+      { emoji: '💧', text: 'Su içmelisin, gün boyu az içtin.', context: 'Masanın orada, ama kalkmak zor.',
+        doReward: 'Hidrasyon beyin performansını artırdı!', skipPenalty: 'Baş ağrısı başladı, konsantrasyon düştü.', energyCost: 3 },
+    ];
+
+    let current = 0, score = 0, energy = 100, streak = 0, timer, timerStart;
+    let shuffled = [], decisions = [];
+    const TIMER_SECONDS = 7;
+
+    function startGame() {
+      document.getElementById('intro').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+      shuffled = [...tasks].sort(() => Math.random() - 0.5);
+      showTask();
+    }
+
+    function updateEnergy() {
+      document.getElementById('energy-fill').style.width = energy + '%';
+      document.getElementById('energy-val').textContent = energy + '%';
+    }
+
+    function showTask() {
+      if (current >= shuffled.length) return endGame();
+      updateEnergy();
+      document.getElementById('progress').style.width = (current / shuffled.length * 100) + '%';
+      document.getElementById('streak').textContent = streak > 0 ? `🔥 ${streak} görev üst üste yapıldı!` : '';
+      const t = shuffled[current];
+      document.getElementById('task-card').innerHTML = `
+        <div class="task-emoji">${t.emoji}</div>
+        <div class="task-text">${t.text}</div>
+        <div class="task-context">${t.context}</div>
+        <div class="decision-btns">
+          <button class="decision-btn do-now" onclick="decide('do')">✅ Şimdi Yap</button>
+          <button class="decision-btn postpone" onclick="decide('skip')">⏰ Ertele</button>
+        </div>
+        <div id="consequence"></div>
+      `;
+      startTimer();
+    }
+
+    function startTimer() {
+      const fill = document.getElementById('timer-fill');
+      let elapsed = 0;
+      clearInterval(timer);
+      timer = setInterval(() => {
+        elapsed += 100;
+        const pct = 100 - (elapsed / (TIMER_SECONDS * 1000)) * 100;
+        fill.style.width = Math.max(0, pct) + '%';
+        if (pct > 50) fill.className = 'timer-fill';
+        else if (pct > 25) fill.className = 'timer-fill warning';
+        else fill.className = 'timer-fill danger';
+        if (elapsed >= TIMER_SECONDS * 1000) {
+          clearInterval(timer);
+          timeOut();
+        }
+      }, 100);
+    }
+
+    function timeOut() {
+      const t = shuffled[current];
+      streak = 0;
+      decisions.push({ task: t.text, action: 'timeout' });
+      const cons = document.getElementById('consequence');
+      cons.innerHTML = `<div class="consequence timeout">⏰ Süre doldu! Otomatik ertelendi. ${t.skipPenalty}</div>
+        <button class="nt-btn nt-btn-primary nt-btn-sm" style="margin-top:12px" onclick="nextTask()">Sonraki →</button>`;
+      document.querySelectorAll('.decision-btn').forEach(b => b.disabled = true);
+      current++;
+    }
+
+    function decide(action) {
+      clearInterval(timer);
+      const t = shuffled[current];
+      const cons = document.getElementById('consequence');
+      document.querySelectorAll('.decision-btn').forEach(b => b.disabled = true);
+
+      if (action === 'do') {
+        if (energy < t.energyCost) {
+          cons.innerHTML = `<div class="consequence bad">😓 Enerjin yetmiyor (${t.energyCost} gerekli)! Mecburen ertelendi. ${t.skipPenalty}</div>
+            <button class="nt-btn nt-btn-primary nt-btn-sm" style="margin-top:12px" onclick="nextTask()">Sonraki →</button>`;
+          streak = 0;
+          decisions.push({ task: t.text, action: 'no_energy' });
+        } else {
+          energy -= t.energyCost;
+          score += 10 + streak * 2;
+          streak++;
+          updateEnergy();
+          cons.innerHTML = `<div class="consequence good">✅ ${t.doReward} (+${10 + (streak-1)*2} puan)</div>
+            <button class="nt-btn nt-btn-primary nt-btn-sm" style="margin-top:12px" onclick="nextTask()">Sonraki →</button>`;
+          decisions.push({ task: t.text, action: 'done' });
+        }
+      } else {
+        energy = Math.min(100, energy + 10);
+        streak = 0;
+        updateEnergy();
+        cons.innerHTML = `<div class="consequence bad">⏰ ${t.skipPenalty} (Enerji +10 geri kazanıldı)</div>
+          <button class="nt-btn nt-btn-primary nt-btn-sm" style="margin-top:12px" onclick="nextTask()">Sonraki →</button>`;
+        decisions.push({ task: t.text, action: 'skipped' });
+      }
+      current++;
+    }
+
+    function nextTask() { showTask(); }
+
+    function endGame() {
+      document.getElementById('game').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      const done = decisions.filter(d => d.action === 'done').length;
+      const pct = Math.round((done / shuffled.length) * 100);
+      let label, text;
+      if (pct >= 80) { label = 'Savsaklama Avcısı!'; text = 'Erteleme tuzağına düşmeden görevleri tamamladın!'; }
+      else if (pct >= 60) { label = 'İyi Savaşçı!'; text = 'Çoğu görevi yaptın ama birkaç erteleme var. Enerji yönetimi kritik.'; }
+      else if (pct >= 40) { label = 'Dikkat!'; text = 'Erteleme dürtüsü güçlü. "5 dakika kuralını" dene: sadece 5 dk başla.'; }
+      else { label = 'Erteleme Döngüsü'; text = 'Beyin kısa vadeli rahatlamayı tercih etti. Her erteleme gelecekteki stresi büyütür.'; }
+      document.getElementById('final-score').textContent = score;
+      document.getElementById('final-label').textContent = label;
+      document.getElementById('final-text').textContent = text;
+      const summary = document.getElementById('summary');
+      summary.innerHTML = `<p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:8px"><strong>Özet:</strong></p>` +
+        decisions.map(d => {
+          const icon = d.action === 'done' ? '✅' : d.action === 'timeout' ? '⏰' : d.action === 'no_energy' ? '😓' : '⏰';
+          return `<div style="font-size:0.8rem;padding:4px 0;border-bottom:1px solid var(--border)">${icon} ${d.task}</div>`;
+        }).join('');
+      NT.save('savsaklama', { score, done, total: shuffled.length, date: new Date().toISOString() });
+    }
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

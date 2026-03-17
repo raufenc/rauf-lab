@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yapılacaklar Listesi — NöroTerbiye</title>
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Araç</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">📝 Kişisel Yapılacaklar Listesi</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Kitabın finalindeki uygulama çağrısını dijital bir plana çevir. Şablonlardan başla veya sıfırdan oluştur.
+      </p>
+
+      <div id="app" class="nt-fade-in" style="animation-delay:0.15s">
+        <!-- Şablon seçimi -->
+        <div id="template-section">
+          <div class="nt-form-group">
+            <label class="nt-form-label">Hazır şablondan başla (isteğe bağlı)</label>
+            <select class="nt-select" id="template-select">
+              <option value="">-- Şablon seçin veya boş başlayın --</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Form -->
+        <div class="nt-card" style="padding:28px;margin-bottom:20px">
+          <div class="nt-form-group">
+            <label class="nt-form-label">Hedef Alışkanlık</label>
+            <input class="nt-input" id="f-hedef" placeholder="Örn: Ekran süresini azaltmak">
+          </div>
+          <div class="nt-form-group">
+            <label class="nt-form-label">Tetikleyici</label>
+            <input class="nt-input" id="f-tetik" placeholder="Bu davranışı ne tetikliyor?">
+          </div>
+          <div class="nt-form-group">
+            <label class="nt-form-label">Temel Arzu</label>
+            <input class="nt-input" id="f-arzu" placeholder="Altındaki gerçek ihtiyaç ne?">
+          </div>
+          <div class="nt-form-group">
+            <label class="nt-form-label">Yanlış Davranış</label>
+            <input class="nt-input" id="f-yanlis" placeholder="Şu an ne yapıyorsun?">
+          </div>
+          <div class="nt-form-group">
+            <label class="nt-form-label">Doğru Alternatif</label>
+            <input class="nt-input" id="f-alternatif" placeholder="Bunun yerine ne yapabilirsin?">
+          </div>
+          <div class="nt-form-group">
+            <label class="nt-form-label">Güçlü Zaman</label>
+            <input class="nt-input" id="f-zaman" placeholder="İradenin en yüksek olduğu zaman">
+          </div>
+          <div class="nt-form-group">
+            <label class="nt-form-label">Destek Kişisi</label>
+            <input class="nt-input" id="f-destek" placeholder="Seni takip edecek kişi">
+          </div>
+          <div class="nt-form-group">
+            <label class="nt-form-label">Günlük Kontrol Sorusu</label>
+            <input class="nt-input" id="f-soru" placeholder="Her gün kendine soracağın soru">
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="nt-btn nt-btn-primary" onclick="addPlan()">Plana Ekle</button>
+            <button class="nt-btn nt-btn-ghost" onclick="clearForm()">Temizle</button>
+          </div>
+        </div>
+
+        <!-- Kayıtlı planlar -->
+        <h2 class="nt-section-title" style="margin-top:40px">📋 Planlarım</h2>
+        <div id="plans-list"></div>
+        <div id="empty-msg" style="text-align:center;padding:40px;color:var(--muted);font-size:0.9rem">
+          Henüz plan eklenmedi. Yukarıdan bir hedef belirleyerek başla.
+        </div>
+
+        <div style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap" id="actions" style="display:none">
+          <button class="nt-btn nt-btn-secondary nt-btn-sm" onclick="printPlans()">🖨️ Yazdır</button>
+          <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="clearAll()">Tümünü Sil</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/data/sablonlar.js"></script>
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    // Populate templates
+    const sel = document.getElementById('template-select');
+    SABLONLAR_DATA.forEach(s => {
+      if (s.id === 'ID') return;
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = s.hedef;
+      sel.appendChild(opt);
+    });
+
+    sel.addEventListener('change', () => {
+      const s = SABLONLAR_DATA.find(x => x.id === sel.value);
+      if (!s) return;
+      document.getElementById('f-hedef').value = s.hedef;
+      document.getElementById('f-tetik').value = s.tetikleyici;
+      document.getElementById('f-arzu').value = s.temelArzu;
+      document.getElementById('f-yanlis').value = s.yanlisDavranis;
+      document.getElementById('f-alternatif').value = s.alternatif;
+      document.getElementById('f-zaman').value = s.kuvvetliZaman;
+      document.getElementById('f-destek').value = s.planAdimi;
+      document.getElementById('f-soru').value = s.caydirici;
+    });
+
+    let plans = NT.load('yapilacaklar', []);
+
+    function addPlan() {
+      const hedef = document.getElementById('f-hedef').value.trim();
+      if (!hedef) { NT.toast('Hedef alanı boş olamaz'); return; }
+      plans.push({
+        id: Date.now(),
+        hedef,
+        tetik: document.getElementById('f-tetik').value.trim(),
+        arzu: document.getElementById('f-arzu').value.trim(),
+        yanlis: document.getElementById('f-yanlis').value.trim(),
+        alternatif: document.getElementById('f-alternatif').value.trim(),
+        zaman: document.getElementById('f-zaman').value.trim(),
+        destek: document.getElementById('f-destek').value.trim(),
+        soru: document.getElementById('f-soru').value.trim(),
+        done: false,
+        tarih: new Date().toLocaleDateString('tr-TR')
+      });
+      NT.save('yapilacaklar', plans);
+      clearForm();
+      renderPlans();
+      NT.toast('Plan eklendi!');
+    }
+
+    function clearForm() {
+      ['f-hedef','f-tetik','f-arzu','f-yanlis','f-alternatif','f-zaman','f-destek','f-soru'].forEach(id =>
+        document.getElementById(id).value = ''
+      );
+      sel.value = '';
+    }
+
+    function removePlan(id) {
+      plans = plans.filter(p => p.id !== id);
+      NT.save('yapilacaklar', plans);
+      renderPlans();
+    }
+
+    function toggleDone(id) {
+      const p = plans.find(x => x.id === id);
+      if (p) p.done = !p.done;
+      NT.save('yapilacaklar', plans);
+      renderPlans();
+    }
+
+    function renderPlans() {
+      const list = document.getElementById('plans-list');
+      const empty = document.getElementById('empty-msg');
+      list.innerHTML = '';
+      if (plans.length === 0) { empty.style.display = 'block'; return; }
+      empty.style.display = 'none';
+      plans.forEach(p => {
+        const fields = [
+          p.tetik && `<b>Tetikleyici:</b> ${p.tetik}`,
+          p.arzu && `<b>Temel Arzu:</b> ${p.arzu}`,
+          p.yanlis && `<b>Yanlış:</b> ${p.yanlis}`,
+          p.alternatif && `<b>Alternatif:</b> ${p.alternatif}`,
+          p.zaman && `<b>Güçlü Zaman:</b> ${p.zaman}`,
+          p.destek && `<b>Destek:</b> ${p.destek}`,
+          p.soru && `<b>Günlük Soru:</b> ${p.soru}`,
+        ].filter(Boolean).join('<br>');
+        list.innerHTML += `
+          <div class="nt-card" style="margin-bottom:12px;opacity:${p.done?'0.6':'1'}">
+            <div style="display:flex;justify-content:space-between;align-items:start;gap:12px">
+              <div style="flex:1">
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px;${p.done?'text-decoration:line-through':''}">
+                  ${p.hedef}
+                </h3>
+                <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.7">${fields}</div>
+                <div style="margin-top:8px;font-size:0.72rem;color:var(--muted)">${p.tarih}</div>
+              </div>
+              <div style="display:flex;gap:6px;flex-shrink:0">
+                <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="toggleDone(${p.id})">${p.done?'↩️':'✅'}</button>
+                <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="removePlan(${p.id})">🗑️</button>
+              </div>
+            </div>
+          </div>`;
+      });
+    }
+
+    function printPlans() {
+      window.print();
+    }
+
+    function clearAll() {
+      if (!confirm('Tüm planlar silinecek. Emin misin?')) return;
+      plans = [];
+      NT.save('yapilacaklar', plans);
+      renderPlans();
+    }
+
+    renderPlans();
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

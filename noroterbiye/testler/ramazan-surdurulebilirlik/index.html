@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ramazan Sonrası Sürdürülebilirlik — NöroTerbiye</title>
+  <meta name="description" content="Ramazan'da kazandığın ritmi koruyabiliyor musun? Bayram sonrası sürdürülebilirlik testini çöz.">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Testi</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">🌙 Ramazan Sonrası Sürdürülebilirlik</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Ramazan'da kazandığın ritmi koruyabiliyor musun? 10 soru, 3 dakika.
+      </p>
+      <div id="test-area" class="nt-card nt-fade-in" style="padding:32px;animation-delay:0.2s"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script src="/noroterbiye/js/test-engine.js"></script>
+  <script>
+    TestEngine.init({
+      containerId: 'test-area',
+      title: 'Ramazan Sonrası Sürdürülebilirlik',
+      slug: 'ramazan-surdurulebilirlik',
+      questions: [
+        {
+          soru: 'Ramazan bittikten sonra ilk hafta ne olur?',
+          secenekler: [
+            { text: 'Her şey eski haline döner, sanki Ramazan olmamış gibi', puan: 4 },
+            { text: 'Birkaç gün devam eder sonra bırakırım', puan: 3 },
+            { text: 'Bazı alışkanlıkları sürdürmeye çalışırım', puan: 1 },
+            { text: 'Ramazan disiplinini büyük ölçüde koruyabilirim', puan: 0 },
+          ],
+          aciklama: 'Ramazan, nefsin "kuvvetli zamanlar"ından biridir. 30 gün süren pratik beyinde yeni devreler oluşturur — ama pekiştirme olmazsa silinir.'
+        },
+        {
+          soru: 'Ramazan\'da kazandığın en değerli alışkanlık hangisiydi?',
+          secenekler: [
+            { text: 'Özel bir alışkanlık kazanmadım', puan: 4 },
+            { text: 'Namaz düzeni ama bayramda bozuldu', puan: 3 },
+            { text: 'Bazı alışkanlıklar edindim ve bir kısmı devam ediyor', puan: 1 },
+            { text: 'Somut alışkanlıklar kazandım ve sürdürüyorum', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Bayram sabahı ilk gün yeme-içme alışkanlığın nasıl değişir?',
+          secenekler: [
+            { text: 'Aşırı yerim, kendimi kaybederim', puan: 4 },
+            { text: 'Normalden fazla yerim', puan: 3 },
+            { text: 'Biraz fazla ama kontrollü', puan: 1 },
+            { text: 'Ramazan porsiyon ölçümü devam eder', puan: 0 },
+          ],
+          aciklama: 'Bayramda aşırı yeme, "yoksunluk sonrası aşırı telafi" tepkisidir. Dopamin sistemi, kısıtlama sonrası ödülü kat kat güçlü algılar.'
+        },
+        {
+          soru: 'Ramazan\'da bıraktığın bir kötü alışkanlık (ekran, sigara, dedikodu vb.) bayramda geri gelir mi?',
+          secenekler: [
+            { text: 'Hemen geri gelir, ilk gün', puan: 4 },
+            { text: 'Birkaç gün içinde geri döner', puan: 3 },
+            { text: 'Biraz geri gelir ama azalmış olarak', puan: 1 },
+            { text: 'Geri gelmez, kalıcı olarak bırakırım', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Bayram sonrası nafile oruç tutar mısın (Şevval orucu gibi)?',
+          secenekler: [
+            { text: 'Hiç tutmam', puan: 4 },
+            { text: 'Bazen niyet ederim ama yapamam', puan: 3 },
+            { text: 'Bazı yıllar tutarım', puan: 1 },
+            { text: 'Her yıl tutarım', puan: 0 },
+          ],
+          aciklama: 'Şevval orucu, Ramazan alışkanlığını pekiştirmenin en etkili yoludur. Nörobilimsel olarak, 30+6 gün tekrar yeni devreyi kalıcılaştırır.'
+        },
+        {
+          soru: 'Ramazan\'da gece ekran kullanımın nasıl değişir?',
+          secenekler: [
+            { text: 'Değişmez, belki artar bile (iftar sonrası)', puan: 4 },
+            { text: 'Biraz azalır ama çok değil', puan: 3 },
+            { text: 'Belirgin şekilde azalır', puan: 1 },
+            { text: 'Ciddi şekilde azaltır, o zamanı ibadete ayırırım', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Ramazan sonrası için somut bir "devam planın" olur mu?',
+          secenekler: [
+            { text: 'Hayır, plan yapmam', puan: 4 },
+            { text: 'Kafamda bir şeyler var ama yazılı değil', puan: 3 },
+            { text: 'Birkaç hedef belirlerim', puan: 1 },
+            { text: 'Yazılı, somut ve ölçülebilir planım var', puan: 0 },
+          ],
+          aciklama: 'Plan olmadan değişim olmaz. "Uygulama niyeti" — ne zaman, nerede, nasıl yapacağını önceden belirlemek başarı oranını 2-3 kat artırır.'
+        },
+        {
+          soru: 'Ramazan\'da sabır kasın ne kadar güçlendi?',
+          secenekler: [
+            { text: 'Pek güçlenmedi, sadece aç kaldım', puan: 4 },
+            { text: 'Biraz güçlendi ama bayramda eski haline döndü', puan: 3 },
+            { text: 'Belirgin şekilde güçlendi, kısmen devam ediyor', puan: 1 },
+            { text: 'Kalıcı bir sabır gelişimi yaşadım', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Ramazan ruhunu yıl boyuna yayma konusunda ne yaparsın?',
+          secenekler: [
+            { text: 'Hiçbir şey, gelecek Ramazan\'ı beklerim', puan: 4 },
+            { text: 'Bazen hatırlar, o an bir şeyler yapmaya çalışırım', puan: 3 },
+            { text: 'Haftalık oruç veya düzenli bir pratik sürdürürüm', puan: 1 },
+            { text: 'Yıl boyuna yayılmış sistematik bir programım var', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Geçen Ramazan ile bu Ramazan arasında bir gelişme oldu mu?',
+          secenekler: [
+            { text: 'Hayır, her Ramazan aynı döngü', puan: 4 },
+            { text: 'Çok az, belki bir-iki şey', puan: 3 },
+            { text: 'Evet, bazı alanlarda ilerleme var', puan: 1 },
+            { text: 'Evet, ciddi ve ölçülebilir bir gelişme yaşadım', puan: 0 },
+          ],
+          aciklama: 'Her Ramazan aynı döngüyse, nefs mücadelesinde yöntem problemi vardır. Gelişim zihniyeti (growth mindset) her Ramazan\'ı bir öncekinden ileriye taşımalıdır.'
+        },
+      ],
+      resultRanges: [
+        { min: 0, max: 20, label: 'Sürdürülebilir Ritim', text: 'Ramazan kazanımlarını yıla yayabiliyorsun. Bu çok kıymetli — nefsin "kuvvetli zamanlar"dan kalıcı dönüşüm çıkarabiliyor.', emoji: '🌟' },
+        { min: 21, max: 45, label: 'Kısmi Koruma', text: 'Bazı kazanımları koruyorsun ama kayıplar var. Bayram sonrası ilk 2 hafta kritik — bu dönem için somut plan kur.', emoji: '🌙' },
+        { min: 46, max: 70, label: 'Hızlı Erozyon', text: 'Ramazan\'da kazandıkların hızla eriyor. Sorun irade değil, plan eksikliği. "Gelecek Ramazan" yerine "yarın" planla başla.', emoji: '⚠️' },
+        { min: 71, max: 100, label: 'Sıfırlama Döngüsü', text: 'Her Ramazan sıfırdan başlıyorsun. Bu döngüyü kırmak için tek bir küçük alışkanlığı 40 gün sürdürmeyi hedefle.', emoji: '🔄' },
+      ]
+    });
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

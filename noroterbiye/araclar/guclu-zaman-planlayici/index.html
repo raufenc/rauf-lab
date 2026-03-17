@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Güçlü Zaman Planlayıcı — NöroTerbiye</title>
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .time-grid { display:grid; grid-template-columns:80px 1fr 1fr 1fr; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:24px; }
+    .time-header { background:var(--surface2); padding:10px 8px; font-size:0.72rem; font-weight:700; text-align:center; color:var(--text-secondary); }
+    .time-cell { background:var(--surface); padding:8px; font-size:0.78rem; min-height:40px; cursor:pointer; transition:all 0.15s; position:relative; }
+    .time-cell:hover { background:var(--surface-hover); }
+    .time-cell.high { background:var(--nt-green-soft); border-left:3px solid var(--nt-green); }
+    .time-cell.medium { background:var(--nt-amber-soft); border-left:3px solid var(--nt-amber); }
+    .time-cell.low { background:var(--nt-red-soft); border-left:3px solid var(--nt-red); }
+    .time-label { background:var(--surface2); padding:10px 8px; font-size:0.78rem; font-weight:600; display:flex; align-items:center; justify-content:center; }
+    .task-tag { display:inline-block; padding:2px 8px; background:var(--nt-primary-soft); color:var(--nt-primary); border-radius:var(--radius-full); font-size:0.7rem; margin-top:4px; }
+    .legend { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:24px; font-size:0.78rem; }
+    .legend-item { display:flex; align-items:center; gap:6px; }
+    .legend-dot { width:12px; height:12px; border-radius:3px; }
+    @media(max-width:600px) { .time-grid { grid-template-columns:60px 1fr; } .time-header:nth-child(3),.time-header:nth-child(4),.time-cell:nth-child(4n+3),.time-cell:nth-child(4n) { display:none; } }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Araç</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">⏰ Güçlü Zaman Planlayıcı</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:24px">
+        Günün saatlerini irade gücüne göre işaretle. Önemli kararları güçlü zamanlarına yerleştir.
+      </p>
+
+      <div class="legend nt-fade-in" style="animation-delay:0.12s">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--nt-green)"></div> Yüksek irade</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--nt-amber)"></div> Orta irade</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--nt-red)"></div> Düşük irade</div>
+        <div class="legend-item" style="margin-left:auto;font-size:0.72rem;color:var(--muted)">Hücrelere tıkla: seviye değiştir</div>
+      </div>
+
+      <div class="time-grid nt-fade-in" style="animation-delay:0.15s" id="time-grid">
+        <div class="time-header">Saat</div>
+        <div class="time-header">İrade Seviyesi</div>
+        <div class="time-header">Görev / Karar</div>
+        <div class="time-header">Not</div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:40px">
+        <button class="nt-btn nt-btn-primary nt-btn-sm" onclick="savePlan()">💾 Kaydet</button>
+        <button class="nt-btn nt-btn-secondary nt-btn-sm" onclick="window.print()">🖨️ Yazdır</button>
+        <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="resetGrid()">Sıfırla</button>
+      </div>
+
+      <div class="nt-card" style="padding:20px">
+        <h3 style="font-size:0.95rem;font-weight:700;margin-bottom:8px">💡 İpucu</h3>
+        <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.6">
+          Araştırmalar gösteriyor ki irade gücü sınırlı bir kaynaktır. Sabah saatleri genellikle en güçlü zamandır.
+          Önemli kararlarını (diyet, egzersiz, zor görevler) bu zaman dilimlerine yerleştir.
+          Akşam saatlerinde kolay ve rutinleşmiş görevler planla.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const hours = ['06:00','07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00'];
+    const levels = ['','high','medium','low'];
+    const levelLabels = {'':'Seç','high':'Yüksek','medium':'Orta','low':'Düşük'};
+
+    let gridData = NT.load('guclu_zaman', null);
+    if (!gridData) {
+      gridData = hours.map(h => ({ hour: h, level: '', task: '', note: '' }));
+    }
+
+    const grid = document.getElementById('time-grid');
+
+    function renderGrid() {
+      // Remove existing rows
+      grid.querySelectorAll('.time-label,.time-cell').forEach(el => el.remove());
+
+      gridData.forEach((row, i) => {
+        // Hour label
+        const label = document.createElement('div');
+        label.className = 'time-label';
+        label.textContent = row.hour;
+        grid.appendChild(label);
+
+        // Level cell
+        const levelCell = document.createElement('div');
+        levelCell.className = 'time-cell ' + row.level;
+        levelCell.textContent = levelLabels[row.level];
+        levelCell.style.fontWeight = '600';
+        levelCell.style.textAlign = 'center';
+        levelCell.onclick = () => {
+          const idx = levels.indexOf(row.level);
+          row.level = levels[(idx + 1) % levels.length];
+          renderGrid();
+        };
+        grid.appendChild(levelCell);
+
+        // Task cell
+        const taskCell = document.createElement('div');
+        taskCell.className = 'time-cell';
+        taskCell.contentEditable = true;
+        taskCell.textContent = row.task;
+        taskCell.style.outline = 'none';
+        taskCell.onblur = () => { row.task = taskCell.textContent.trim(); };
+        grid.appendChild(taskCell);
+
+        // Note cell
+        const noteCell = document.createElement('div');
+        noteCell.className = 'time-cell';
+        noteCell.contentEditable = true;
+        noteCell.textContent = row.note;
+        noteCell.style.outline = 'none';
+        noteCell.style.color = 'var(--text-secondary)';
+        noteCell.onblur = () => { row.note = noteCell.textContent.trim(); };
+        grid.appendChild(noteCell);
+      });
+    }
+
+    function savePlan() {
+      NT.save('guclu_zaman', gridData);
+      NT.toast('Plan kaydedildi!');
+    }
+
+    function resetGrid() {
+      if (!confirm('Tüm plan sıfırlanacak. Emin misin?')) return;
+      gridData = hours.map(h => ({ hour: h, level: '', task: '', note: '' }));
+      NT.save('guclu_zaman', gridData);
+      renderGrid();
+    }
+
+    renderGrid();
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

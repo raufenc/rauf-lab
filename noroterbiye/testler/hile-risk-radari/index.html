@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern Hile Risk Radarı — NöroTerbiye</title>
+  <meta name="description" content="Hangi modern tuzaklarda daha kırılgansın? Yemek, ekran, oyun, para, müzik ve sosyal medya alanlarında risk haritanı çıkar.">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Testi</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">🎯 Modern Hile Risk Radarı</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Modern dünyanın hangi tuzağında daha kırılgansın? 12 soru, 3 dakika.
+      </p>
+      <div id="test-area" class="nt-card nt-fade-in" style="padding:32px;animation-delay:0.2s"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script src="/noroterbiye/js/test-engine.js"></script>
+  <script>
+    TestEngine.init({
+      containerId: 'test-area',
+      title: 'Modern Hile Risk Radarı',
+      slug: 'hile-risk-radari',
+      questions: [
+        {
+          soru: 'Canın sıkıldığında ilk yaptığın şey nedir?',
+          secenekler: [
+            { text: 'Telefonu açıp sosyal medyaya bakarım', puan: 4 },
+            { text: 'Atıştırmalık bir şeyler ararım', puan: 3 },
+            { text: 'Bir oyun veya dizi açarım', puan: 3 },
+            { text: 'Yürüyüşe çıkarım veya kitap okurum', puan: 0 },
+          ],
+          aciklama: 'Can sıkıntısı anında nefsin en çok hangi "kısa yol"a yöneldiğini gösterir.'
+        },
+        {
+          soru: 'Alışveriş yaparken "bunu gerçekten ihtiyacım var mı?" diye düşünür müsün?',
+          secenekler: [
+            { text: 'Nadiren, genelde hemen alırım', puan: 4 },
+            { text: 'Bazen düşünürüm ama yine alırım', puan: 3 },
+            { text: 'Çoğunlukla düşünürüm', puan: 1 },
+            { text: 'Her zaman, gerekmedikçe almam', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Gece yatmadan önce ekranla ne kadar vakit geçirirsin?',
+          secenekler: [
+            { text: '2 saatten fazla', puan: 4 },
+            { text: '1-2 saat', puan: 3 },
+            { text: '30 dakika - 1 saat', puan: 1 },
+            { text: 'Hemen hemen hiç', puan: 0 },
+          ],
+          aciklama: 'Gece ekranı, uyku kalitesini düşürerek ertesi gün iradenin zayıflamasına yol açar.'
+        },
+        {
+          soru: 'Tok olduğun halde "bir şey yesem" isteği ne sıklıkla gelir?',
+          secenekler: [
+            { text: 'Günde birkaç kez', puan: 4 },
+            { text: 'Neredeyse her gün', puan: 3 },
+            { text: 'Haftada birkaç kez', puan: 1 },
+            { text: 'Nadiren', puan: 0 },
+          ],
+          aciklama: 'Hedonik açlık: Miden değil, beynin haz istiyor. Dopaminin klasik tuzağı.'
+        },
+        {
+          soru: 'Sosyal medyada başkalarının hayatını görünce nasıl hissedersin?',
+          secenekler: [
+            { text: 'Eksik ve yetersiz hissederim', puan: 4 },
+            { text: 'Bazen kıyas yaparım', puan: 3 },
+            { text: 'Fark ederim ama etkilenmemeye çalışırım', puan: 1 },
+            { text: 'Beni etkilemez', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Müziksiz ne kadar dayanabilirsin?',
+          secenekler: [
+            { text: 'Çok zor, sürekli kulaklığım takılı', puan: 4 },
+            { text: 'Birkaç saat dayanırım', puan: 3 },
+            { text: 'Gün boyu müziksiz olabilirim', puan: 1 },
+            { text: 'Sessizlik beni rahatsız etmez', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Oyun (mobil veya bilgisayar) oynamaya başlayınca durabilir misin?',
+          secenekler: [
+            { text: '"Son bir tur" deyip saatlerce devam ederim', puan: 4 },
+            { text: 'Zor duruyorum ama bazen kontrol edebiliyorum', puan: 3 },
+            { text: 'Belirlediğim sürede bırakabilirim', puan: 1 },
+            { text: 'Oyun oynamam veya kontrollü oynarım', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Bildirim sesi geldiğinde telefona bakmadan ne kadar durabilirsin?',
+          secenekler: [
+            { text: 'Hemen bakarım, dayanamam', puan: 4 },
+            { text: 'Birkaç dakika ama sonra bakarım', puan: 3 },
+            { text: 'İşim bitince bakarım', puan: 1 },
+            { text: 'Bildirimlerimi kapalı tutarım', puan: 0 },
+          ],
+          aciklama: 'Her bildirim bir dopamin beklentisi tetikler. Telefon, en yaygın dikkat korsanıdır.'
+        },
+        {
+          soru: 'Bir dizi/film bitince hemen bir sonrakini açar mısın?',
+          secenekler: [
+            { text: 'Evet, gece boyunca izleyebilirim', puan: 4 },
+            { text: 'Genellikle bir tane daha izlerim', puan: 3 },
+            { text: 'Bazen, ama çoğunlukla kendimi tutarım', puan: 1 },
+            { text: 'Hayır, izlediğimi sindirmek isterim', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Parasız bir hafta sonu geçirmek sana nasıl gelir?',
+          secenekler: [
+            { text: 'Çok sıkıcı, harcamadan eğlenemem', puan: 4 },
+            { text: 'Zor ama mümkün', puan: 2 },
+            { text: 'Sorun değil, alternatiflerim var', puan: 1 },
+            { text: 'Tercih ederim, en güzel zamanlarım parasız geçer', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Birinin arkasından konuşma fırsatı çıktığında ne yaparsın?',
+          secenekler: [
+            { text: 'Katılırım, bazen başlatırım bile', puan: 4 },
+            { text: 'Katılırım ama sonra pişman olurum', puan: 3 },
+            { text: 'Dinlerim ama pek katkı sunmam', puan: 1 },
+            { text: 'Konuyu değiştirmeye çalışırım', puan: 0 },
+          ],
+          aciklama: 'Gıybet, "ucuz serotonin + dopamin" kaynağıdır — başkası üzerinden statü ve haz elde etme.'
+        },
+        {
+          soru: 'Stresli bir durumda kendini sakinleştirmek için ne yaparsın?',
+          secenekler: [
+            { text: 'Yeme, ekran veya sigara gibi alışkanlıklara yönelirim', puan: 4 },
+            { text: 'Birine kızarım veya sinirimi atarım', puan: 3 },
+            { text: 'Derin nefes alır, sabretmeye çalışırım', puan: 1 },
+            { text: 'Dua eder veya bilinçli bir şekilde yönetirim', puan: 0 },
+          ]
+        },
+      ],
+      resultRanges: [
+        { min: 0, max: 20, label: 'Dengeli Seyrediyor', text: 'Modern tuzaklara karşı güçlü bir farkındalığın var. Yine de uyanık kal — nefs her an yeni kapılar dener.', emoji: '🛡️' },
+        { min: 21, max: 45, label: 'Bazı Alanlar Hassas', text: 'Genel olarak idare ediyorsun ama belirli alanlarda kırılganlığın var. Bu alanları tespit edip alternatifler üretmek seni güçlendirir.', emoji: '⚠️' },
+        { min: 46, max: 70, label: 'Risk Bölgesi', text: 'Birçok modern tuzak senin için aktif çalışıyor. Farkındalık ilk adım — şimdi plan kurma zamanı.', emoji: '🎯' },
+        { min: 71, max: 100, label: 'Alarm Seviyesi', text: 'Modern dünyanın hileleri seni ciddi şekilde etkiliyor. Ama endişelenme — her düşüşten dönüş mümkün. Araçlarımızla planını kur.', emoji: '🚨' },
+      ]
+    });
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

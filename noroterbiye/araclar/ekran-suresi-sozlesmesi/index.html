@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ekran Süresi Sözleşmesi — NöroTerbiye</title>
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .contract-output { background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%); border:2px solid var(--nt-cyan); border-radius:var(--radius-xl); padding:40px 32px; max-width:560px; margin:0 auto; }
+    .contract-output h2 { text-align:center; font-size:1.3rem; margin-bottom:24px; }
+    .contract-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:0.88rem; }
+    .contract-row:last-child { border-bottom:none; }
+    .contract-row .label { color:var(--text-secondary); }
+    .contract-row .value { font-weight:600; }
+    .sig-area { display:flex; gap:24px; margin-top:32px; padding-top:24px; border-top:1px dashed var(--border); }
+    .sig-box { flex:1; text-align:center; }
+    .sig-box .line { border-bottom:1px solid var(--text); min-height:40px; margin-bottom:6px; }
+    .sig-box .name { font-size:0.78rem; color:var(--muted); }
+    .rule-list { list-style:none; padding:0; }
+    .rule-list li { padding:8px 0; border-bottom:1px solid var(--border); font-size:0.85rem; display:flex; align-items:center; gap:8px; }
+    .rule-list li:last-child { border-bottom:none; }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Araç</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">📵 Ekran Süresi Sözleşmesi</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Ebeveyn ve genç birlikte doldurup imzalayacağı bir dijital sözleşme. Kuralları birlikte belirleyin.
+      </p>
+
+      <!-- Form -->
+      <div id="form-view" class="nt-fade-in" style="animation-delay:0.15s">
+        <div class="nt-card" style="padding:28px;margin-bottom:20px">
+          <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:20px">Sözleşme Bilgileri</h3>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="nt-form-group">
+              <label class="nt-form-label">Gencin adı</label>
+              <input class="nt-input" id="f-genc" placeholder="Ahmet">
+            </div>
+            <div class="nt-form-group">
+              <label class="nt-form-label">Ebeveynin adı</label>
+              <input class="nt-input" id="f-ebeveyn" placeholder="Baba / Anne">
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="nt-form-group">
+              <label class="nt-form-label">Hafta içi günlük limit</label>
+              <select class="nt-select" id="f-hafta-ici">
+                <option>30 dakika</option><option>1 saat</option><option selected>1.5 saat</option><option>2 saat</option><option>2.5 saat</option><option>3 saat</option>
+              </select>
+            </div>
+            <div class="nt-form-group">
+              <label class="nt-form-label">Hafta sonu günlük limit</label>
+              <select class="nt-select" id="f-hafta-sonu">
+                <option>1 saat</option><option>1.5 saat</option><option selected>2 saat</option><option>2.5 saat</option><option>3 saat</option><option>4 saat</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="nt-form-group">
+            <label class="nt-form-label">Ekrandan uzak saatler</label>
+            <input class="nt-input" id="f-uzak" placeholder="Örn: Yemek saatleri, yatmadan 1 saat önce, namaz vakitleri">
+          </div>
+
+          <div class="nt-form-group">
+            <label class="nt-form-label">Yasaklı uygulamalar / içerikler</label>
+            <input class="nt-input" id="f-yasak" placeholder="Örn: TikTok, 18+ içerik, yabancı sohbet">
+          </div>
+
+          <div class="nt-form-group">
+            <label class="nt-form-label">İzin verilen uygulamalar</label>
+            <input class="nt-input" id="f-izin" placeholder="Örn: WhatsApp (aile grubu), YouTube (eğitim), Kitap uygulaması">
+          </div>
+
+          <h3 style="font-size:0.95rem;font-weight:700;margin-top:24px;margin-bottom:12px">Kurallar</h3>
+          <div id="rules-container">
+            <div class="nt-form-group" style="display:flex;gap:8px">
+              <input class="nt-input" id="f-rule" placeholder="Kural ekle...">
+              <button class="nt-btn nt-btn-secondary nt-btn-sm" onclick="addRule()">+</button>
+            </div>
+            <ul class="rule-list" id="rules-list"></ul>
+          </div>
+
+          <h3 style="font-size:0.95rem;font-weight:700;margin-top:24px;margin-bottom:12px">İstisnalar</h3>
+          <div class="nt-form-group">
+            <textarea class="nt-textarea" id="f-istisna" placeholder="Örn: Ödev için bilgisayar kullanılabilir. Aile filmi izleme süresi sayılmaz." style="min-height:60px"></textarea>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="nt-form-group">
+              <label class="nt-form-label">Kuralı çiğnemenin sonucu</label>
+              <input class="nt-input" id="f-ceza" placeholder="Örn: Ertesi gün ekran yok">
+            </div>
+            <div class="nt-form-group">
+              <label class="nt-form-label">Kurala uymanın ödülü</label>
+              <input class="nt-input" id="f-odul" placeholder="Örn: Haftasonunda ekstra 1 saat">
+            </div>
+          </div>
+
+          <div class="nt-form-group">
+            <label class="nt-form-label">Kontrol sıklığı</label>
+            <select class="nt-select" id="f-kontrol">
+              <option>Her gün</option><option selected>Haftada bir</option><option>2 haftada bir</option>
+            </select>
+          </div>
+
+          <button class="nt-btn nt-btn-primary nt-btn-lg" style="width:100%;justify-content:center" onclick="generateContract()">📜 Sözleşmeyi Oluştur</button>
+        </div>
+      </div>
+
+      <!-- Output -->
+      <div id="contract-view" style="display:none">
+        <div class="contract-output" id="contract-card">
+          <p style="text-align:center;font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">NöroTerbiye Ekran Süresi Sözleşmesi</p>
+          <h2>📵 Ekran Anlaşması</h2>
+          <div id="contract-body"></div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:24px;flex-wrap:wrap">
+          <button class="nt-btn nt-btn-primary nt-btn-sm" onclick="saveContract()">💾 Kaydet</button>
+          <button class="nt-btn nt-btn-secondary nt-btn-sm" onclick="window.print()">🖨️ Yazdır</button>
+          <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="editContract()">✏️ Düzenle</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    let rules = [
+      'Yemek masasında telefon olmayacak',
+      'Yatmadan 1 saat önce ekranlar kapanacak',
+      'Şifre ebeveynde olacak'
+    ];
+
+    function renderRules() {
+      const list = document.getElementById('rules-list');
+      list.innerHTML = rules.map((r, i) => `
+        <li>
+          <span style="flex:1">${r}</span>
+          <button class="nt-btn nt-btn-ghost" style="padding:0 4px;font-size:0.8rem" onclick="removeRule(${i})">×</button>
+        </li>
+      `).join('');
+    }
+
+    function addRule() {
+      const input = document.getElementById('f-rule');
+      const val = input.value.trim();
+      if (!val) return;
+      rules.push(val);
+      input.value = '';
+      renderRules();
+    }
+
+    function removeRule(i) {
+      rules.splice(i, 1);
+      renderRules();
+    }
+
+    function generateContract() {
+      const genc = document.getElementById('f-genc').value.trim() || 'Genç';
+      const ebeveyn = document.getElementById('f-ebeveyn').value.trim() || 'Ebeveyn';
+      const today = new Date().toLocaleDateString('tr-TR');
+
+      const body = document.getElementById('contract-body');
+      body.innerHTML = `
+        <div class="contract-row"><span class="label">Tarih</span><span class="value">${today}</span></div>
+        <div class="contract-row"><span class="label">Hafta içi limit</span><span class="value">${document.getElementById('f-hafta-ici').value}</span></div>
+        <div class="contract-row"><span class="label">Hafta sonu limit</span><span class="value">${document.getElementById('f-hafta-sonu').value}</span></div>
+        <div class="contract-row"><span class="label">Ekrandan uzak saatler</span><span class="value">${document.getElementById('f-uzak').value || '—'}</span></div>
+        <div class="contract-row"><span class="label">Yasaklı</span><span class="value" style="color:var(--nt-red)">${document.getElementById('f-yasak').value || '—'}</span></div>
+        <div class="contract-row"><span class="label">İzin verilen</span><span class="value" style="color:var(--nt-green)">${document.getElementById('f-izin').value || '—'}</span></div>
+        <div style="margin:20px 0">
+          <p style="font-size:0.82rem;font-weight:700;margin-bottom:8px">Kurallar:</p>
+          <ul style="padding-left:20px;font-size:0.85rem;line-height:1.8">
+            ${rules.map(r => `<li>${r}</li>`).join('')}
+          </ul>
+        </div>
+        ${document.getElementById('f-istisna').value ? `<div class="contract-row"><span class="label">İstisnalar</span><span class="value" style="font-size:0.82rem;font-weight:400">${document.getElementById('f-istisna').value}</span></div>` : ''}
+        <div class="contract-row"><span class="label">Kurala uymazsa</span><span class="value" style="color:var(--nt-red)">${document.getElementById('f-ceza').value || '—'}</span></div>
+        <div class="contract-row"><span class="label">Kurala uyarsa</span><span class="value" style="color:var(--nt-green)">${document.getElementById('f-odul').value || '—'}</span></div>
+        <div class="contract-row"><span class="label">Kontrol</span><span class="value">${document.getElementById('f-kontrol').value}</span></div>
+        <div class="sig-area">
+          <div class="sig-box"><div class="line"></div><div class="name">${genc}</div></div>
+          <div class="sig-box"><div class="line"></div><div class="name">${ebeveyn}</div></div>
+        </div>
+      `;
+
+      document.getElementById('form-view').style.display = 'none';
+      document.getElementById('contract-view').style.display = 'block';
+    }
+
+    function editContract() {
+      document.getElementById('form-view').style.display = 'block';
+      document.getElementById('contract-view').style.display = 'none';
+    }
+
+    function saveContract() {
+      const contracts = NT.load('ekran_sozlesmeleri', []);
+      contracts.push({
+        id: Date.now(),
+        tarih: new Date().toLocaleDateString('tr-TR'),
+        html: document.getElementById('contract-card').innerHTML
+      });
+      NT.save('ekran_sozlesmeleri', contracts);
+      NT.toast('Sözleşme kaydedildi!');
+    }
+
+    renderRules();
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dipten Dönüş — NöroTerbiye</title>
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .flow-container { max-width:480px; margin:0 auto; }
+    .flow-step { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-xl); padding:40px 32px; text-align:center; min-height:300px; display:flex; flex-direction:column; justify-content:center; align-items:center; animation:ntFadeIn 0.4s ease; }
+    .flow-step.calm { border-color:var(--nt-cyan); background:var(--nt-cyan-soft); }
+    .flow-step.reflect { border-color:var(--nt-amber); }
+    .flow-step.plan { border-color:var(--nt-green); }
+    .flow-icon { font-size:3rem; margin-bottom:16px; }
+    .flow-title { font-size:1.3rem; font-weight:700; margin-bottom:12px; }
+    .flow-text { font-size:0.95rem; color:var(--text-secondary); line-height:1.7; margin-bottom:24px; max-width:380px; }
+    .breath-circle { width:120px; height:120px; border-radius:50%; background:var(--nt-cyan-soft); border:3px solid var(--nt-cyan); display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:700; color:var(--nt-cyan); margin:16px auto; animation:breathe 8s ease-in-out infinite; }
+    @keyframes breathe {
+      0%,100% { transform:scale(0.8); opacity:0.7; }
+      25% { transform:scale(1.2); opacity:1; }
+      50% { transform:scale(0.8); opacity:0.7; }
+      75% { transform:scale(1.2); opacity:1; }
+    }
+    .step-counter { font-size:0.72rem; color:var(--muted); margin-bottom:8px; letter-spacing:0.1em; }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Araç</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">🆘 Dipten Dönüş</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        "Az önce hata yaptım..." Sorun değil. Bu kurtarma akışı seni adım adım toparlayacak.
+      </p>
+
+      <div class="flow-container nt-fade-in" style="animation-delay:0.15s" id="flow-area"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    let step = 0;
+    let flowData = {};
+
+    const steps = [
+      {
+        type: 'calm',
+        icon: '🫁',
+        title: 'Nefes Al',
+        text: 'Önce sakinleş. 4 saniye nefes al, 4 saniye tut, 4 saniye ver. Bunu 3 kez tekrarla.',
+        hasBreath: true,
+        btnText: 'Sakinleştim, devam →'
+      },
+      {
+        type: 'reflect',
+        icon: '🪞',
+        title: 'Kabul Et',
+        text: 'Bir hata yaptın. Bu seni kötü insan yapmaz, insan yapar. Şimdi sadece ne olduğunu kabul et.',
+        hasInput: false,
+        btnText: 'Kabul ediyorum →'
+      },
+      {
+        type: 'reflect',
+        icon: '🎯',
+        title: 'Ne Oldu?',
+        text: 'Az önce ne yaptın? Kısaca yaz. Yargılamadan, sadece kaydet.',
+        hasInput: true,
+        inputKey: 'neOldu',
+        placeholder: 'Ne yaptım...',
+        btnText: 'İleri →'
+      },
+      {
+        type: 'reflect',
+        icon: '🔍',
+        title: 'Tetikleyici Ne?',
+        text: 'Bu davranışı tetikleyen şey neydi? Bir duygu mu, bir ortam mı, bir kişi mi?',
+        hasInput: true,
+        inputKey: 'tetikleyici',
+        placeholder: 'Bunu tetikleyen...',
+        btnText: 'İleri →'
+      },
+      {
+        type: 'reflect',
+        icon: '💭',
+        title: 'O Anda Ne Hissettin?',
+        text: 'Hemen öncesinde ve sırasında ne hissettin?',
+        hasButtons: true,
+        feelings: ['Yalnızlık','Sıkıntı','Öfke','Stres','Yorgunluk','Heyecan','Üzüntü','Merak'],
+        inputKey: 'hisler',
+        btnText: 'İleri →'
+      },
+      {
+        type: 'plan',
+        icon: '🛡️',
+        title: 'Bir Sonraki Adım',
+        text: 'Şimdi ne yapabilirsin? Bir adım at. Küçük olsun ama olsun.',
+        hasInput: true,
+        inputKey: 'sonrakiAdim',
+        placeholder: 'Şimdi yapacağım şey...',
+        suggestions: ['Abdest alacağım','Yürüyüşe çıkacağım','Birine mesaj atacağım','Bir bardak su içeceğim','Dua edeceğim','Notlarımı okuyacağım'],
+        btnText: 'İleri →'
+      },
+      {
+        type: 'plan',
+        icon: '💪',
+        title: 'Hatırla',
+        text: '',
+        isFinale: true,
+        btnText: '💾 Kaydet ve Bitir'
+      }
+    ];
+
+    const selectedFeelings = [];
+
+    function renderStep() {
+      const area = document.getElementById('flow-area');
+      const s = steps[step];
+
+      let html = `<div class="flow-step ${s.type}">
+        <div class="step-counter">${step + 1} / ${steps.length}</div>
+        <div class="flow-icon">${s.icon}</div>
+        <div class="flow-title">${s.title}</div>`;
+
+      if (s.isFinale) {
+        html += `<div class="flow-text">
+          <p style="font-size:1.1rem;font-weight:600;margin-bottom:16px">"Her düşüş bir son değil, bir ders."</p>
+          <p>Bir hata yaptın ama buraya geldin. Bu bile güçlü olduğunun kanıtı.</p>
+          <p style="margin-top:12px">Yarın yeni bir gün. Şimdi bu anı kaydet ve ileri bak.</p>
+        </div>`;
+      } else {
+        html += `<div class="flow-text">${s.text}</div>`;
+      }
+
+      if (s.hasBreath) {
+        html += '<div class="breath-circle">Nefes</div>';
+      }
+
+      if (s.hasInput) {
+        html += `<div style="width:100%;max-width:350px">`;
+        if (s.suggestions) {
+          html += `<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:12px">
+            ${s.suggestions.map(sg => `<button class="nt-filter-btn" onclick="document.getElementById('flow-input').value='${sg}'">${sg}</button>`).join('')}
+          </div>`;
+        }
+        html += `<input class="nt-input" id="flow-input" placeholder="${s.placeholder || ''}" value="${flowData[s.inputKey] || ''}" style="text-align:center">
+        </div>`;
+      }
+
+      if (s.hasButtons) {
+        html += `<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:350px" id="feeling-btns">
+          ${s.feelings.map(f => `<button class="nt-filter-btn ${selectedFeelings.includes(f)?'active':''}" onclick="toggleFeeling('${f}')">${f}</button>`).join('')}
+        </div>`;
+      }
+
+      html += `<div style="display:flex;gap:10px;margin-top:24px">
+        ${step > 0 ? '<button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="prevStep()">← Geri</button>' : ''}
+        <button class="nt-btn nt-btn-primary nt-btn-sm" onclick="nextStep()">${s.btnText}</button>
+      </div>`;
+
+      html += '</div>';
+      area.innerHTML = html;
+    }
+
+    function toggleFeeling(f) {
+      const idx = selectedFeelings.indexOf(f);
+      if (idx >= 0) selectedFeelings.splice(idx, 1);
+      else selectedFeelings.push(f);
+      renderStep();
+    }
+
+    function nextStep() {
+      const s = steps[step];
+      if (s.hasInput) {
+        const val = document.getElementById('flow-input').value.trim();
+        if (!val) { NT.toast('Bir şey yaz'); return; }
+        flowData[s.inputKey] = val;
+      }
+      if (s.hasButtons) {
+        flowData.hisler = [...selectedFeelings];
+      }
+
+      if (step >= steps.length - 1) {
+        // Save
+        const records = NT.load('dipten_donus', []);
+        records.push({
+          id: Date.now(),
+          tarih: new Date().toLocaleDateString('tr-TR'),
+          saat: new Date().toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' }),
+          ...flowData
+        });
+        NT.save('dipten_donus', records);
+        NT.toast('Kayıt kaydedildi. Güçlüsün!');
+        step = 0;
+        flowData = {};
+        selectedFeelings.length = 0;
+        renderStep();
+        return;
+      }
+
+      step++;
+      renderStep();
+    }
+
+    function prevStep() {
+      if (step > 0) { step--; renderStep(); }
+    }
+
+    renderStep();
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

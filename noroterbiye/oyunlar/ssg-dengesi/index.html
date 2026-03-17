@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Şehvet-Şöhret-Gadab Dengesi — NöroTerbiye</title>
+  <meta name="description" content="Üç temel dürtüyü dengede tutabilir misin? Senaryolarla test et.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .gauges { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+    .gauge { flex: 1; min-width: 140px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+    .gauge-label { font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; display: flex; justify-content: space-between; }
+    .gauge-bar { height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
+    .gauge-fill { height: 100%; border-radius: 5px; transition: width 0.6s ease, background 0.3s; }
+    .gauge-sehvet .gauge-fill { background: var(--nt-rose); }
+    .gauge-sohret .gauge-fill { background: var(--nt-amber); }
+    .gauge-gadab .gauge-fill { background: var(--nt-red); }
+    .gauge-warning { font-size: 0.7rem; color: var(--nt-red); margin-top: 4px; min-height: 16px; }
+    .scenario-box { padding: 24px; margin-bottom: 16px; }
+    .scenario-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 12px; }
+    .scenario-desc { font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.6; }
+    .scenario-options { display: flex; flex-direction: column; gap: 8px; }
+    .scenario-opt { text-align: left; padding: 14px 18px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); color: var(--text); font-size: 0.88rem; cursor: pointer; transition: all var(--transition-fast); font-family: var(--font-sans); line-height: 1.4; }
+    .scenario-opt:hover { border-color: var(--nt-primary); background: var(--nt-primary-soft); }
+    .round-info { text-align: center; font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; }
+    .game-over-reason { font-size: 0.9rem; color: var(--nt-red); margin-bottom: 16px; text-align: center; }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+
+      <div id="intro" class="nt-fade-in">
+        <h1 class="nt-title" style="font-size:2rem;margin-bottom:12px">⚖️ Şehvet-Şöhret-Gadab Dengesi</h1>
+        <p class="nt-subtitle" style="margin-bottom:20px">Üç temel dürtüyü dengede tutabilir misin?</p>
+        <div class="nt-card" style="margin-bottom:24px">
+          <h3 style="font-weight:700;margin-bottom:8px">Nasıl Oynanır?</h3>
+          <ul style="font-size:0.88rem;color:var(--text-secondary);line-height:1.8;padding-left:20px">
+            <li>3 gösterge var: <strong>Şehvet</strong> (haz dürtüsü), <strong>Şöhret</strong> (ego/statü), <strong>Gadab</strong> (öfke/saldırganlık)</li>
+            <li>Her turda bir senaryo gelir, 3 seçenekten birini seçersin</li>
+            <li>Her seçenek göstergeleri farklı etkiler</li>
+            <li>Herhangi bir gösterge <strong>%100'e ulaşırsa</strong> oyun biter!</li>
+            <li>Amaç: 10 tur boyunca dengeyi korumak</li>
+            <li>İdeal bölge: Her gösterge %20-60 arası</li>
+          </ul>
+        </div>
+        <button class="nt-btn nt-btn-primary nt-btn-lg" onclick="startGame()">Oyna</button>
+      </div>
+
+      <div id="game" style="display:none">
+        <div class="gauges">
+          <div class="gauge gauge-sehvet">
+            <div class="gauge-label"><span>🔥 Şehvet</span><span id="sehvet-val">30%</span></div>
+            <div class="gauge-bar"><div class="gauge-fill" id="sehvet-fill" style="width:30%"></div></div>
+            <div class="gauge-warning" id="sehvet-warn"></div>
+          </div>
+          <div class="gauge gauge-sohret">
+            <div class="gauge-label"><span>👑 Şöhret</span><span id="sohret-val">30%</span></div>
+            <div class="gauge-bar"><div class="gauge-fill" id="sohret-fill" style="width:30%"></div></div>
+            <div class="gauge-warning" id="sohret-warn"></div>
+          </div>
+          <div class="gauge gauge-gadab">
+            <div class="gauge-label"><span>💢 Gadab</span><span id="gadab-val">30%</span></div>
+            <div class="gauge-bar"><div class="gauge-fill" id="gadab-fill" style="width:30%"></div></div>
+            <div class="gauge-warning" id="gadab-warn"></div>
+          </div>
+        </div>
+        <div class="round-info" id="round-info"></div>
+        <div class="nt-card scenario-box" id="scenario-box"></div>
+      </div>
+
+      <div id="result" style="display:none">
+        <div class="nt-card nt-result">
+          <div class="nt-result-score" id="final-score"></div>
+          <div class="nt-result-label" id="final-label"></div>
+          <div id="game-over-reason" class="game-over-reason"></div>
+          <div class="nt-result-text" id="final-text"></div>
+          <div class="nt-result-actions">
+            <button class="nt-btn nt-btn-primary" onclick="location.reload()">Tekrar Oyna</button>
+            <a href="/noroterbiye/oyunlar/" class="nt-btn nt-btn-secondary">Diğer Oyunlar</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const allScenarios = [
+      { title: '📱 Gece geç saatte telefon', desc: 'Saat 23:00, yatman gerekiyor ama sosyal medya çekiyor...',
+        opts: [
+          { text: 'Kaydırmaya devam et, uyku bekleyebilir', fx: { sehvet: 15, sohret: 5, gadab: -5 } },
+          { text: 'Telefonu başka odaya bırak ve yat', fx: { sehvet: -10, sohret: -5, gadab: -5 } },
+          { text: 'Sinirlenerek telefonu fırlat', fx: { sehvet: -5, sohret: 0, gadab: 20 } },
+        ]},
+      { title: '👥 Arkadaş grubunda tartışma', desc: 'Arkadaşın seni haksız yere eleştirdi, herkes izliyor.',
+        opts: [
+          { text: 'Sesini yükselt, haklı olduğunu kanıtla', fx: { sehvet: 0, sohret: 15, gadab: 20 } },
+          { text: 'Sakin ol, sonra baş başa konuş', fx: { sehvet: 0, sohret: -5, gadab: -10 } },
+          { text: 'Alay ederek ortamı değiştir', fx: { sehvet: 5, sohret: 10, gadab: 5 } },
+        ]},
+      { title: '🍰 İftar sofrası', desc: 'Çok güzel tatlılar var. Zaten tok ama gözün gidiyor.',
+        opts: [
+          { text: 'Üç tabak daha al, zevk yüksek', fx: { sehvet: 20, sohret: 0, gadab: -5 } },
+          { text: 'Bir dilim al, tadına bak, dur', fx: { sehvet: 5, sohret: 0, gadab: 0 } },
+          { text: 'Hiç yeme, nefsi aç bırak', fx: { sehvet: -15, sohret: 5, gadab: 10 } },
+        ]},
+      { title: '📊 Sosyal medyada paylaşım', desc: 'Güzel bir fotoğrafın var. Beğeni beklentisi yüksek.',
+        opts: [
+          { text: 'Filtreleri kullan, en iyi açıyı bul, paylaş', fx: { sehvet: 5, sohret: 20, gadab: 0 } },
+          { text: 'Doğal haliyle paylaş', fx: { sehvet: 0, sohret: 5, gadab: 0 } },
+          { text: 'Paylaşma, bu dürtüyü fark et ve bırak', fx: { sehvet: -5, sohret: -10, gadab: 0 } },
+        ]},
+      { title: '🚗 Trafikte sıkışma', desc: 'Acelen var, biri seni sıkıştırıyor.',
+        opts: [
+          { text: 'Korna bas, el kol hareketi yap', fx: { sehvet: 0, sohret: 5, gadab: 20 } },
+          { text: 'Derin nefes al, müzik aç, bekle', fx: { sehvet: 5, sohret: 0, gadab: -10 } },
+          { text: 'Sürekli şerit değiştir, geçmeye çalış', fx: { sehvet: 10, sohret: 5, gadab: 10 } },
+        ]},
+      { title: '🎮 Oyun turnuvası', desc: 'Online oyunda son 2 kişi kaldınız. Rakip tehdit mesajı attı.',
+        opts: [
+          { text: 'Sert karşılık ver, gücünü göster', fx: { sehvet: 5, sohret: 15, gadab: 15 } },
+          { text: 'Sessizce oyna, konsantre ol', fx: { sehvet: 0, sohret: -5, gadab: -5 } },
+          { text: 'Oyunu kapat, değmez', fx: { sehvet: -10, sohret: -10, gadab: -10 } },
+        ]},
+      { title: '💰 Pahalı ürün reklamı', desc: 'Arkadaşlarının hepsinde var. Sen de istiyorsun ama gerçekten ihtiyacın yok.',
+        opts: [
+          { text: 'Hemen satın al, herkes görsün', fx: { sehvet: 15, sohret: 15, gadab: -5 } },
+          { text: 'Bir hafta bekle, hâlâ istiyorsan düşün', fx: { sehvet: -5, sohret: -5, gadab: 5 } },
+          { text: 'Almayı reddet, kendi yolunu çiz', fx: { sehvet: -10, sohret: -10, gadab: 0 } },
+        ]},
+      { title: '📝 Sınav sonucu', desc: 'Çok çalıştın ama not beklediğinin altında kaldı.',
+        opts: [
+          { text: 'Hocayı suçla, adaletsizlik var', fx: { sehvet: 0, sohret: 10, gadab: 20 } },
+          { text: 'Eksiklerini analiz et, planla', fx: { sehvet: 0, sohret: -5, gadab: -5 } },
+          { text: 'Moral bozuldu, tatlı ye, dizi izle', fx: { sehvet: 15, sohret: 0, gadab: -10 } },
+        ]},
+      { title: '🌙 Gece ibadeti', desc: 'Uyanıksın, teheccüd kılabilirsin ama yatak da çok çekici...',
+        opts: [
+          { text: 'Yatağa geri dön, yarın artık', fx: { sehvet: 10, sohret: 0, gadab: 0 } },
+          { text: 'Kalk, abdest al, en az 2 rekat kıl', fx: { sehvet: -10, sohret: -5, gadab: -10 } },
+          { text: 'Zorla kalk ama içinden sızlan', fx: { sehvet: -5, sohret: 5, gadab: 10 } },
+        ]},
+      { title: '🏅 Başarı tanınması', desc: 'Projende iyi iş çıkardın. Herkes övsün istiyorsun.',
+        opts: [
+          { text: 'Her yerde anlat, herkese duyur', fx: { sehvet: 5, sohret: 20, gadab: 0 } },
+          { text: 'Teşekkür et, hamdele, geç', fx: { sehvet: 0, sohret: -5, gadab: 0 } },
+          { text: 'Kibirlenme, ama içinden tatmin ol', fx: { sehvet: 5, sohret: 5, gadab: 0 } },
+        ]},
+      { title: '🍔 Fast food tuzağı', desc: 'Geç saatte acıktın. Fast food hızlı ve kolay.',
+        opts: [
+          { text: 'Büyük menü + ekstra sos', fx: { sehvet: 20, sohret: 0, gadab: -5 } },
+          { text: 'Evde basit bir şey hazırla', fx: { sehvet: -5, sohret: 0, gadab: 5 } },
+          { text: 'Aç yat, sabah güzel kahvaltı yap', fx: { sehvet: -15, sohret: 0, gadab: 5 } },
+        ]},
+      { title: '😤 Kardeş kavgası', desc: 'Kardeşin eşyalarını karıştırmış.',
+        opts: [
+          { text: 'Bağır ve cezalandır', fx: { sehvet: 0, sohret: 10, gadab: 20 } },
+          { text: 'Sakin konuş, sınır koy', fx: { sehvet: 0, sohret: 0, gadab: -10 } },
+          { text: 'Görmezden gel, biriktir', fx: { sehvet: 0, sohret: -5, gadab: 10 } },
+        ]},
+    ];
+
+    let vals = { sehvet: 30, sohret: 30, gadab: 30 };
+    let round = 0, totalRounds = 10, scenarios = [], survived = true;
+
+    function startGame() {
+      document.getElementById('intro').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+      scenarios = [...allScenarios].sort(() => Math.random() - 0.5).slice(0, totalRounds);
+      showRound();
+    }
+
+    function updateGauges() {
+      ['sehvet', 'sohret', 'gadab'].forEach(k => {
+        vals[k] = Math.max(0, Math.min(100, vals[k]));
+        document.getElementById(k + '-fill').style.width = vals[k] + '%';
+        document.getElementById(k + '-val').textContent = vals[k] + '%';
+        const warn = document.getElementById(k + '-warn');
+        if (vals[k] >= 80) warn.textContent = '⚠️ Tehlikeli seviye!';
+        else if (vals[k] >= 60) warn.textContent = '⚡ Dikkat, yükseliyor...';
+        else warn.textContent = '';
+      });
+    }
+
+    function showRound() {
+      if (round >= scenarios.length) return endGame();
+      document.getElementById('round-info').textContent = `Tur ${round + 1} / ${totalRounds}`;
+      const s = scenarios[round];
+      const box = document.getElementById('scenario-box');
+      box.innerHTML = `
+        <div class="scenario-title">${s.title}</div>
+        <div class="scenario-desc">${s.desc}</div>
+        <div class="scenario-options">
+          ${s.opts.map((o, i) => `<button class="scenario-opt" onclick="pick(${i})">${o.text}</button>`).join('')}
+        </div>
+      `;
+    }
+
+    function pick(i) {
+      const s = scenarios[round];
+      const fx = s.opts[i].fx;
+      vals.sehvet += fx.sehvet;
+      vals.sohret += fx.sohret;
+      vals.gadab += fx.gadab;
+      updateGauges();
+
+      if (vals.sehvet >= 100 || vals.sohret >= 100 || vals.gadab >= 100) {
+        survived = false;
+        let reason = '';
+        if (vals.sehvet >= 100) reason = 'Şehvet dürtüsü kontrolden çıktı! Haz arayışı seni ele geçirdi.';
+        if (vals.sohret >= 100) reason = 'Şöhret dürtüsü kontrolden çıktı! Ego seni yönetiyor.';
+        if (vals.gadab >= 100) reason = 'Gadab dürtüsü kontrolden çıktı! Öfke seni tüketiyor.';
+        setTimeout(() => endGame(reason), 600);
+        return;
+      }
+      round++;
+      setTimeout(showRound, 400);
+    }
+
+    function endGame(reason) {
+      document.getElementById('game').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      const avg = Math.round((vals.sehvet + vals.sohret + vals.gadab) / 3);
+      let pct, label, text;
+      if (!survived) {
+        pct = round; label = `${round}/${totalRounds} tur`;
+        text = 'Dürtülerden biri kontrolden çıktı. Dengeyi korumak, nefsi terbiye etmenin temelidir.';
+        document.getElementById('game-over-reason').textContent = reason;
+      } else {
+        const balance = 100 - Math.abs(avg - 40);
+        pct = balance + '%'; label = 'Dengeyi Korudun!';
+        if (avg <= 40) text = 'Mükemmel denge! Dürtülerini kontrol altında tuttun. Gerçek terbiye budur.';
+        else if (avg <= 60) text = 'İyi bir denge ama bazı dürtüler yükseldi. Dikkatli ol.';
+        else text = 'Tehlikeli bölgedeydin ama hayatta kaldın. Daha dengeli seçimler yapabilirsin.';
+      }
+      document.getElementById('final-score').textContent = pct;
+      document.getElementById('final-label').textContent = label;
+      document.getElementById('final-text').textContent = text;
+      NT.save('ssg_dengesi', { survived, round, vals, date: new Date().toISOString() });
+    }
+
+    updateGauges();
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

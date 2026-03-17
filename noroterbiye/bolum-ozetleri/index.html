@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bölüm Özetleri — NöroTerbiye</title>
+  <meta name="description" content="NöroTerbiye kitabının her bölümünün kısa özeti. Hızlı tekrar ve sindirme alanı.">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <h1 class="nt-title nt-fade-in" style="font-size:2rem;margin-bottom:8px">📝 Bölüm Özetleri</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Her bölümün özü, ana sorusu ve seni düşündürecek bir çıkarım.
+      </p>
+
+      <div id="summaries" style="display:flex;flex-direction:column;gap:20px"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const bolumler = [
+      {
+        kisim: 'İlk Adım',
+        renk: 'warm',
+        bolumler: [
+          { baslik: 'NöroTerbiye Nedir?', sayfa: '13-17',
+            ozet: 'Beyin araştırmaları ilerledikçe nefsin biyolojik karşılıkları daha net ortaya çıktı. Nöroterbiye, sinirbilim ile nefs terbiyesini birleştiren bir yaklaşım.',
+            soru: 'Nefsin makamı neresidir ve onu anlamak için nereye bakmalıyız?',
+            cikarim: 'Nefsi terbiye etmek için tavsiye edilen amellerin beyindeki haz kimyasallarını ideal miktarda salgılatmak gibi bir faydası var.' }
+        ]
+      },
+      {
+        kisim: 'Nefsin Biyolojisi',
+        renk: 'green',
+        bolumler: [
+          { baslik: 'Şehvet (Dopamin)', sayfa: '33-35',
+            ozet: 'Dopamin ödül beklentisi ve arzu ile ilgilidir. Ödülün kendisinden çok, ödül beklentisi sırasında yükselir.',
+            soru: 'Sahip olduğun şey mi seni mutlu eder, yoksa sahip olabileceğini düşündüğün mü?',
+            cikarim: 'Nefs, henüz elde etmediğinden daha çok etkilenir.' },
+          { baslik: 'Şöhret (Serotonin)', sayfa: '36-37',
+            ozet: 'Serotonin sosyal kıymet, statü ve görünürlükle ilgilidir. Beğenilmek, takdir edilmek aynı kimyasal koridorda buluşur.',
+            soru: 'Başkalarının gözündeki yerin seni ne kadar belirliyor?',
+            cikarim: 'Kıyas, beğeni ve statü arayışı biyolojik bir temele sahip.' },
+          { baslik: 'Gadab (Kortizol)', sayfa: '38-40',
+            ozet: 'Kortizol stres ve tehdit algısıyla salgılanır. Rahatsız eder ama harekete de çağırır.',
+            soru: 'Stresi tamamen susturmak mı daha iyi, yoksa doğru yere yöneltmek mi?',
+            cikarim: 'Öfke ve stres düşman değil, yanlış yönlendirildiğinde sorun.' },
+          { baslik: 'Ödül ve Ceza', sayfa: '44-46',
+            ozet: 'Davranış öğreniminin iki ana motoru. Ödül tekrar ettirir, ceza kaçındırır.',
+            soru: 'Alışkanlıklarını ödül mü ceza mı şekillendirdi?',
+            cikarim: 'Beynin ödül sistemi helal-haram ayrımını kendiliğinden yapmaz.' },
+        ]
+      },
+      {
+        kisim: 'Modern Dünyanın Hileleri',
+        renk: 'red',
+        bolumler: [
+          { baslik: 'Yemek & Hedonik Açlık', sayfa: '58-67',
+            ozet: 'Tok olduğu halde yemek isteme (hedonik açlık), dopaminin en yaygın kısa yollarından. Şeker ve kola beynin denge sistemini bozar.',
+            soru: 'Karnın tok iken uzanan elin gerçekten kalori mi arıyor?',
+            cikarim: 'Atalarımız oruçla bu sorunu çözmüş.' },
+          { baslik: 'Ekran & Sosyal Medya', sayfa: '68-78',
+            ozet: 'Reklamlar ayna nöronlarla prova yaptırır. Sosyal medya 5 dakikada beş farklı duygu yaşatır.',
+            soru: 'İzlediğin şey sadece vakit mi alıyor, yoksa iç manzaranı da mı biçimlendiriyor?',
+            cikarim: 'Ekranlar gerçeklik kılığına girebilir.' },
+          { baslik: 'Oyun & Para & Müzik', sayfa: '79-92',
+            ozet: 'Oyunlar başarı ihtiyacını, para doyumsuzluk döngüsünü, müzik sürekli haz arayışını besler.',
+            soru: 'Masum görünen alışkanlıklar toplamda ne kadar yer kaplıyor?',
+            cikarim: 'Günde on küçük aşırılık, bazen tek büyük hatayla benzer etki üretebilir.' },
+          { baslik: 'Bağımlılıklar', sayfa: '93-118',
+            ozet: 'Sigara, alkol, pornografi, kumar ve ahlakî zaaflar. Doğrudan ve dolaylı etkiyen maddeler ve davranışlar.',
+            soru: 'Bağımlılık ne zaman başlar?',
+            cikarim: 'Normal hayattan tat alamamak, asıl esaretin başladığı yerdir.' },
+        ]
+      },
+      {
+        kisim: 'Farklı Nefsler',
+        renk: 'purple',
+        bolumler: [
+          { baslik: 'Mizaç ve Kimya', sayfa: '121-131',
+            ozet: 'Herkesin baskın kimyası farklı. Mizaç, nefsin hareket tarzını şekillendirir.',
+            soru: 'Sen hangi kimyanın etkisi altındasın?',
+            cikarim: 'Fıtratını bilmek, terbiyenin başlangıç noktasıdır.' },
+          { baslik: 'Çocuk ve Genç Nefsi', sayfa: '153-170',
+            ozet: 'Çocuğun prefrontal korteksi gelişmemiş, gencin dopamin sistemi aşırı aktif. İkisi de özel yaklaşım gerektirir.',
+            soru: 'Çocuğa nasihat etmek mi yoksa model olmak mı daha etkili?',
+            cikarim: 'Ergenlikte çevre etkisi doruktadır.' },
+          { baslik: 'Nefsin Nöromertebeleri', sayfa: '173-178',
+            ozet: 'Nefsin emmâre, levvâme, mülhime, mutmainne gibi mertebeleri nörobilimsel karşılıklarıyla anlatılır.',
+            soru: 'Nefsin hangi mertebede?',
+            cikarim: 'Her mertebe bir bilinç ve kontrol seviyesine karşılık gelir.' },
+        ]
+      },
+      {
+        kisim: 'NöroTerbiye Usulleri',
+        renk: 'cyan',
+        bolumler: [
+          { baslik: 'Zihin', sayfa: '183-209',
+            ozet: 'İnan, bugüne odaklan, savsaklamayı yen, can sıkıntısına izin ver, nefsin dilini öğren, stresin faydalarını bil.',
+            soru: 'İnanmadan terbiye mümkün mü?',
+            cikarim: 'Kelebek etkisi: küçük bir değişiklik büyük sonuçlar üretebilir.' },
+          { baslik: 'Beden', sayfa: '210-242',
+            ozet: 'Doğru beslenme, hareket, uyku, irade yönetimi, amel ve alternatifini ikame etme.',
+            soru: 'İrade zayıflığı sandığın şey aslında biyolojik bir eksiklik olabilir mi?',
+            cikarim: 'Eksik vitamin, kötü uyku ve dengesiz beslenme; irade zayıflığı sanılan sonuçlar doğurabilir.' },
+          { baslik: 'Çevre', sayfa: '243-261',
+            ozet: 'Kuvvetli zamanları kullan, dipten dönmeyi bil, arkadaşını seç, ilham verenleri bul, Ramazan ritmini değerlendir.',
+            soru: 'Çevren seni yukarı mı çekiyor, aşağı mı?',
+            cikarim: 'Bana arkadaşını söyle, sana kim olduğunu söyleyeyim.' },
+          { baslik: 'Son İki Adım', sayfa: '262-265',
+            ozet: 'Yapılacaklar listesi hazırla. Hayata geçir ve devam et.',
+            soru: 'Şimdi ne yapacaksın?',
+            cikarim: 'Bilmek yetmez, yapmak gerekir. Tek günde değil, doğru sistemle.' },
+        ]
+      }
+    ];
+
+    const renkMap = { warm: 'var(--warm)', green: 'var(--nt-green)', red: 'var(--nt-red)', purple: 'var(--nt-purple)', cyan: 'var(--nt-cyan)' };
+    const renkSoftMap = { warm: 'var(--warm-soft)', green: 'var(--nt-green-soft)', red: 'var(--nt-red-soft)', purple: 'var(--nt-purple-soft)', cyan: 'var(--nt-cyan-soft)' };
+
+    const container = document.getElementById('summaries');
+    bolumler.forEach(kisim => {
+      let html = `<div style="margin-bottom:8px">
+        <h2 style="font-size:1.2rem;font-weight:700;color:${renkMap[kisim.renk]};margin-bottom:16px">${kisim.kisim}</h2>`;
+
+      kisim.bolumler.forEach(b => {
+        html += `
+          <div class="nt-card" style="padding:24px;margin-bottom:12px;border-left:3px solid ${renkMap[kisim.renk]}">
+            <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
+              <h3 style="font-size:1.05rem;font-weight:700">${b.baslik}</h3>
+              <span style="font-size:0.72rem;color:var(--muted);white-space:nowrap">s.${b.sayfa}</span>
+            </div>
+            <p style="font-size:0.9rem;color:var(--text-secondary);line-height:1.6;margin-bottom:12px">${b.ozet}</p>
+            <div style="padding:12px 16px;background:${renkSoftMap[kisim.renk]};border-radius:var(--radius-md);margin-bottom:8px">
+              <p style="font-size:0.82rem;font-weight:600;color:${renkMap[kisim.renk]}">Ana Soru</p>
+              <p style="font-size:0.88rem;color:var(--text);font-style:italic">${b.soru}</p>
+            </div>
+            <p style="font-size:0.82rem;color:var(--muted2)">💡 ${b.cikarim}</p>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+      container.innerHTML += html;
+    });
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tetikleyici Kaydı — NöroTerbiye</title>
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:24px; }
+    .cal-header { font-size:0.7rem; font-weight:600; text-align:center; padding:6px 0; color:var(--muted); }
+    .cal-day { aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); font-size:0.78rem; cursor:pointer; transition:all 0.15s; position:relative; }
+    .cal-day:hover { border-color:var(--nt-primary); }
+    .cal-day.has-entry { background:var(--nt-primary-soft); border-color:var(--nt-primary); }
+    .cal-day.today { font-weight:700; box-shadow:0 0 0 2px var(--nt-primary); }
+    .cal-day.other { opacity:0.3; }
+    .cal-dot { width:6px; height:6px; border-radius:50%; background:var(--nt-primary); margin-top:2px; }
+    .entry-card { padding:14px 18px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); margin-bottom:8px; }
+    .entry-meta { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    .entry-meta span { font-size:0.72rem; padding:2px 8px; background:var(--surface2); border-radius:var(--radius-full); color:var(--text-secondary); }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Araç</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">🎯 Tetikleyici Kaydı</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Alışkanlıkların ne zaman ve neyle tetiklendiğini kaydet. Zamanla kalıpları fark et.
+      </p>
+
+      <!-- New Entry Form -->
+      <div class="nt-card nt-fade-in" style="padding:28px;margin-bottom:32px;animation-delay:0.15s">
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:16px">Yeni Kayıt</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="nt-form-group">
+            <label class="nt-form-label">Saat</label>
+            <input class="nt-input" type="time" id="f-saat" value="">
+          </div>
+          <div class="nt-form-group">
+            <label class="nt-form-label">Ortam</label>
+            <select class="nt-select" id="f-ortam">
+              <option>Ev</option><option>Okul/İş</option><option>Dışarı</option><option>Toplu taşıma</option><option>Yatak</option><option>Diğer</option>
+            </select>
+          </div>
+        </div>
+        <div class="nt-form-group">
+          <label class="nt-form-label">Ne oldu? (Tetikleyici)</label>
+          <input class="nt-input" id="f-olay" placeholder="Örn: Arkadaşım beni sinir etti">
+        </div>
+        <div class="nt-form-group">
+          <label class="nt-form-label">Ne hissettin?</label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap" id="feelings">
+            <button class="nt-filter-btn" data-feel="Öfke">😠 Öfke</button>
+            <button class="nt-filter-btn" data-feel="Sıkıntı">😩 Sıkıntı</button>
+            <button class="nt-filter-btn" data-feel="Yalnızlık">😔 Yalnızlık</button>
+            <button class="nt-filter-btn" data-feel="Kıskançlık">😒 Kıskançlık</button>
+            <button class="nt-filter-btn" data-feel="Heyecan">😆 Heyecan</button>
+            <button class="nt-filter-btn" data-feel="Yorgunluk">😴 Yorgunluk</button>
+            <button class="nt-filter-btn" data-feel="Açlık">🍽️ Açlık</button>
+            <button class="nt-filter-btn" data-feel="Stres">😰 Stres</button>
+          </div>
+        </div>
+        <div class="nt-form-group">
+          <label class="nt-form-label">Ne yaptın?</label>
+          <input class="nt-input" id="f-tepki" placeholder="Örn: Telefona sarıldım / Yürüyüşe çıktım">
+        </div>
+        <button class="nt-btn nt-btn-primary" onclick="saveRecord()">Kaydet</button>
+      </div>
+
+      <!-- Calendar -->
+      <h3 class="nt-section-title">📅 Takvim</h3>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="changeMonth(-1)">← Önceki</button>
+        <span style="font-weight:700;font-size:0.95rem" id="month-label"></span>
+        <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="changeMonth(1)">Sonraki →</button>
+      </div>
+      <div class="cal-grid" id="calendar"></div>
+
+      <!-- Day entries -->
+      <div id="day-entries" style="margin-top:16px"></div>
+
+      <div style="margin-top:32px;display:flex;gap:10px">
+        <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="exportData()">📥 Verileri İndir</button>
+        <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="clearAll()">🗑️ Tümünü Sil</button>
+      </div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    let records = NT.load('tetikleyici_kaydi', []);
+    let selectedFeelings = [];
+    let viewDate = new Date();
+    let selectedDay = null;
+
+    // Set default time
+    const now = new Date();
+    document.getElementById('f-saat').value = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+
+    // Feeling buttons
+    document.getElementById('feelings').addEventListener('click', e => {
+      const btn = e.target.closest('[data-feel]');
+      if (!btn) return;
+      btn.classList.toggle('active');
+      const feel = btn.dataset.feel;
+      if (selectedFeelings.includes(feel)) selectedFeelings = selectedFeelings.filter(f => f !== feel);
+      else selectedFeelings.push(feel);
+    });
+
+    function saveRecord() {
+      const olay = document.getElementById('f-olay').value.trim();
+      if (!olay) { NT.toast('Tetikleyiciyi yaz'); return; }
+      records.push({
+        id: Date.now(),
+        tarih: new Date().toLocaleDateString('tr-TR'),
+        saat: document.getElementById('f-saat').value,
+        ortam: document.getElementById('f-ortam').value,
+        olay,
+        duygular: [...selectedFeelings],
+        tepki: document.getElementById('f-tepki').value.trim()
+      });
+      NT.save('tetikleyici_kaydi', records);
+      document.getElementById('f-olay').value = '';
+      document.getElementById('f-tepki').value = '';
+      selectedFeelings = [];
+      document.querySelectorAll('#feelings .active').forEach(b => b.classList.remove('active'));
+      renderCalendar();
+      NT.toast('Kayıt eklendi!');
+    }
+
+    function renderCalendar() {
+      const cal = document.getElementById('calendar');
+      const year = viewDate.getFullYear();
+      const month = viewDate.getMonth();
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const today = new Date();
+      const months = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+      document.getElementById('month-label').textContent = months[month] + ' ' + year;
+
+      const dayNames = ['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+      let html = dayNames.map(d => `<div class="cal-header">${d}</div>`).join('');
+
+      // Adjust for Monday start (JS: 0=Sun)
+      const startDay = (firstDay + 6) % 7;
+      for (let i = 0; i < startDay; i++) html += '<div class="cal-day other"></div>';
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = d.toString().padStart(2,'0') + '.' + (month+1).toString().padStart(2,'0') + '.' + year;
+        const hasEntry = records.some(r => r.tarih === dateStr);
+        const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+        html += `<div class="cal-day ${hasEntry?'has-entry':''} ${isToday?'today':''}" onclick="showDay('${dateStr}')">
+          ${d}${hasEntry ? '<div class="cal-dot"></div>' : ''}
+        </div>`;
+      }
+      cal.innerHTML = html;
+    }
+
+    function showDay(dateStr) {
+      selectedDay = dateStr;
+      const dayEntries = records.filter(r => r.tarih === dateStr);
+      const container = document.getElementById('day-entries');
+      if (dayEntries.length === 0) {
+        container.innerHTML = `<p style="color:var(--muted);font-size:0.85rem;padding:16px;text-align:center">${dateStr} tarihinde kayıt yok.</p>`;
+        return;
+      }
+      container.innerHTML = `<h4 style="font-size:0.9rem;font-weight:700;margin-bottom:12px">${dateStr} Kayıtları</h4>` +
+        dayEntries.map(e => `
+          <div class="entry-card">
+            <div style="display:flex;justify-content:space-between">
+              <strong style="font-size:0.85rem">⏰ ${e.saat} — ${e.ortam}</strong>
+              <button class="nt-btn nt-btn-ghost" style="padding:2px 6px;font-size:0.75rem" onclick="deleteRecord(${e.id})">×</button>
+            </div>
+            <p style="font-size:0.85rem;margin-top:6px">${e.olay}</p>
+            ${e.tepki ? `<p style="font-size:0.82rem;color:var(--text-secondary);margin-top:4px">→ ${e.tepki}</p>` : ''}
+            <div class="entry-meta">${e.duygular.map(d => `<span>${d}</span>`).join('')}</div>
+          </div>
+        `).join('');
+    }
+
+    function deleteRecord(id) {
+      records = records.filter(r => r.id !== id);
+      NT.save('tetikleyici_kaydi', records);
+      renderCalendar();
+      if (selectedDay) showDay(selectedDay);
+    }
+
+    function changeMonth(delta) {
+      viewDate.setMonth(viewDate.getMonth() + delta);
+      renderCalendar();
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(records, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'tetikleyici-kaydi.json';
+      a.click();
+    }
+
+    function clearAll() {
+      if (!confirm('Tüm kayıtlar silinecek!')) return;
+      records = [];
+      NT.save('tetikleyici_kaydi', records);
+      renderCalendar();
+      document.getElementById('day-entries').innerHTML = '';
+    }
+
+    renderCalendar();
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

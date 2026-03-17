@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alternatifini İkame Et — NöroTerbiye</title>
+  <meta name="description" content="Yanlış davranışa doğru alternatif bulabilir misin? Eşleştirme oyunu.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔄</text></svg>">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .match-area { display: flex; gap: 24px; flex-wrap: wrap; margin: 24px 0; }
+    .match-col { flex: 1; min-width: 250px; }
+    .match-col h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 12px; text-align: center; padding: 8px; border-radius: var(--radius-md); }
+    .col-wrong h3 { background: var(--nt-red-soft); color: var(--nt-red); }
+    .col-right h3 { background: var(--nt-green-soft); color: var(--nt-green); }
+    .match-item {
+      padding: 14px 16px; margin-bottom: 8px; border-radius: var(--radius-md);
+      border: 2px solid var(--border); background: var(--surface); cursor: pointer;
+      font-size: 0.88rem; line-height: 1.4; transition: all var(--transition-fast);
+      user-select: none;
+    }
+    .match-item:hover { border-color: var(--nt-primary); }
+    .match-item.selected { border-color: var(--nt-primary); background: var(--nt-primary-soft); box-shadow: 0 0 0 3px var(--nt-primary-soft); }
+    .match-item.matched-correct { border-color: var(--nt-green); background: var(--nt-green-soft); opacity: 0.7; cursor: default; }
+    .match-item.matched-wrong { border-color: var(--nt-red); background: var(--nt-red-soft); }
+    .match-line { text-align: center; font-size: 0.8rem; color: var(--muted); margin: 8px 0; }
+    .match-feedback { text-align: center; margin-top: 16px; padding: 12px; border-radius: var(--radius-md); font-size: 0.85rem; min-height: 48px; }
+    .match-feedback.correct { background: var(--nt-green-soft); color: var(--nt-green); }
+    .match-feedback.wrong { background: var(--nt-red-soft); color: var(--nt-red); }
+    .score-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+
+      <div id="intro" class="nt-fade-in">
+        <h1 class="nt-title" style="font-size:2rem;margin-bottom:12px">🔄 Alternatifini İkame Et</h1>
+        <p class="nt-subtitle" style="margin-bottom:20px">Yanlış davranışa doğru alternatif bulabilir misin?</p>
+        <div class="nt-card" style="margin-bottom:24px">
+          <h3 style="font-weight:700;margin-bottom:8px">Nasıl Oynanır?</h3>
+          <ul style="font-size:0.88rem;color:var(--text-secondary);line-height:1.8;padding-left:20px">
+            <li>Solda <strong>yanlış/zararlı davranışlar</strong>, sağda <strong>doğru alternatifler</strong></li>
+            <li>Önce soldaki bir davranışa tıkla, sonra sağdaki doğru alternatifine tıkla</li>
+            <li>Doğru eşleştirme yeşile döner</li>
+            <li>8 çift, tüm eşleştirmeleri tamamla!</li>
+          </ul>
+        </div>
+        <button class="nt-btn nt-btn-primary nt-btn-lg" onclick="startGame()">Oyna</button>
+      </div>
+
+      <div id="game" style="display:none">
+        <div class="score-bar">
+          <span id="match-count">0 / 8 eşleştirildi</span>
+          <span id="attempts">Deneme: 0</span>
+        </div>
+        <div class="nt-quiz-progress"><div class="nt-quiz-progress-bar" id="progress"></div></div>
+        <div class="match-area">
+          <div class="match-col col-wrong">
+            <h3>❌ Zararlı Davranış</h3>
+            <div id="left-col"></div>
+          </div>
+          <div class="match-col col-right">
+            <h3>✅ Doğru Alternatif</h3>
+            <div id="right-col"></div>
+          </div>
+        </div>
+        <div class="match-feedback" id="feedback"></div>
+      </div>
+
+      <div id="result" style="display:none">
+        <div class="nt-card nt-result">
+          <div class="nt-result-score" id="final-score"></div>
+          <div class="nt-result-label" id="final-label"></div>
+          <div class="nt-result-text" id="final-text"></div>
+          <div class="nt-result-actions">
+            <button class="nt-btn nt-btn-primary" onclick="location.reload()">Tekrar Oyna</button>
+            <a href="/noroterbiye/oyunlar/" class="nt-btn nt-btn-secondary">Diğer Oyunlar</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const pairs = [
+      { wrong: '📱 Stresli olunca sosyal medya kaydır', right: '🏃 Stresli olunca 10 dk yürüyüş yap', info: 'Hareket kortizolü düşürür; ekran sadece erteleme yapar.' },
+      { wrong: '🍫 Üzgünken şeker/çikolata ye', right: '📞 Üzgünken güvendiğin biriyle konuş', info: 'Şeker anlık dopamin verir; paylaşmak kalıcı oksitosin salgılar.' },
+      { wrong: '🎮 Sıkılınca saatlerce oyun oyna', right: '🎨 Sıkılınca yaratıcı bir hobi dene', info: 'Oyun sahte başarı hissi verir; hobi gerçek beceri ve tatmin kazandırır.' },
+      { wrong: '😤 Öfkelenince bağır/kır dök', right: '💨 Öfkelenince 10 derin nefes al', info: 'Bağırmak amigdalayı güçlendirir; nefes parasempatik sistemi aktive eder.' },
+      { wrong: '📺 Uyuyamayınca dizi maratonu yap', right: '📖 Uyuyamayınca kitap oku veya dua et', info: 'Ekran melatonini baskılar; kitap ve dua zihni sakinleştirir.' },
+      { wrong: '🛒 Mutsuzken alışveriş yap', right: '✍️ Mutsuzken duygularını yaz', info: 'Alışveriş geçici dopamindir; yazma duyguları düzenler ve farkındalık verir.' },
+      { wrong: '👀 Kendini başkalarıyla kıyasla', right: '📊 Dünkü kendinle kıyasla', info: 'Sosyal kıyaslama mutsuzluk getirir; kişisel gelişim serotonin artırır.' },
+      { wrong: '⏰ Zor işleri yarına ertele', right: '🎯 Zor işi 5 dk kuralıyla başla', info: 'Erteleme kaygıyı artırır; 5 dk kuralı "başlama sürtünmesini" kırar.' },
+    ];
+
+    let selectedLeft = null, matched = 0, attempts = 0;
+    let shuffledLeft = [], shuffledRight = [];
+
+    function startGame() {
+      document.getElementById('intro').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+      shuffledLeft = pairs.map((p, i) => ({ ...p, idx: i })).sort(() => Math.random() - 0.5);
+      shuffledRight = pairs.map((p, i) => ({ ...p, idx: i })).sort(() => Math.random() - 0.5);
+      render();
+    }
+
+    function render() {
+      const leftCol = document.getElementById('left-col');
+      const rightCol = document.getElementById('right-col');
+      leftCol.innerHTML = '';
+      rightCol.innerHTML = '';
+      shuffledLeft.forEach((p, i) => {
+        const el = document.createElement('div');
+        el.className = 'match-item' + (p.done ? ' matched-correct' : '');
+        el.textContent = p.wrong;
+        el.dataset.idx = p.idx;
+        if (!p.done) el.onclick = () => selectLeft(p.idx, el);
+        leftCol.appendChild(el);
+      });
+      shuffledRight.forEach((p, i) => {
+        const el = document.createElement('div');
+        el.className = 'match-item' + (p.done ? ' matched-correct' : '');
+        el.textContent = p.right;
+        el.dataset.idx = p.idx;
+        if (!p.done) el.onclick = () => selectRight(p.idx, el);
+        rightCol.appendChild(el);
+      });
+    }
+
+    function selectLeft(idx, el) {
+      document.querySelectorAll('.col-wrong .match-item').forEach(e => e.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedLeft = idx;
+      document.getElementById('feedback').className = 'match-feedback';
+      document.getElementById('feedback').textContent = 'Şimdi sağdaki doğru alternatifi seç →';
+    }
+
+    function selectRight(idx, el) {
+      if (selectedLeft === null) {
+        document.getElementById('feedback').className = 'match-feedback wrong';
+        document.getElementById('feedback').textContent = 'Önce soldaki bir davranışı seç!';
+        return;
+      }
+      attempts++;
+      document.getElementById('attempts').textContent = `Deneme: ${attempts}`;
+      const fb = document.getElementById('feedback');
+      if (idx === selectedLeft) {
+        matched++;
+        const pair = pairs[idx];
+        shuffledLeft.find(p => p.idx === idx).done = true;
+        shuffledRight.find(p => p.idx === idx).done = true;
+        fb.className = 'match-feedback correct';
+        fb.textContent = '✅ ' + pair.info;
+        document.getElementById('match-count').textContent = `${matched} / ${pairs.length} eşleştirildi`;
+        document.getElementById('progress').style.width = (matched / pairs.length * 100) + '%';
+        selectedLeft = null;
+        render();
+        if (matched >= pairs.length) setTimeout(endGame, 1200);
+      } else {
+        fb.className = 'match-feedback wrong';
+        fb.textContent = '❌ Bu eşleşme doğru değil. Tekrar dene!';
+        el.classList.add('matched-wrong');
+        setTimeout(() => el.classList.remove('matched-wrong'), 600);
+        selectedLeft = null;
+        document.querySelectorAll('.col-wrong .match-item').forEach(e => e.classList.remove('selected'));
+      }
+    }
+
+    function endGame() {
+      document.getElementById('game').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      const efficiency = Math.round((pairs.length / attempts) * 100);
+      let label, text;
+      if (attempts <= pairs.length) { label = 'Mükemmel!'; text = 'Hatasız eşleştirdin! Alternatif davranışları çok iyi biliyorsun.'; }
+      else if (attempts <= pairs.length + 3) { label = 'Çok İyi!'; text = 'Çok az hatayla tamamladın. Davranış dönüşümü farkındalığın yüksek.'; }
+      else if (attempts <= pairs.length * 2) { label = 'İyi!'; text = 'Bazı eşleştirmeler zor oldu ama öğrendin. Her yanlış davranışın bir doğru alternatifi vardır.'; }
+      else { label = 'Öğrenme Fırsatı'; text = 'Alternatif davranışları keşfetmeye devam et. Farkındalık ilk adımdır.'; }
+      document.getElementById('final-score').textContent = efficiency + '%';
+      document.getElementById('final-label').textContent = label;
+      document.getElementById('final-text').textContent = text;
+      NT.save('alternatif_ikame', { matched, attempts, efficiency, date: new Date().toISOString() });
+    }
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

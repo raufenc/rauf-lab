@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Genç Nefs Risk Radarı — NöroTerbiye</title>
+  <meta name="description" content="Ergenlikte ödül, risk ve çevre dinamiklerini keşfet. Genç nefsin en hassas olduğu alanları tespit et.">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Testi</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">🔥 Genç Nefs Risk Radarı</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Ergenlikte ödül, risk ve çevre. Genç nefsin en hassas alanlarını keşfet. 12 soru, 3 dakika.
+      </p>
+      <div id="test-area" class="nt-card nt-fade-in" style="padding:32px;animation-delay:0.2s"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script src="/noroterbiye/js/test-engine.js"></script>
+  <script>
+    TestEngine.init({
+      containerId: 'test-area',
+      title: 'Genç Nefs Risk Radarı',
+      slug: 'genc-risk-radari',
+      questions: [
+        {
+          soru: 'Arkadaşların "herkes yapıyor" dediğinde ne hissedersin?',
+          secenekler: [
+            { text: 'Hemen uyarım, dışarıda kalmak istemem', puan: 4 },
+            { text: 'Tereddüt ederim ama çoğunlukla uyarım', puan: 3 },
+            { text: 'Düşünürüm, doğru bulmuyorsam yapmam', puan: 1 },
+            { text: 'Akran baskısı beni etkilemez', puan: 0 },
+          ],
+          aciklama: 'Ergen beyninde sosyal kabul sistemi aşırı aktiftir. Akran baskısı, prefrontal korteks tam olgunlaşmadığı için çok güçlüdür.'
+        },
+        {
+          soru: 'Günde kaç saat ekranla (telefon/bilgisayar/tablet) vakit geçirirsin?',
+          secenekler: [
+            { text: '6 saatten fazla', puan: 4 },
+            { text: '4-6 saat', puan: 3 },
+            { text: '2-4 saat', puan: 1 },
+            { text: '2 saatten az', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Bir şeyi çok istediğinde bekleyebilir misin?',
+          secenekler: [
+            { text: 'Hayır, hemen olmalı', puan: 4 },
+            { text: 'Çok zorlanırım ama bazen beklerim', puan: 3 },
+            { text: 'Genelde bekleyebilirim', puan: 1 },
+            { text: 'Sabırlıyımdır, beklemek beni güçlendirir', puan: 0 },
+          ],
+          aciklama: 'Ergen beyni anlık ödülü 2-3 kat daha güçlü algılar. Bu, dopamin sisteminin aşırı aktivitesinden kaynaklanır.'
+        },
+        {
+          soru: 'Riskli bir şey yapmak (hız, tehlikeli oyun, kural ihlali) seni heyecanlandırır mı?',
+          secenekler: [
+            { text: 'Evet, adrenalin harika', puan: 4 },
+            { text: 'Bazen, arkadaşlarla birlikteyken', puan: 3 },
+            { text: 'Nadiren, genelde temkinliyim', puan: 1 },
+            { text: 'Hayır, gereksiz risk almam', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Sosyal medyada kaç takipçin olduğu seni ne kadar ilgilendirir?',
+          secenekler: [
+            { text: 'Çok, sürekli kontrol ederim', puan: 4 },
+            { text: 'Önemserim, beğenilere bakarım', puan: 3 },
+            { text: 'Biraz ilgilendirir ama takıntım yok', puan: 1 },
+            { text: 'Hiç ilgilendirmez', puan: 0 },
+          ],
+          aciklama: 'Takipçi sayısı, serotonin üzerinden çalışan statü hiyerarşisinin dijital versiyonudur.'
+        },
+        {
+          soru: 'Sınavlara çalışmak yerine genelde ne yaparsın?',
+          secenekler: [
+            { text: 'Oyun oynar veya sosyal medyada takılırım', puan: 4 },
+            { text: 'Son güne bırakır, son anda çalışırım', puan: 3 },
+            { text: 'Plan yaparım ama bazen uygulamam', puan: 1 },
+            { text: 'Düzenli çalışırım', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Ailenle aranız nasıl?',
+          secenekler: [
+            { text: 'Çok çatışmalı, sürekli kavga', puan: 4 },
+            { text: 'Bazen gergin ama idare ediyoruz', puan: 2 },
+            { text: 'Genel olarak iyi, ara sıra sorun', puan: 1 },
+            { text: 'Çok iyi, birbirimize destek oluruz', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Uyku düzenin nasıl?',
+          secenekler: [
+            { text: 'Çok düzensiz, gece geç yatar sabah zor kalkarım', puan: 4 },
+            { text: 'Düzensiz ama idare eder', puan: 3 },
+            { text: 'Genelde düzenli, bazen bozulur', puan: 1 },
+            { text: 'Düzenli uyurum', puan: 0 },
+          ],
+          aciklama: 'Uyku düzensizliği, ergen beyninde prefrontal korteksi doğrudan zayıflatır. İrade gücünün en temel yakıtı uykudur.'
+        },
+        {
+          soru: 'Stres veya üzüntü anında ne yaparsın?',
+          secenekler: [
+            { text: 'Yeme, ekran veya zararlı alışkanlıklara sığınırım', puan: 4 },
+            { text: 'İçime kapanırım', puan: 3 },
+            { text: 'Bir yakınıma anlatırım', puan: 1 },
+            { text: 'Dua, spor veya bilinçli bir aktiviteye yönelirim', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Gelecekle ilgili planların var mı?',
+          secenekler: [
+            { text: 'Hiç düşünmüyorum, anı yaşıyorum', puan: 4 },
+            { text: 'Belirsiz hayallerim var ama plan yok', puan: 3 },
+            { text: 'Kabaca biliyorum ne istediğimi', puan: 1 },
+            { text: 'Net hedeflerim ve planlarım var', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Sabah namazına kalkabiliyor musun?',
+          secenekler: [
+            { text: 'Hiç kalkmıyorum', puan: 4 },
+            { text: 'Çok nadir', puan: 3 },
+            { text: 'Çoğunlukla ama bazen kaçırırım', puan: 1 },
+            { text: 'Her gün kalkıyorum', puan: 0 },
+          ],
+          aciklama: 'Sabah namazı, nefse en zor gelen ibadetlerden biridir. Bu küçük zafer, tüm günün irade tonunu belirler.'
+        },
+        {
+          soru: 'Kendine güvenin nasıl?',
+          secenekler: [
+            { text: 'Çok düşük, kendimi yetersiz görürüm', puan: 3 },
+            { text: 'Dalgalanır, bazen çok iyi bazen çok kötü', puan: 4 },
+            { text: 'Genel olarak iyi, bazı alanlarda zorlanırım', puan: 1 },
+            { text: 'Sağlıklı bir öz güvenim var', puan: 0 },
+          ]
+        },
+      ],
+      resultRanges: [
+        { min: 0, max: 20, label: 'Güçlü Temel', text: 'Genç nefsin için sağlam bir zemin kurmuşsun. Bu bilinç ve disiplini koru — en büyük yatırımın kendine.', emoji: '💪' },
+        { min: 21, max: 45, label: 'Dikkatli Seyir', text: 'Bazı riskli alanlar var ama genel olarak iyi gidiyorsun. Zayıf noktalarını güçlendir, çevrenle ilgili bilinçli seçimler yap.', emoji: '🧭' },
+        { min: 46, max: 70, label: 'Aktif Risk Bölgesi', text: 'Birçok alanda genç nefsin zorlanıyor. Bu normal — ergen beyni henüz olgunlaşıyor. Ama bilinçli müdahale şart, şimdi atılan temeller ömür boyu etkili.', emoji: '🔥' },
+        { min: 71, max: 100, label: 'Yoğun Risk', text: 'Neredeyse tüm alanlarda ciddi risk var. Ama umutsuz olma — ergen beyni en çok değişime açık beyindir. Bir mentor, bir plan, bir adım ile başla.', emoji: '🚨' },
+      ]
+    });
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nefs Günlüğü — NöroTerbiye</title>
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .rating-group { display:flex; flex-direction:column; gap:16px; margin-bottom:24px; }
+    .rating-row { display:flex; align-items:center; gap:12px; }
+    .rating-label { min-width:100px; font-size:0.88rem; font-weight:600; }
+    .rating-buttons { display:flex; gap:4px; }
+    .rating-btn { width:36px; height:36px; border-radius:var(--radius-md); border:1px solid var(--border); background:var(--surface); color:var(--text); font-weight:700; font-size:0.85rem; cursor:pointer; transition:all 0.15s; font-family:var(--font-sans); }
+    .rating-btn:hover { border-color:var(--nt-primary); }
+    .rating-btn.active-low { background:var(--nt-green-soft); border-color:var(--nt-green); color:var(--nt-green); }
+    .rating-btn.active-mid { background:var(--nt-amber-soft); border-color:var(--nt-amber); color:var(--nt-amber); }
+    .rating-btn.active-high { background:var(--nt-red-soft); border-color:var(--nt-red); color:var(--nt-red); }
+    .chart-container { margin-top:32px; }
+    .chart-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+    .chart-label { min-width:80px; font-size:0.72rem; color:var(--text-secondary); text-align:right; }
+    .chart-bars { display:flex; gap:3px; flex:1; }
+    .chart-bar { height:24px; border-radius:3px; transition:width 0.4s; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:700; color:#fff; min-width:0; }
+    .day-labels { display:flex; gap:3px; margin-left:88px; margin-bottom:4px; }
+    .day-label { flex:1; text-align:center; font-size:0.65rem; color:var(--muted); }
+    .history-entry { padding:12px 16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); margin-bottom:8px; font-size:0.82rem; }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Araç</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">📓 Nefs Günlüğü</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Günlük Şehvet, Şöhret ve Gadab seviyelerini kaydet. Haftalık eğilimleri gör.
+      </p>
+
+      <div class="nt-card nt-fade-in" style="padding:28px;animation-delay:0.15s">
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:16px">Bugünün Kaydı</h3>
+        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:16px" id="today-label"></p>
+
+        <div class="rating-group">
+          <div class="rating-row">
+            <span class="rating-label">🔥 Şehvet</span>
+            <div class="rating-buttons" id="rate-sehvet"></div>
+          </div>
+          <div class="rating-row">
+            <span class="rating-label">👑 Şöhret</span>
+            <div class="rating-buttons" id="rate-sohret"></div>
+          </div>
+          <div class="rating-row">
+            <span class="rating-label">💢 Gadab</span>
+            <div class="rating-buttons" id="rate-gadab"></div>
+          </div>
+        </div>
+
+        <div class="nt-form-group">
+          <label class="nt-form-label">Bugünün zor anı</label>
+          <textarea class="nt-textarea" id="f-note" placeholder="Ne oldu? Ne hissettin? Ne yaptın?" style="min-height:80px"></textarea>
+        </div>
+
+        <button class="nt-btn nt-btn-primary" onclick="saveEntry()">Günü Kaydet</button>
+      </div>
+
+      <!-- Weekly Chart -->
+      <div class="chart-container nt-fade-in" style="animation-delay:0.2s">
+        <h3 class="nt-section-title">📊 Haftalık Eğilim</h3>
+        <div id="weekly-chart"></div>
+      </div>
+
+      <!-- History -->
+      <div style="margin-top:32px">
+        <h3 class="nt-section-title">📜 Geçmiş Kayıtlar</h3>
+        <div id="history-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const ratings = { sehvet: 0, sohret: 0, gadab: 0 };
+    let entries = NT.load('nefs_gunlugu', []);
+    const today = new Date().toLocaleDateString('tr-TR');
+    document.getElementById('today-label').textContent = today;
+
+    // Check if today already has an entry
+    const todayEntry = entries.find(e => e.tarih === today);
+    if (todayEntry) {
+      ratings.sehvet = todayEntry.sehvet;
+      ratings.sohret = todayEntry.sohret;
+      ratings.gadab = todayEntry.gadab;
+      document.getElementById('f-note').value = todayEntry.not || '';
+    }
+
+    function renderRating(containerId, key) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'rating-btn';
+        btn.textContent = i;
+        if (ratings[key] === i) {
+          btn.classList.add(i <= 2 ? 'active-low' : i <= 3 ? 'active-mid' : 'active-high');
+        }
+        btn.onclick = () => { ratings[key] = i; renderAllRatings(); };
+        container.appendChild(btn);
+      }
+    }
+
+    function renderAllRatings() {
+      renderRating('rate-sehvet', 'sehvet');
+      renderRating('rate-sohret', 'sohret');
+      renderRating('rate-gadab', 'gadab');
+    }
+
+    function saveEntry() {
+      if (!ratings.sehvet || !ratings.sohret || !ratings.gadab) {
+        NT.toast('Her bir kategoriyi puanla'); return;
+      }
+      const note = document.getElementById('f-note').value.trim();
+      const existing = entries.findIndex(e => e.tarih === today);
+      const entry = { tarih: today, sehvet: ratings.sehvet, sohret: ratings.sohret, gadab: ratings.gadab, not: note, ts: Date.now() };
+      if (existing >= 0) entries[existing] = entry;
+      else entries.push(entry);
+      NT.save('nefs_gunlugu', entries);
+      renderChart();
+      renderHistory();
+      NT.toast('Kayıt kaydedildi!');
+    }
+
+    function renderChart() {
+      const chart = document.getElementById('weekly-chart');
+      const last7 = entries.slice(-7);
+      if (last7.length === 0) {
+        chart.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;text-align:center;padding:24px">Henüz veri yok. İlk kaydını ekle.</p>';
+        return;
+      }
+
+      const days = last7.map(e => e.tarih.split('.').slice(0,2).join('.'));
+      const maxVal = 5;
+
+      let html = '<div class="day-labels">' + days.map(d => `<div class="day-label">${d}</div>`).join('') + '</div>';
+
+      const categories = [
+        { key: 'sehvet', label: '🔥 Şehvet', color: 'var(--nt-orange)' },
+        { key: 'sohret', label: '👑 Şöhret', color: 'var(--nt-purple)' },
+        { key: 'gadab', label: '💢 Gadab', color: 'var(--nt-red)' },
+      ];
+
+      categories.forEach(cat => {
+        html += `<div class="chart-row">
+          <div class="chart-label">${cat.label}</div>
+          <div class="chart-bars">
+            ${last7.map(e => {
+              const val = e[cat.key];
+              const w = (val / maxVal) * 100;
+              return `<div class="chart-bar" style="width:${w}%;background:${cat.color}">${val}</div>`;
+            }).join('')}
+          </div>
+        </div>`;
+      });
+
+      chart.innerHTML = html;
+    }
+
+    function renderHistory() {
+      const list = document.getElementById('history-list');
+      const sorted = [...entries].reverse().slice(0, 14);
+      if (sorted.length === 0) {
+        list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem">Henüz kayıt yok.</p>';
+        return;
+      }
+      list.innerHTML = sorted.map(e => `
+        <div class="history-entry">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <strong>${e.tarih}</strong>
+            <span style="font-size:0.75rem">🔥${e.sehvet} 👑${e.sohret} 💢${e.gadab}</span>
+          </div>
+          ${e.not ? `<div style="color:var(--text-secondary);font-size:0.8rem">${e.not}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    renderAllRatings();
+    renderChart();
+    renderHistory();
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

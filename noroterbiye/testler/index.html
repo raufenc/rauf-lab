@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Testler — NöroTerbiye</title>
+  <meta name="description" content="NöroTerbiye testleri: Modern Hile Risk Radarı, Hedonik Açlık Testi, Ekran Baskısı ve daha fazlası. Kendini tanı.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap">
+      <h1 class="nt-title nt-fade-in" style="font-size:2rem;margin-bottom:8px">📋 Testler & Quizler</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:8px">
+        Kendini tanı, farkındalık oluştur. Bu testler teşhis koymaz; sana ayna tutar.
+      </p>
+      <p class="nt-fade-in" style="animation-delay:0.15s;font-size:0.78rem;color:var(--muted);margin-bottom:32px">
+        Her sonuç bir etiket değil, bir başlangıç noktasıdır.
+      </p>
+
+      <div class="nt-grid nt-grid-2 nt-stagger" id="test-list"></div>
+
+      <div style="margin-top:48px;padding:32px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg)">
+        <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:12px">📝 Kavram Quizleri</h3>
+        <p style="font-size:0.88rem;color:var(--text-secondary);margin-bottom:16px">
+          Sözlükteki kavramları ne kadar biliyorsun? 101 sorudan oluşan soru bankasıyla bilgini test et.
+        </p>
+        <a href="/noroterbiye/testler/kavram-quiz/" class="nt-btn nt-btn-primary nt-btn-sm">Kavram Quizine Başla</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/data/testler.js"></script>
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const ikonlar = {
+      'TS01':'🎯','TS02':'🍔','TS03':'📱','TS04':'⏳','TS05':'👥','TS06':'🧬',
+      'TS07':'🌍','TS08':'👶','TS09':'🔥','TS10':'⚖️','TS11':'📚','TS12':'📝',
+      'TS13':'🔄','TS14':'🌙','TS15':'💎','TS16':'🧠'
+    };
+
+    const slugMap = {
+      'TS01': 'hile-risk-radari',
+      'TS02': 'hedonik-aclik',
+      'TS03': 'ekran-baskisi',
+      'TS04': 'savsaklama-profili',
+      'TS05': 'cevre-etkisi',
+      'TS06': 'mizac-kimya',
+      'TS07': 'bireyci-kolektivist',
+      'TS08': 'ebeveynlik-tarzi',
+      'TS09': 'genc-risk-radari',
+      'TS10': 'ssg-checkup',
+      'TS11': 'kavram-quiz',
+      'TS12': 'bolum-sonu-quiz',
+      'TS13': 'okuma-oncesi-sonrasi',
+      'TS14': 'ramazan-surdurulebilirlik',
+      'TS15': 'dopamin-kaynak-haritasi',
+    };
+
+    const container = document.getElementById('test-list');
+    TESTLER_DATA.forEach(t => {
+      const slug = slugMap[t.id] || t.id.toLowerCase();
+      container.innerHTML += `
+        <a href="/noroterbiye/testler/${slug}/" class="nt-card nt-card-clickable" style="text-decoration:none;color:var(--text)">
+          <div style="display:flex;gap:16px;align-items:start">
+            <div style="font-size:2.2rem;flex-shrink:0">${ikonlar[t.id] || '📋'}</div>
+            <div style="flex:1">
+              <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:6px">${t.ad}</h3>
+              <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.5;margin-bottom:10px">${t.amac}</p>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <span class="nt-tag">${t.kitle}</span>
+                <span class="nt-tag nt-tag-primary">${t.tema}</span>
+              </div>
+            </div>
+          </div>
+        </a>
+      `;
+    });
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

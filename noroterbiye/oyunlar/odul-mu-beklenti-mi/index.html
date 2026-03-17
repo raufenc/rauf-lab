@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ödül mü Beklenti mi? — NöroTerbiye</title>
+  <meta name="description" content="Dopamin ödülde mi yoksa beklentide mi ateşlenir? Tahmin et ve öğren.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎰</text></svg>">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .scenario-card { padding: 28px; text-align: center; margin-bottom: 20px; }
+    .scenario-emoji { font-size: 3rem; margin-bottom: 12px; }
+    .scenario-text { font-size: 1.05rem; line-height: 1.6; margin-bottom: 20px; }
+    .choice-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .choice-btn { padding: 14px 24px; border-radius: var(--radius-lg); border: 2px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all var(--transition-fast); font-family: var(--font-sans); min-width: 160px; }
+    .choice-btn:hover { border-color: var(--nt-primary); background: var(--nt-primary-soft); }
+    .choice-btn.correct { border-color: var(--nt-green); background: var(--nt-green-soft); }
+    .choice-btn.wrong { border-color: var(--nt-red); background: var(--nt-red-soft); }
+    .choice-btn:disabled { cursor: default; opacity: 0.8; }
+    .reveal { margin-top: 16px; padding: 16px; border-radius: var(--radius-md); font-size: 0.88rem; line-height: 1.6; }
+    .reveal.show { background: var(--surface2); border-left: 3px solid var(--nt-primary); }
+    .next-btn { margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+
+      <div id="intro" class="nt-fade-in">
+        <h1 class="nt-title" style="font-size:2rem;margin-bottom:12px">🎰 Ödül mü Beklenti mi?</h1>
+        <p class="nt-subtitle" style="margin-bottom:20px">Dopamin gerçekten ne zaman ateşlenir?</p>
+        <div class="nt-card" style="margin-bottom:24px">
+          <h3 style="font-weight:700;margin-bottom:8px">Nasıl Oynanır?</h3>
+          <ul style="font-size:0.88rem;color:var(--text-secondary);line-height:1.8;padding-left:20px">
+            <li>Bir senaryo okuyacaksın</li>
+            <li>Dopaminin <strong>ödülde mi</strong> yoksa <strong>beklentide mi</strong> ateşlendiğini tahmin et</li>
+            <li>Bazı senaryolarda <strong>her ikisinde de</strong> olabilir!</li>
+            <li>10 senaryo, doğru tahminler puan kazandırır</li>
+          </ul>
+        </div>
+        <button class="nt-btn nt-btn-primary nt-btn-lg" onclick="startGame()">Oyna</button>
+      </div>
+
+      <div id="game" style="display:none">
+        <div class="nt-quiz-progress"><div class="nt-quiz-progress-bar" id="progress"></div></div>
+        <div style="text-align:center;font-size:0.8rem;color:var(--muted);margin-bottom:16px" id="counter"></div>
+        <div class="nt-card scenario-card" id="scenario"></div>
+      </div>
+
+      <div id="result" style="display:none">
+        <div class="nt-card nt-result">
+          <div class="nt-result-score" id="final-score"></div>
+          <div class="nt-result-label" id="final-label"></div>
+          <div class="nt-result-text" id="final-text"></div>
+          <div class="nt-result-actions">
+            <button class="nt-btn nt-btn-primary" onclick="location.reload()">Tekrar Oyna</button>
+            <a href="/noroterbiye/oyunlar/" class="nt-btn nt-btn-secondary">Diğer Oyunlar</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const scenarios = [
+      { emoji: '📱', text: 'Telefonuna bildirim geldi. Henüz açmadın ama merak ediyorsun. Dopamin ne zaman ateşlendi?', answer: 'beklenti', info: 'Dopamin bildirimi açmadan ÖNCE, merak anında zirve yapar. Açtığında çoğunlukla hayal kırıklığı olur.' },
+      { emoji: '🍕', text: 'Pizza siparişi verdin, 30 dakika bekliyorsun. Pizza geldi ve ilk lokmayı aldın.', answer: 'beklenti', info: 'En yüksek dopamin bekleme sürecindedir. İlk lokma güzeldir ama beklentinin altında kalır.' },
+      { emoji: '🎁', text: 'Doğum günün. Sürpriz bir hediye var ama ne olduğunu bilmiyorsun.', answer: 'beklenti', info: 'Sürpriz beklentisi dopamini patlatır. Hediyeyi açtığında dopamin zaten düşmeye başlamıştır.' },
+      { emoji: '🏆', text: 'Haftalardır çalıştığın proje sonunda kabul edildi. Sonucu öğrendiğin an.', answer: 'ödül', info: 'Uzun emek sonrası gelen başarı gerçek bir ödül tepkisi yaratır. Bu sağlıklı dopamindir.' },
+      { emoji: '🎰', text: 'Kumar makinesinde kolu çektin. Çarklar dönüyor...', answer: 'beklenti', info: 'Kumar tasarımının sırrı budur: Çarkların dönme anı, kazanmaktan daha fazla dopamin verir.' },
+      { emoji: '🤲', text: 'İhtiyacı olan birine yardım ettin. Gülümsemesini gördün.', answer: 'ödül', info: 'Yardım etmenin verdiği tatmin gerçek bir ödül tepkisidir. "Helper\'s high" buna denir.' },
+      { emoji: '🛒', text: '"Sepete Ekle" butonuna bastın. Kargo 2 gün sonra gelecek.', answer: 'beklenti', info: 'Satın alma kararı anı en yüksek dopamindir. Ürün geldiğinde heyecan çoktan düşmüştür.' },
+      { emoji: '📺', text: 'Dizide büyük bir sır açıklanacak. "Sonraki bölüm 5 saniye içinde başlıyor..."', answer: 'beklenti', info: 'Cliffhanger ve autoplay beklenti dopaminini sömürür. Bilgiyi öğrenince tatmin kısa sürer.' },
+      { emoji: '🌅', text: 'Sabah erkenden kalkıp namaz kıldın. İçinde bir huzur var.', answer: 'ödül', info: 'Manevi pratiklerin verdiği huzur serotonin ve doğal dopaminin birlikte çalışmasıdır. Gerçek tatmindir.' },
+      { emoji: '📊', text: 'Paylaştığın fotoğrafa beğeni geliyor. Sürekli kontrol ediyorsun.', answer: 'beklenti', info: 'Her kontrol anı yeni bir beklenti dopamini ateşler. Beğeni sayısı asla "yeterli" hissettirmez.' },
+    ];
+
+    let current = 0, score = 0, shuffled = [];
+
+    function startGame() {
+      document.getElementById('intro').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+      shuffled = [...scenarios].sort(() => Math.random() - 0.5);
+      showScenario();
+    }
+
+    function showScenario() {
+      if (current >= shuffled.length) return endGame();
+      document.getElementById('progress').style.width = (current / shuffled.length * 100) + '%';
+      document.getElementById('counter').textContent = `${current + 1} / ${shuffled.length}`;
+      const s = shuffled[current];
+      document.getElementById('scenario').innerHTML = `
+        <div class="scenario-emoji">${s.emoji}</div>
+        <div class="scenario-text">${s.text}</div>
+        <div class="choice-btns">
+          <button class="choice-btn" onclick="choose('beklenti',this)">🧠 Beklentide</button>
+          <button class="choice-btn" onclick="choose('ödül',this)">🎁 Ödülde</button>
+        </div>
+        <div class="reveal" id="reveal"></div>
+      `;
+    }
+
+    function choose(answer, btn) {
+      const s = shuffled[current];
+      const correct = s.answer === answer;
+      if (correct) score++;
+      const btns = document.querySelectorAll('.choice-btn');
+      btns.forEach(b => {
+        b.disabled = true;
+        const val = b.textContent.includes('Beklenti') ? 'beklenti' : 'ödül';
+        if (val === s.answer) b.classList.add('correct');
+        else if (b === btn && !correct) b.classList.add('wrong');
+      });
+      const reveal = document.getElementById('reveal');
+      reveal.className = 'reveal show';
+      reveal.innerHTML = `${correct ? '✅ Doğru!' : '❌ Yanlış!'} ${s.info}<br><button class="nt-btn nt-btn-primary nt-btn-sm next-btn" onclick="nextQ()">Sonraki →</button>`;
+    }
+
+    function nextQ() { current++; showScenario(); }
+
+    function endGame() {
+      document.getElementById('game').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      const r = NT.calcScore(score, shuffled.length);
+      document.getElementById('final-score').textContent = r.pct + '%';
+      document.getElementById('final-label').textContent = r.label;
+      document.getElementById('final-text').textContent = r.text + ' Dopamin çoğunlukla ödülde değil, beklentide ateşlenir. Bu farkındalık nefsi tanımanın anahtarıdır.';
+      NT.save('odul_beklenti', { score, total: shuffled.length, pct: r.pct, date: new Date().toISOString() });
+    }
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

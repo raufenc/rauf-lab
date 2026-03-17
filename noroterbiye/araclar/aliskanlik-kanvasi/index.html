@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alışkanlık Dönüştürme Kanvası — NöroTerbiye</title>
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .canvas-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
+    .canvas-col { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px; min-height:200px; }
+    .canvas-col h3 { font-size:0.85rem; font-weight:700; margin-bottom:12px; text-align:center; }
+    .canvas-col .color-bar { height:4px; border-radius:2px; margin-bottom:12px; }
+    .canvas-item { padding:10px 12px; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-md); font-size:0.82rem; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
+    .canvas-item button { background:none; border:none; cursor:pointer; color:var(--muted); font-size:0.9rem; }
+    .canvas-item button:hover { color:var(--nt-red); }
+    @media(max-width:768px) { .canvas-grid { grid-template-columns:1fr 1fr; } }
+    @media(max-width:480px) { .canvas-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Araç</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">🔄 Alışkanlık Dönüştürme Kanvası</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:24px">
+        Yanlış davranışı yapı sökümüne uğrat. 4 sütunlu kanvasta tetikleyiciden alternatife kadar her şeyi gör.
+      </p>
+
+      <div class="nt-form-group nt-fade-in" style="animation-delay:0.12s;max-width:400px">
+        <label class="nt-form-label">Hazır şablondan yükle</label>
+        <select class="nt-select" id="tpl-select">
+          <option value="">-- Şablon seçin --</option>
+        </select>
+      </div>
+
+      <div class="canvas-grid nt-fade-in" style="animation-delay:0.15s">
+        <div class="canvas-col" id="col-tetik">
+          <div class="color-bar" style="background:var(--nt-red)"></div>
+          <h3>🎯 Tetikleyici</h3>
+          <div class="col-items"></div>
+          <input class="nt-input" style="font-size:0.8rem;padding:8px 10px;margin-top:8px" placeholder="Ekle..." onkeydown="if(event.key==='Enter')addItem('col-tetik',this)">
+        </div>
+        <div class="canvas-col" id="col-arzu">
+          <div class="color-bar" style="background:var(--nt-amber)"></div>
+          <h3>💎 Temel Arzu</h3>
+          <div class="col-items"></div>
+          <input class="nt-input" style="font-size:0.8rem;padding:8px 10px;margin-top:8px" placeholder="Ekle..." onkeydown="if(event.key==='Enter')addItem('col-arzu',this)">
+        </div>
+        <div class="canvas-col" id="col-yanlis">
+          <div class="color-bar" style="background:var(--nt-rose)"></div>
+          <h3>❌ Yanlış Davranış</h3>
+          <div class="col-items"></div>
+          <input class="nt-input" style="font-size:0.8rem;padding:8px 10px;margin-top:8px" placeholder="Ekle..." onkeydown="if(event.key==='Enter')addItem('col-yanlis',this)">
+        </div>
+        <div class="canvas-col" id="col-alt">
+          <div class="color-bar" style="background:var(--nt-green)"></div>
+          <h3>✅ Alternatif</h3>
+          <div class="col-items"></div>
+          <input class="nt-input" style="font-size:0.8rem;padding:8px 10px;margin-top:8px" placeholder="Ekle..." onkeydown="if(event.key==='Enter')addItem('col-alt',this)">
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="nt-btn nt-btn-primary nt-btn-sm" onclick="saveCanvas()">💾 Kaydet</button>
+        <button class="nt-btn nt-btn-secondary nt-btn-sm" onclick="window.print()">🖨️ Yazdır</button>
+        <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="clearCanvas()">Temizle</button>
+      </div>
+
+      <h2 class="nt-section-title" style="margin-top:48px">📁 Kayıtlı Kanvaslar</h2>
+      <div id="saved-list"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/data/sablonlar.js"></script>
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const cols = { 'col-tetik':[], 'col-arzu':[], 'col-yanlis':[], 'col-alt':[] };
+    const colKeys = { 'col-tetik':'tetikleyici', 'col-arzu':'temelArzu', 'col-yanlis':'yanlisDavranis', 'col-alt':'alternatif' };
+
+    // Populate templates
+    const tplSel = document.getElementById('tpl-select');
+    SABLONLAR_DATA.forEach(s => {
+      if (s.id === 'ID') return;
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = s.hedef;
+      tplSel.appendChild(opt);
+    });
+
+    tplSel.addEventListener('change', () => {
+      const s = SABLONLAR_DATA.find(x => x.id === tplSel.value);
+      if (!s) return;
+      clearCanvas();
+      cols['col-tetik'] = [s.tetikleyici];
+      cols['col-arzu'] = [s.temelArzu];
+      cols['col-yanlis'] = [s.yanlisDavranis];
+      cols['col-alt'] = [s.alternatif];
+      renderCols();
+    });
+
+    function addItem(colId, input) {
+      const val = input.value.trim();
+      if (!val) return;
+      cols[colId].push(val);
+      input.value = '';
+      renderCols();
+    }
+
+    function removeItem(colId, idx) {
+      cols[colId].splice(idx, 1);
+      renderCols();
+    }
+
+    function renderCols() {
+      Object.keys(cols).forEach(colId => {
+        const container = document.querySelector(`#${colId} .col-items`);
+        container.innerHTML = cols[colId].map((item, i) =>
+          `<div class="canvas-item"><span>${item}</span><button onclick="removeItem('${colId}',${i})">×</button></div>`
+        ).join('');
+      });
+    }
+
+    function clearCanvas() {
+      Object.keys(cols).forEach(k => cols[k] = []);
+      renderCols();
+    }
+
+    let savedCanvases = NT.load('kanvaslar', []);
+
+    function saveCanvas() {
+      const hasItems = Object.values(cols).some(arr => arr.length > 0);
+      if (!hasItems) { NT.toast('Kanvas boş, bir şey ekle'); return; }
+      savedCanvases.push({
+        id: Date.now(),
+        tarih: new Date().toLocaleDateString('tr-TR'),
+        data: JSON.parse(JSON.stringify(cols))
+      });
+      NT.save('kanvaslar', savedCanvases);
+      renderSaved();
+      NT.toast('Kanvas kaydedildi!');
+    }
+
+    function loadCanvas(id) {
+      const c = savedCanvases.find(x => x.id === id);
+      if (!c) return;
+      Object.keys(cols).forEach(k => cols[k] = [...(c.data[k] || [])]);
+      renderCols();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteCanvas(id) {
+      savedCanvases = savedCanvases.filter(x => x.id !== id);
+      NT.save('kanvaslar', savedCanvases);
+      renderSaved();
+    }
+
+    function renderSaved() {
+      const list = document.getElementById('saved-list');
+      if (savedCanvases.length === 0) {
+        list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem">Henüz kayıtlı kanvas yok.</p>';
+        return;
+      }
+      list.innerHTML = savedCanvases.map(c => {
+        const summary = Object.values(c.data).flat().slice(0, 3).join(', ');
+        return `<div class="nt-card" style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <span style="font-size:0.82rem;font-weight:600">${c.tarih}</span>
+              <span style="font-size:0.78rem;color:var(--text-secondary);margin-left:8px">${summary}...</span>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="loadCanvas(${c.id})">📂</button>
+              <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="deleteCanvas(${c.id})">🗑️</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    renderCols();
+    renderSaved();
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

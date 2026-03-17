@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mikro Tefekkür — NöroTerbiye</title>
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .prompt-card { text-align:center; padding:48px 32px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-xl); margin-bottom:24px; position:relative; overflow:hidden; }
+    .prompt-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg,var(--nt-primary),var(--nt-cyan)); }
+    .prompt-text { font-size:1.3rem; font-weight:600; line-height:1.6; margin-bottom:24px; max-width:480px; margin-left:auto; margin-right:auto; }
+    .prompt-category { font-size:0.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:16px; }
+    .timer-display { font-size:3.5rem; font-weight:800; color:var(--nt-primary); font-variant-numeric:tabular-nums; margin-bottom:16px; }
+    .timer-ring { width:120px; height:120px; margin:0 auto 16px; position:relative; }
+    .timer-ring svg { transform:rotate(-90deg); }
+    .timer-ring circle { fill:none; stroke-width:4; }
+    .timer-ring .bg { stroke:var(--surface2); }
+    .timer-ring .fg { stroke:var(--nt-primary); stroke-linecap:round; transition:stroke-dashoffset 1s linear; }
+    .history-item { padding:14px 18px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); margin-bottom:8px; }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Araç</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">🧘 Mikro Tefekkür</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Günde 2 dakika. Bir soru, bir düşünce, bir farkındalık.
+      </p>
+
+      <!-- Prompt Card -->
+      <div class="prompt-card nt-fade-in" style="animation-delay:0.15s" id="prompt-card">
+        <div class="prompt-category" id="prompt-cat"></div>
+        <div class="prompt-text" id="prompt-text"></div>
+        <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="newPrompt()">🔄 Başka soru</button>
+      </div>
+
+      <!-- Timer -->
+      <div class="nt-card nt-fade-in" style="padding:32px;text-align:center;animation-delay:0.2s">
+        <div class="timer-display" id="timer-display">2:00</div>
+        <div style="display:flex;gap:10px;justify-content:center;margin-bottom:20px">
+          <button class="nt-btn nt-btn-primary nt-btn-sm" id="timer-btn" onclick="toggleTimer()">▶ Başlat</button>
+          <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="resetTimer()">Sıfırla</button>
+        </div>
+        <div class="nt-form-group" style="margin-top:16px">
+          <label class="nt-form-label">Düşünceni yaz</label>
+          <textarea class="nt-textarea" id="f-reflection" placeholder="Bu soru sana ne düşündürdü?"></textarea>
+        </div>
+        <button class="nt-btn nt-btn-primary" onclick="saveReflection()">💾 Kaydet</button>
+      </div>
+
+      <!-- History -->
+      <h3 class="nt-section-title" style="margin-top:40px">📜 Geçmiş Tefekkürler</h3>
+      <div id="history-list"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const prompts = [
+      { cat: 'Nefs', text: 'Bugün nefsine en çok hangi konuda boyun eğdin?' },
+      { cat: 'Nefs', text: 'Son yaptığın "istemediğin halde yaptığın" şey neydi?' },
+      { cat: 'Şükür', text: 'Bugün fark etmediğin ama aslında sahip olduğun 3 nimet ne?' },
+      { cat: 'Şükür', text: 'Eğer bu sabah uyanmasaydın, dün ne yapmış olmak isterdin?' },
+      { cat: 'Dopamin', text: 'Bugün en çok dopamin aldığın an hangisiydi? Helal miydi, haram mıydı?' },
+      { cat: 'Dopamin', text: 'Telefonunu açtığında ne arıyordun, ne buldun?' },
+      { cat: 'Çevre', text: 'Bugün kiminle vakit geçirdin? O kişi seni yukarı mı çekti, aşağı mı?' },
+      { cat: 'Çevre', text: 'Çevrende seni en çok etkileyen 3 kişi kim? Neden?' },
+      { cat: 'Gadab', text: 'Bugün öfkelendin mi? İlk yükselişi fark edebildin mi?' },
+      { cat: 'Gadab', text: 'Sinirlendiğinde vücudunda ne hissediyorsun? O anı tanıyabiliyor musun?' },
+      { cat: 'Şöhret', text: 'Bugün birinin takdirini kazanmak için ne yaptın?' },
+      { cat: 'Şöhret', text: 'Kimsenin görmediği bir iyilik yaptın mı bugün?' },
+      { cat: 'Şehvet', text: 'Bugün "hemen şimdi" istediğin ama aslında ihtiyacın olmayan şey neydi?' },
+      { cat: 'Şehvet', text: 'Can sıkıntısı anında ilk yaptığın şey ne? Neden o?' },
+      { cat: 'İrade', text: 'Bugün bir şeye "hayır" diyebildin mi? Nasıl hissettin?' },
+      { cat: 'İrade', text: 'İradeni en çok ne zaman güçlü hissediyorsun?' },
+      { cat: 'Amaç', text: '5 yıl sonra bugüne baktığında ne görmek istersin?' },
+      { cat: 'Amaç', text: 'Eğer hiçbir engel olmasaydı, yarın ne yapardın?' },
+      { cat: 'Ölüm', text: 'Eğer bu son günün olsaydı, bugün ne yapardın?' },
+      { cat: 'Ölüm', text: 'Kabrinde sana sorulacak sorulara bugünkü yaşamınla ne cevap verirsin?' },
+      { cat: 'Alışkanlık', text: 'Bugün otomatik pilotta yaptığın bir şey neydi? Farkında mıydın?' },
+      { cat: 'Alışkanlık', text: 'En çok tekrar ettiğin kötü alışkanlığın ne? Onu bir "tetikleyici" ile ilişkilendirebilir misin?' },
+      { cat: 'Sabır', text: 'Bugün sabretmen gereken bir an oldu mu? Nasıl başa çıktın?' },
+      { cat: 'Sabır', text: 'Sabır ile pasiflik arasındaki farkı kendi hayatından bir örnekle açıklayabilir misin?' },
+    ];
+
+    let currentPrompt = null;
+    let timerInterval = null;
+    let timeLeft = 120;
+    let isRunning = false;
+    let reflections = NT.load('tefekkurler', []);
+
+    function newPrompt() {
+      currentPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+      document.getElementById('prompt-cat').textContent = currentPrompt.cat;
+      document.getElementById('prompt-text').textContent = currentPrompt.text;
+    }
+
+    function toggleTimer() {
+      const btn = document.getElementById('timer-btn');
+      if (isRunning) {
+        clearInterval(timerInterval);
+        isRunning = false;
+        btn.textContent = '▶ Devam';
+      } else {
+        isRunning = true;
+        btn.textContent = '⏸ Duraklat';
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          updateTimerDisplay();
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            isRunning = false;
+            btn.textContent = '▶ Başlat';
+            NT.toast('Süre doldu!');
+          }
+        }, 1000);
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      isRunning = false;
+      timeLeft = 120;
+      updateTimerDisplay();
+      document.getElementById('timer-btn').textContent = '▶ Başlat';
+    }
+
+    function updateTimerDisplay() {
+      const min = Math.floor(timeLeft / 60);
+      const sec = timeLeft % 60;
+      document.getElementById('timer-display').textContent = `${min}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    function saveReflection() {
+      const text = document.getElementById('f-reflection').value.trim();
+      if (!text) { NT.toast('Bir şeyler yaz'); return; }
+      reflections.push({
+        id: Date.now(),
+        tarih: new Date().toLocaleDateString('tr-TR'),
+        saat: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+        prompt: currentPrompt ? currentPrompt.text : '',
+        cat: currentPrompt ? currentPrompt.cat : '',
+        text
+      });
+      NT.save('tefekkurler', reflections);
+      document.getElementById('f-reflection').value = '';
+      renderHistory();
+      NT.toast('Tefekkür kaydedildi!');
+    }
+
+    function deleteReflection(id) {
+      reflections = reflections.filter(r => r.id !== id);
+      NT.save('tefekkurler', reflections);
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const list = document.getElementById('history-list');
+      const sorted = [...reflections].reverse();
+      if (sorted.length === 0) {
+        list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem">Henüz kayıt yok. İlk tefekkürünü yap.</p>';
+        return;
+      }
+      list.innerHTML = sorted.map(r => `
+        <div class="history-item">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:0.75rem;color:var(--muted)">${r.tarih} ${r.saat}</span>
+            <span style="display:flex;align-items:center;gap:8px">
+              <span class="nt-tag nt-tag-primary" style="font-size:0.65rem">${r.cat}</span>
+              <button class="nt-btn nt-btn-ghost" style="padding:0;font-size:0.75rem" onclick="deleteReflection(${r.id})">×</button>
+            </span>
+          </div>
+          ${r.prompt ? `<p style="font-size:0.78rem;color:var(--text-secondary);font-style:italic;margin-bottom:6px">"${r.prompt}"</p>` : ''}
+          <p style="font-size:0.85rem;line-height:1.6">${r.text}</p>
+        </div>
+      `).join('');
+    }
+
+    // Init
+    newPrompt();
+    renderHistory();
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

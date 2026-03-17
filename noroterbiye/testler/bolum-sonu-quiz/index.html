@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bölüm Sonu Quizleri — NöroTerbiye</title>
+  <meta name="description" content="Kitap bölümlerini tema bazlı quiz ile test et. Dopamin, serotonin, nefs mertebeleri ve daha fazlası.">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Quiz</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">📝 Bölüm Sonu Quizleri</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:12px">
+        Tema seç, o konudaki sorularla bilgini test et.
+      </p>
+
+      <div id="tema-secici" class="nt-fade-in" style="animation-delay:0.15s;margin-bottom:32px">
+        <p class="nt-label" style="margin-bottom:12px">Tema Seç:</p>
+        <div id="tema-butonlari" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+          <button class="nt-btn nt-btn-secondary nt-btn-sm" onclick="bolumQuizBaslat(null, 10)">🎲 Karışık 10 Soru</button>
+          <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="bolumQuizBaslat(null, 20)">🎲 Karışık 20 Soru</button>
+        </div>
+      </div>
+
+      <div id="quiz-area" class="nt-card nt-fade-in" style="padding:32px;animation-delay:0.2s"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/data/sorular.js"></script>
+  <script src="/noroterbiye/js/common.js"></script>
+  <script src="/noroterbiye/js/test-engine.js"></script>
+  <script>
+    // Benzersiz temaları çıkar (header satırını atla)
+    const temalar = [...new Set(
+      SORU_BANKASI_DATA
+        .filter(s => s.id !== 'Soru ID' && s.tema && s.tema !== 'Tema')
+        .map(s => s.tema)
+    )].sort();
+
+    // Tema butonlarını oluştur
+    const butonlar = document.getElementById('tema-butonlari');
+    temalar.forEach(tema => {
+      const count = SORU_BANKASI_DATA.filter(s => s.tema === tema).length;
+      const btn = document.createElement('button');
+      btn.className = 'nt-btn nt-btn-ghost nt-btn-sm';
+      btn.textContent = `${tema} (${count})`;
+      btn.onclick = () => bolumQuizBaslat(tema);
+      butonlar.appendChild(btn);
+    });
+
+    function bolumQuizBaslat(tema, count) {
+      let sorular;
+      if (tema) {
+        sorular = SORU_BANKASI_DATA.filter(s => s.tema === tema && s.id !== 'Soru ID');
+        count = count || sorular.length;
+      } else {
+        sorular = SORU_BANKASI_DATA.filter(s => s.id !== 'Soru ID' && s.tema !== 'Tema');
+        count = count || 10;
+      }
+
+      if (sorular.length === 0) {
+        document.getElementById('quiz-area').innerHTML = '<p>Bu temada soru bulunamadı.</p>';
+        return;
+      }
+
+      // Tema seçici gizle
+      document.getElementById('tema-secici').style.display = 'none';
+
+      KavramQuiz.init(sorular, Math.min(count, sorular.length));
+    }
+
+    // İlk yüklemede boş quiz alanı
+    document.getElementById('quiz-area').innerHTML = '<p style="color:var(--muted);text-align:center">Yukarıdan bir tema seç veya karışık quiz başlat.</p>';
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kısa Kısa Bilgiler — NöroTerbiye</title>
+  <meta name="description" content="NöroTerbiye'den paylaşımlık kısa bilgi kartları. Dopamin, serotonin, modern tuzaklar ve daha fazlası.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🃏</text></svg>">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap">
+      <h1 class="nt-title nt-fade-in" style="font-size:2rem;margin-bottom:8px">🃏 Kısa Kısa Bilgiler</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:28px">
+        Her biri paylaşılabilir, her biri bir farkındalık kıvılcımı.
+      </p>
+
+      <div class="nt-search nt-fade-in" style="animation-delay:0.15s">
+        <span class="nt-search-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
+        <input type="text" id="search" placeholder="Kart ara..." autocomplete="off">
+      </div>
+
+      <div class="nt-filters nt-fade-in" style="animation-delay:0.2s" id="filters"></div>
+      <p id="count" class="nt-label" style="margin-bottom:16px"></p>
+      <div id="cards" class="nt-grid nt-grid-3"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/data/kisa-bilgiler.js"></script>
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    let activeFilter = 'Tümü';
+    const themes = ['Tümü', ...new Set(KISA_BILGILER_DATA.map(k => k.tema))];
+    const temaRenkler = { 'Biyoloji': 'green', 'Modern Tuzak': 'red', 'Nefs Türleri': 'purple', 'Terbiye': 'cyan', 'Çevre': 'amber' };
+
+    const filtersEl = document.getElementById('filters');
+    themes.forEach(t => {
+      const btn = document.createElement('button');
+      btn.className = 'nt-filter-btn' + (t === 'Tümü' ? ' active' : '');
+      btn.textContent = t;
+      btn.onclick = () => {
+        activeFilter = t;
+        filtersEl.querySelectorAll('.nt-filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
+      };
+      filtersEl.appendChild(btn);
+    });
+
+    function render() {
+      const q = document.getElementById('search').value;
+      let data = KISA_BILGILER_DATA;
+      if (activeFilter !== 'Tümü') data = data.filter(k => k.tema === activeFilter);
+      data = NT.filterBySearch(data, q, ['baslik', 'kisaBilgi', 'aciklama']);
+
+      document.getElementById('count').textContent = `${data.length} kart gösteriliyor`;
+
+      document.getElementById('cards').innerHTML = data.map(k => {
+        const renk = temaRenkler[k.tema] || 'primary';
+        return `
+          <div class="nt-info-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+              <span class="nt-tag nt-tag-${renk}">${k.tema}</span>
+              <button class="nt-btn nt-btn-ghost" style="padding:4px 8px;font-size:0.75rem" onclick="NT.share('${k.baslik.replace(/'/g,"\\'")} — NöroTerbiye', '${k.kisaBilgi.replace(/'/g,"\\'")}')">
+                Paylaş
+              </button>
+            </div>
+            <div class="nt-info-card-title">${k.baslik}</div>
+            <div class="nt-info-card-text">${k.kisaBilgi}</div>
+            ${k.aciklama ? `<p style="font-size:0.8rem;color:var(--muted2);line-height:1.5;font-style:italic">${k.aciklama}</p>` : ''}
+            ${k.ilgiliKavram ? `<div style="margin-top:10px"><a href="/noroterbiye/sozluk/#${k.ilgiliKavram.toLowerCase().replace(/\s+/g,'-')}" class="nt-tag" style="text-decoration:none">📚 ${k.ilgiliKavram}</a></div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('search').addEventListener('input', render);
+    render();
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

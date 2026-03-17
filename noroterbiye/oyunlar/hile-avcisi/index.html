@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hile Avcısı — NöroTerbiye</title>
+  <meta name="description" content="Modern dünyanın hilelerini tanıyabilir misin? Kartları kaydırarak zararsız ile tuzak olanları ayır.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕵️</text></svg>">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .swipe-area { position: relative; min-height: 320px; display: flex; align-items: center; justify-content: center; margin: 24px 0; }
+    .swipe-card {
+      width: 300px; max-width: 90vw; padding: 32px 24px; text-align: center;
+      background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md); position: relative; touch-action: none;
+      transition: transform 0.1s, opacity 0.3s; user-select: none; cursor: grab;
+    }
+    .swipe-card:active { cursor: grabbing; }
+    .swipe-card .emoji { font-size: 3rem; margin-bottom: 16px; }
+    .swipe-card .name { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
+    .swipe-card .desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+    .swipe-hints { display: flex; justify-content: space-between; margin: 0 20px; font-size: 0.8rem; }
+    .swipe-hints .safe { color: var(--nt-green); }
+    .swipe-hints .trap { color: var(--nt-red); }
+    .swipe-buttons { display: flex; justify-content: center; gap: 24px; margin-top: 16px; }
+    .swipe-btn { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--border); background: var(--surface); font-size: 1.5rem; cursor: pointer; transition: all var(--transition-fast); display: flex; align-items: center; justify-content: center; }
+    .swipe-btn:hover { transform: scale(1.1); }
+    .swipe-btn.safe-btn:hover { border-color: var(--nt-green); background: var(--nt-green-soft); }
+    .swipe-btn.trap-btn:hover { border-color: var(--nt-red); background: var(--nt-red-soft); }
+    .feedback { text-align: center; margin-top: 12px; font-size: 0.85rem; min-height: 60px; padding: 12px; border-radius: var(--radius-md); }
+    .feedback.correct { background: var(--nt-green-soft); color: var(--nt-green); }
+    .feedback.wrong { background: var(--nt-red-soft); color: var(--nt-red); }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+
+      <div id="intro" class="nt-fade-in">
+        <h1 class="nt-title" style="font-size:2rem;margin-bottom:12px">🕵️ Hile Avcısı</h1>
+        <p class="nt-subtitle" style="margin-bottom:20px">Modern dünyanın hilelerini tanıyabilir misin?</p>
+        <div class="nt-card" style="margin-bottom:24px">
+          <h3 style="font-weight:700;margin-bottom:8px">Nasıl Oynanır?</h3>
+          <ul style="font-size:0.88rem;color:var(--text-secondary);line-height:1.8;padding-left:20px">
+            <li>Her kart bir modern madde veya alışkanlık gösterir</li>
+            <li><strong>Sağa kaydır</strong> (veya ✅) = Zararsız / faydalı</li>
+            <li><strong>Sola kaydır</strong> (veya ❌) = Tuzak / hile</li>
+            <li>15 kart, her doğru 1 puan</li>
+            <li>Mobilde kartı parmağınla sağa/sola kaydır</li>
+          </ul>
+        </div>
+        <button class="nt-btn nt-btn-primary nt-btn-lg" onclick="startGame()">Oyna</button>
+      </div>
+
+      <div id="game" style="display:none">
+        <div class="nt-quiz-progress"><div class="nt-quiz-progress-bar" id="progress"></div></div>
+        <div style="text-align:center;font-size:0.8rem;color:var(--muted);margin-bottom:4px" id="counter"></div>
+        <div class="swipe-hints">
+          <span class="trap">❌ Tuzak ← sola</span>
+          <span class="safe">sağa → Zararsız ✅</span>
+        </div>
+        <div class="swipe-area" id="swipe-area"></div>
+        <div class="swipe-buttons">
+          <button class="swipe-btn trap-btn" onclick="choose('tuzak')" title="Tuzak">❌</button>
+          <button class="swipe-btn safe-btn" onclick="choose('zararsiz')" title="Zararsız">✅</button>
+        </div>
+        <div class="feedback" id="feedback"></div>
+      </div>
+
+      <div id="result" style="display:none">
+        <div class="nt-card nt-result">
+          <div class="nt-result-score" id="final-score"></div>
+          <div class="nt-result-label" id="final-label"></div>
+          <div class="nt-result-text" id="final-text"></div>
+          <div class="nt-result-actions">
+            <button class="nt-btn nt-btn-primary" onclick="location.reload()">Tekrar Oyna</button>
+            <a href="/noroterbiye/oyunlar/" class="nt-btn nt-btn-secondary">Diğer Oyunlar</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const cards = [
+      { emoji: '📱', name: 'Sonsuz kaydırma (infinite scroll)', answer: 'tuzak', info: 'Sonsuz kaydırma, dopamin beklentisini sürekli tetikleyerek bırakamamanı sağlar.' },
+      { emoji: '🏃', name: 'Sabah yürüyüşü', answer: 'zararsiz', info: 'Doğal hareket vücudu ve zihni dengeler.' },
+      { emoji: '🔔', name: 'Bildirim rozetleri', answer: 'tuzak', info: 'Kırmızı rozet numarası merak ve kontrol dürtüsü tetikler.' },
+      { emoji: '📖', name: 'Kitap okumak', answer: 'zararsiz', info: 'Uzun form okuma derin düşünme ve sabır geliştirir.' },
+      { emoji: '🍬', name: 'Şekerli enerji içecekleri', answer: 'tuzak', info: 'Kafein + şeker kombinasyonu yapay bir enerji döngüsü kurar.' },
+      { emoji: '🤝', name: 'Yüz yüze sohbet', answer: 'zararsiz', info: 'Gerçek iletişim oksitosin salgılar, derin bağ kurar.' },
+      { emoji: '🎰', name: 'Loot box mekanikleri', answer: 'tuzak', info: 'Rastgele ödül sistemi kumar psikolojisiyle aynıdır.' },
+      { emoji: '🌿', name: 'Doğada vakit geçirmek', answer: 'zararsiz', info: 'Doğa kortizolü düşürür, dikkat kapasitesini artırır.' },
+      { emoji: '👍', name: 'Beğeni sayısı takibi', answer: 'tuzak', info: 'Beğeni sayısı sosyal onay bağımlılığı yaratır.' },
+      { emoji: '🎵', name: 'Müzik dinlemek', answer: 'zararsiz', info: 'Müzik doğal dopamin kaynağıdır ve duygusal düzenleme sağlar.' },
+      { emoji: '📺', name: 'Otomatik oynatma (autoplay)', answer: 'tuzak', info: 'Autoplay karar verme yükünü kaldırır, pasif tüketimi artırır.' },
+      { emoji: '✍️', name: 'Günlük tutmak', answer: 'zararsiz', info: 'Yazma, düşünceleri düzenler ve öz farkındalığı artırır.' },
+      { emoji: '🛒', name: 'Flash indirim geri sayımları', answer: 'tuzak', info: 'Yapay aciliyet hissi dürtüsel karar vermeyi tetikler.' },
+      { emoji: '🧘', name: 'Nefes egzersizi', answer: 'zararsiz', info: 'Bilinçli nefes parasempatik sistemi aktive eder, sakinleştirir.' },
+      { emoji: '🎮', name: 'Streak (günlük seri) baskısı', answer: 'tuzak', info: 'Seriyi koruma baskısı kayıp korkusuyla (loss aversion) seni bağlar.' },
+    ];
+
+    let current = 0, score = 0, shuffled = [], waiting = false;
+
+    function startGame() {
+      document.getElementById('intro').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+      shuffled = [...cards].sort(() => Math.random() - 0.5);
+      showCard();
+    }
+
+    function showCard() {
+      if (current >= shuffled.length) return endGame();
+      waiting = false;
+      document.getElementById('progress').style.width = (current / shuffled.length * 100) + '%';
+      document.getElementById('counter').textContent = `${current + 1} / ${shuffled.length}`;
+      document.getElementById('feedback').className = 'feedback';
+      document.getElementById('feedback').textContent = '';
+      const c = shuffled[current];
+      const area = document.getElementById('swipe-area');
+      area.innerHTML = '';
+      const card = document.createElement('div');
+      card.className = 'swipe-card';
+      card.innerHTML = `<div class="emoji">${c.emoji}</div><div class="name">${c.name}</div><div class="desc">Bu zararsız mı, yoksa bir tuzak mı?</div>`;
+      // Touch swipe
+      let startX = 0, deltaX = 0;
+      card.ontouchstart = e => { startX = e.touches[0].clientX; };
+      card.ontouchmove = e => {
+        deltaX = e.touches[0].clientX - startX;
+        card.style.transform = `translateX(${deltaX}px) rotate(${deltaX * 0.05}deg)`;
+        card.style.opacity = Math.max(0.5, 1 - Math.abs(deltaX) / 300);
+      };
+      card.ontouchend = e => {
+        if (Math.abs(deltaX) > 80) {
+          choose(deltaX > 0 ? 'zararsiz' : 'tuzak');
+        } else {
+          card.style.transform = ''; card.style.opacity = '';
+        }
+        deltaX = 0;
+      };
+      // Mouse drag
+      let mouseDown = false, mouseStartX = 0;
+      card.onmousedown = e => { mouseDown = true; mouseStartX = e.clientX; e.preventDefault(); };
+      document.onmousemove = e => {
+        if (!mouseDown) return;
+        const dx = e.clientX - mouseStartX;
+        card.style.transform = `translateX(${dx}px) rotate(${dx * 0.05}deg)`;
+        card.style.opacity = Math.max(0.5, 1 - Math.abs(dx) / 300);
+      };
+      document.onmouseup = e => {
+        if (!mouseDown) return;
+        mouseDown = false;
+        const dx = e.clientX - mouseStartX;
+        if (Math.abs(dx) > 80) {
+          choose(dx > 0 ? 'zararsiz' : 'tuzak');
+        } else {
+          card.style.transform = ''; card.style.opacity = '';
+        }
+      };
+      area.appendChild(card);
+    }
+
+    function choose(answer) {
+      if (waiting) return;
+      waiting = true;
+      const c = shuffled[current];
+      const correct = c.answer === answer;
+      if (correct) score++;
+      const fb = document.getElementById('feedback');
+      fb.className = 'feedback ' + (correct ? 'correct' : 'wrong');
+      fb.textContent = (correct ? '✅ Doğru! ' : '❌ Yanlış! ') + c.info;
+      const card = document.querySelector('.swipe-card');
+      if (card) {
+        card.style.transform = `translateX(${answer === 'zararsiz' ? 300 : -300}px) rotate(${answer === 'zararsiz' ? 15 : -15}deg)`;
+        card.style.opacity = '0';
+      }
+      current++;
+      setTimeout(showCard, 1800);
+    }
+
+    function endGame() {
+      document.getElementById('game').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      const r = NT.calcScore(score, shuffled.length);
+      document.getElementById('final-score').textContent = r.pct + '%';
+      document.getElementById('final-label').textContent = r.label;
+      document.getElementById('final-text').textContent = r.text + ' Modern dünyanın hileleri fark edildiğinde güçlerini kaybeder.';
+      NT.save('hile_avcisi', { score, total: shuffled.length, pct: r.pct, date: new Date().toISOString() });
+    }
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savsaklama Profili — NöroTerbiye</title>
+  <meta name="description" content="Ertelemenin altındaki gerçek nedeni keşfet. Korku mu, mükemmeliyetçilik mi, yoksa dürtü eksikliği mi?">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Testi</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">⏳ Savsaklama Profili</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Ertelemenin altındaki gerçek nedeni keşfet. 10 soru, 3 dakika.
+      </p>
+      <div id="test-area" class="nt-card nt-fade-in" style="padding:32px;animation-delay:0.2s"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script src="/noroterbiye/js/test-engine.js"></script>
+  <script>
+    TestEngine.init({
+      containerId: 'test-area',
+      title: 'Savsaklama Profili',
+      slug: 'savsaklama-profili',
+      questions: [
+        {
+          soru: 'Önemli bir işe başlamadan önce ne hissedersin?',
+          secenekler: [
+            { text: 'Bunaltıcı bir ağırlık, nereden başlayacağımı bilemem', puan: 4 },
+            { text: 'Başlamak isterim ama "biraz sonra" derim', puan: 3 },
+            { text: 'Hafif bir isteksizlik ama başlarım', puan: 1 },
+            { text: 'Hemen başlarım, ertelemem', puan: 0 },
+          ],
+          aciklama: 'Ertelemenin temelinde çoğunlukla "başlama kaygısı" yatar. Prefrontal korteks devreye girmeden nefs kaçış yolları arar.'
+        },
+        {
+          soru: 'Bir görevi ertelediğinde kendine ne dersin?',
+          secenekler: [
+            { text: '"Zaten beceremeyeceğim, niye uğraşayım"', puan: 4 },
+            { text: '"Yarın daha iyi yaparım"', puan: 3 },
+            { text: '"Erteledim ama telafi ederim"', puan: 2 },
+            { text: '"Ertelemem, planıma bağlı kalırım"', puan: 0 },
+          ],
+          aciklama: 'İç ses ertelemenin türünü ele verir: mükemmeliyetçilik, kaçınma veya tembellik.'
+        },
+        {
+          soru: 'Bir projenin son teslim günü yaklaştığında ne olur?',
+          secenekler: [
+            { text: 'Panik yaparım ve son gece çalışırım', puan: 4 },
+            { text: 'Birkaç gün kala hızlanırım', puan: 3 },
+            { text: 'Önceden planlarım ama bazen yetişmez', puan: 1 },
+            { text: 'Zaten çoktan bitirmiş olurum', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Zor bir görev yerine genellikle ne yaparsın?',
+          secenekler: [
+            { text: 'Telefona bakar, kolay bir şeyle oyalanırım', puan: 4 },
+            { text: 'Daha kolay başka bir iş yaparım', puan: 3 },
+            { text: 'Biraz erteliyorum ama sonunda yaparım', puan: 1 },
+            { text: 'Zor olsa da hemen başlarım', puan: 0 },
+          ],
+          aciklama: 'Beyindeki dopamin sistemi kolay ödüle yönelir. Zor görevden kaçış, nefsin en klasik savsaklama hamlesidir.'
+        },
+        {
+          soru: '"Mükemmel olmazsa hiç yapmasam daha iyi" düşüncesi sende ne kadar güçlü?',
+          secenekler: [
+            { text: 'Çok güçlü, bu yüzden birçok şeyi yarıda bırakırım', puan: 4 },
+            { text: 'Bazen etkiler, özellikle önemli işlerde', puan: 3 },
+            { text: 'Farkındayım ama üstesinden gelirim', puan: 1 },
+            { text: 'Mükemmeliyetçilik beni engellemez', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Sabah uyandığında günün planını nasıl karşılarsın?',
+          secenekler: [
+            { text: 'Planım yok, günü akışına bırakırım', puan: 4 },
+            { text: 'Plan yaparım ama nadiren uygularım', puan: 3 },
+            { text: 'Kabaca planım vardır, çoğunu yaparım', puan: 1 },
+            { text: 'Net planım var ve uygularım', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Ertelediğin bir iş aklının bir köşesinde durur mu?',
+          secenekler: [
+            { text: 'Evet, sürekli rahatsız eder ama yine de yapamam', puan: 4 },
+            { text: 'Arada hatırlarım ve suçluluk duyarım', puan: 3 },
+            { text: 'Bazen aklıma gelir ama çok etkilemez', puan: 1 },
+            { text: 'Ertelediğim iş pek olmaz', puan: 0 },
+          ],
+          aciklama: 'Tamamlanmamış görevlerin zihinsel yükü (Zeigarnik etkisi), kortizol seviyesini yükseltir ve iradeyi tüketir.'
+        },
+        {
+          soru: 'Başkalarının seni beklemesi erteleme davranışını etkiler mi?',
+          secenekler: [
+            { text: 'Hayır, başkalarını da bekletirim', puan: 4 },
+            { text: 'Biraz motive eder ama yine erteleyebilirim', puan: 3 },
+            { text: 'Başkaları varsa daha disiplinli olurum', puan: 1 },
+            { text: 'Kendi işlerimi de başkalarınınki gibi zamanında yaparım', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Küçük adımlara bölerek başlamak sana yardımcı olur mu?',
+          secenekler: [
+            { text: 'Bölsem bile başlayamam', puan: 4 },
+            { text: 'Bazen işe yarar ama her zaman değil', puan: 2 },
+            { text: 'Evet, genellikle çok yardımcı olur', puan: 1 },
+            { text: 'Bölmeye gerek duymam, zaten başlarım', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Erteleme sonrası en çok hangi duyguyu yaşarsın?',
+          secenekler: [
+            { text: 'Derin suçluluk ve öz-eleştiri', puan: 4 },
+            { text: 'Geçici rahatlama ama sonra pişmanlık', puan: 3 },
+            { text: 'Hafif bir rahatsızlık', puan: 1 },
+            { text: 'Ertelemem, bu duyguyu yaşamam', puan: 0 },
+          ],
+          aciklama: 'Erteleme-suçluluk-erteleme döngüsü, nefsin kendini besleyen bir kısır döngüsüdür.'
+        },
+      ],
+      resultRanges: [
+        { min: 0, max: 20, label: 'Disiplinli', text: 'Erteleme senin için ciddi bir sorun değil. Bu güçlü yönünü korumaya devam et, iraden sağlam.', emoji: '💪' },
+        { min: 21, max: 45, label: 'Kontrollü Erteleyici', text: 'Bazı alanlarda erteleme eğilimin var ama farkındalığın yüksek. Tetikleyicilerini tanı ve küçük adımlarla başla.', emoji: '⚠️' },
+        { min: 46, max: 70, label: 'Kronik Savsaklayıcı', text: 'Erteleme hayatını ciddi şekilde etkiliyor. Altta mükemmeliyetçilik veya korku olabilir. 2 dakika kuralıyla başla.', emoji: '⏳' },
+        { min: 71, max: 100, label: 'Felç Noktası', text: 'Erteleme neredeyse her alanda seni durduruyor. Ama farkındalık bile büyük bir adım. Tek bir küçük eylemle başla — nefs en çok o ilk adımda direnir.', emoji: '🚨' },
+      ]
+    });
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

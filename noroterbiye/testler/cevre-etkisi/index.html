@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Çevre Etkisi Skoru — NöroTerbiye</title>
+  <meta name="description" content="Çevren seni destekliyor mu, aşağı mı çekiyor? Sosyal çevreni nöroterbiye perspektifinden değerlendir.">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Testi</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">👥 Çevre Etkisi Skoru</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Çevren seni destekliyor mu, aşağı mı çekiyor? 10 soru, 3 dakika.
+      </p>
+      <div id="test-area" class="nt-card nt-fade-in" style="padding:32px;animation-delay:0.2s"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script src="/noroterbiye/js/test-engine.js"></script>
+  <script>
+    TestEngine.init({
+      containerId: 'test-area',
+      title: 'Çevre Etkisi Skoru',
+      slug: 'cevre-etkisi',
+      questions: [
+        {
+          soru: 'Yakın arkadaş çevren seni hangi yönde etkiler?',
+          secenekler: [
+            { text: 'Genelde olumsuz alışkanlıklara çekerler', puan: 4 },
+            { text: 'Karışık — bazısı iyi, bazısı kötü etkiler', puan: 2 },
+            { text: 'Çoğunlukla olumlu yönde etkilerler', puan: 1 },
+            { text: 'Beni gelişime teşvik eden bir çevrem var', puan: 0 },
+          ],
+          aciklama: 'Ayna nöronlar çevredeki davranışları otomatik kopyalar. Çevre, nefsin en güçlü dış besleyicisidir.'
+        },
+        {
+          soru: 'Sosyal medyada takip ettiğin kişiler seni nasıl etkiliyor?',
+          secenekler: [
+            { text: 'Kıskançlık ve yetersizlik hissi uyandırıyor', puan: 4 },
+            { text: 'Gereksiz tüketime yönlendiriyor', puan: 3 },
+            { text: 'Bazen olumlu, bazen olumsuz', puan: 2 },
+            { text: 'İlham veren, bilgilendiren içerikler takip ediyorum', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Ailende ibadet ve manevi pratikler ne düzeyde?',
+          secenekler: [
+            { text: 'Hiç yok, hatta olumsuz bakılıyor', puan: 4 },
+            { text: 'Çok az, sadece bayramda', puan: 3 },
+            { text: 'Düzenli olmasa da var', puan: 1 },
+            { text: 'Düzenli ve destekleyici', puan: 0 },
+          ]
+        },
+        {
+          soru: 'İş/okul çevrende "herkes yapıyor" baskısı seni etkiler mi?',
+          secenekler: [
+            { text: 'Çok etkiler, sürüye uyarım', puan: 4 },
+            { text: 'Etkiler ama bazen direnebilirim', puan: 3 },
+            { text: 'Farkındayım ve çoğunlukla direnirim', puan: 1 },
+            { text: 'Kendi doğruma göre hareket ederim', puan: 0 },
+          ],
+          aciklama: 'Kolektif baskı, serotonin düzenleyici sistemle ilişkilidir. Statü kaybı korkusu nefsi teslim olmaya iter.'
+        },
+        {
+          soru: 'Çevrende kötü bir alışkanlığı bırakmak istediğinde destek bulur musun?',
+          secenekler: [
+            { text: 'Hayır, hatta dalga geçerler', puan: 4 },
+            { text: 'Genelde ilgisiz kalırlar', puan: 3 },
+            { text: 'Birkaç kişi destekler', puan: 1 },
+            { text: 'Evet, birlikte çalışırız', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Evdeki fiziksel ortam (ekran, yiyecek, düzen) alışkanlıklarını nasıl etkiler?',
+          secenekler: [
+            { text: 'Her köşede tuzak var: atıştırmalık, ekran, dağınıklık', puan: 4 },
+            { text: 'Bazı tuzaklar var ama farkındayım', puan: 2 },
+            { text: 'Çoğunlukla düzenli ve kontrollü', puan: 1 },
+            { text: 'Ortamımı bilinçli şekilde düzenledim', puan: 0 },
+          ],
+          aciklama: 'Çevre tasarımı irade ihtiyacını azaltır. Tuzağı kaldırmak, tuzağa direnmekten kolaydır.'
+        },
+        {
+          soru: 'Mahalledeki veya sosyal çevrendeki genel ahlaki atmosfer nasıl?',
+          secenekler: [
+            { text: 'Olumsuz davranışlar normalleştirilmiş', puan: 4 },
+            { text: 'Karışık, iyi ve kötü örnek bir arada', puan: 2 },
+            { text: 'Genel olarak olumlu', puan: 1 },
+            { text: 'Güçlü bir değerler çevresi var', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Çevrendeki insanlar hedef koyma ve disiplin konusunda nasıl?',
+          secenekler: [
+            { text: 'Kimse hedef koymaz, günübirlik yaşarız', puan: 4 },
+            { text: 'Hedef koyarlar ama sürdürmezler', puan: 3 },
+            { text: 'Bazıları disiplinli, ilham veriyor', puan: 1 },
+            { text: 'Çevremde disiplinli ve hedef odaklı insanlar var', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Bir hata yaptığında çevren nasıl tepki verir?',
+          secenekler: [
+            { text: 'Yargılar ve küçümserler', puan: 4 },
+            { text: 'Genelde umursamazlar', puan: 2 },
+            { text: 'Anlayışla karşılarlar', puan: 1 },
+            { text: 'Yapıcı geri bildirim verip desteklerler', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Son bir yılda çevrenden gelen en güçlü etki hangisiydi?',
+          secenekler: [
+            { text: 'Kötü bir alışkanlık edindim veya güçlendirdim', puan: 4 },
+            { text: 'Durağan kaldım, ilerleme olmadı', puan: 3 },
+            { text: 'Bazı olumlu değişimler yapabildim', puan: 1 },
+            { text: 'Çevrem sayesinde ciddi bir dönüşüm yaşadım', puan: 0 },
+          ],
+          aciklama: 'Çevre etkisi uzun vadede birikir. Küçük günlük etkiler, bir yıl sonunda büyük dönüşümlere yol açar.'
+        },
+      ],
+      resultRanges: [
+        { min: 0, max: 20, label: 'Destekleyici Çevre', text: 'Çevren seni olumlu yönde besliyor. Bu büyük bir nimet — koru ve çoğalt.', emoji: '🌿' },
+        { min: 21, max: 45, label: 'Karışık Etki', text: 'Çevrende hem destekleyici hem zorlaştırıcı unsurlar var. Bilinçli seçimlerle dengeyi lehine çevirebilirsin.', emoji: '⚖️' },
+        { min: 46, max: 70, label: 'Zorlayıcı Çevre', text: 'Çevren seni aşağı çekme eğiliminde. Çevre tasarımı ve bilinçli sınır koyma kritik önemde.', emoji: '⚠️' },
+        { min: 71, max: 100, label: 'Toksik Çevre', text: 'Çevren nefsin en büyük müttefiki olmuş. Radikal değişim gerekiyor — çevre tasarımı en öncelikli adımın olmalı.', emoji: '🚨' },
+      ]
+    });
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

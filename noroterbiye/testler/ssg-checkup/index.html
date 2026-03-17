@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Şehvet-Şöhret-Gadab Check-up — NöroTerbiye</title>
+  <meta name="description" content="Üç ana dürtüde (şehvet, şöhret, gadab) baskın alanını keşfet. Nefsin hangi kapıdan giriyor?">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Testi</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">⚖️ Şehvet-Şöhret-Gadab Check-up</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Üç ana dürtüde baskın alanını keşfet. 12 soru, 3 dakika.
+      </p>
+      <div id="test-area" class="nt-card nt-fade-in" style="padding:32px;animation-delay:0.2s"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script src="/noroterbiye/js/test-engine.js"></script>
+  <script>
+    TestEngine.init({
+      containerId: 'test-area',
+      title: 'Şehvet-Şöhret-Gadab Check-up',
+      slug: 'ssg-checkup',
+      questions: [
+        {
+          soru: 'Sosyal medyada paylaşım yaparken asıl motivasyonun nedir?',
+          secenekler: [
+            { text: 'Beğeni ve takipçi sayısını artırmak', puan: 4 },
+            { text: 'İnsanların beni nasıl gördüğünü kontrol etmek', puan: 3 },
+            { text: 'Güzel anıları paylaşmak', puan: 1 },
+            { text: 'Nadiren paylaşırım, takipçi sayısı umurumda değil', puan: 0 },
+          ],
+          aciklama: 'Şöhret dürtüsü: Serotonin üzerinden statü ve onay arayışı. Beğeni butonu, modern dünyanın en yaygın şöhret tuzağıdır.'
+        },
+        {
+          soru: 'Birisi sana haksız davrandığında ilk tepkin ne olur?',
+          secenekler: [
+            { text: 'Anında patlarım, sert tepki veririm', puan: 4 },
+            { text: 'İçimden kızarım, bazen dışarı vururum', puan: 3 },
+            { text: 'Rahatsız olurum ama kontrol etmeye çalışırım', puan: 1 },
+            { text: 'Sabrederim ve durumu soğukkanlı değerlendiririm', puan: 0 },
+          ],
+          aciklama: 'Gadab dürtüsü: Kortizol ve adrenalin patlaması. Öfke, nefsin en hızlı silahıdır.'
+        },
+        {
+          soru: 'Lezzetli ama sağlıksız bir yemek gördüğünde ne olur?',
+          secenekler: [
+            { text: 'Dayanamam, hemen yerim', puan: 4 },
+            { text: 'Çoğunlukla yerim, bazen direnirim', puan: 3 },
+            { text: 'Bazen yerim ama genelde kontrol ederim', puan: 1 },
+            { text: 'İhtiyacım yoksa yemem', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Bir tartışmada "son sözü söyleme" ihtiyacı duyar mısın?',
+          secenekler: [
+            { text: 'Kesinlikle, son söz bende olmalı', puan: 4 },
+            { text: 'Çoğunlukla evet', puan: 3 },
+            { text: 'Bazen, ama bırakabiliyorum', puan: 1 },
+            { text: 'Haklı olsam bile bırakabilirim', puan: 0 },
+          ],
+          aciklama: 'Bu hem gadab hem şöhret dürtüsüdür — ego tatmini ve üstünlük hissi birleşir.'
+        },
+        {
+          soru: 'Cinsel içerikli görüntülerle karşılaştığında tepkin ne olur?',
+          secenekler: [
+            { text: 'Aktif olarak ararım veya uzun süre bakarım', puan: 4 },
+            { text: 'Karşılaşınca bakarım, zor koparırım', puan: 3 },
+            { text: 'Kısa bir bakış ama hemen geçerim', puan: 1 },
+            { text: 'Bilinçli olarak kaçınırım', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Başkasının başarısını duyduğunda ne hissedersin?',
+          secenekler: [
+            { text: 'Kıskançlık ve rahatsızlık', puan: 4 },
+            { text: 'Biraz imrenme, "keşke benim olsa"', puan: 3 },
+            { text: 'Takdir ederim ama bazen kıyas yaparım', puan: 1 },
+            { text: 'Samimi şekilde sevinirim', puan: 0 },
+          ],
+          aciklama: 'Haset, şöhret dürtüsünün gölgesidir. Başkasının nimeti serotonin dengemizi bozar.'
+        },
+        {
+          soru: 'Trafikte biri seni sıkıştırdığında ne yaparsın?',
+          secenekler: [
+            { text: 'Korna çalar, el kol hareketi yaparım', puan: 4 },
+            { text: 'İçimden küfür ederim', puan: 3 },
+            { text: 'Sinirleniyorum ama geçiyor', puan: 1 },
+            { text: '"Belki acil durumu vardır" diye düşünürüm', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Rahat ve konforlu bir ortamdan fedakarlık yapman gerekse ne hissedersin?',
+          secenekler: [
+            { text: 'Çok zorlanırım, konforundan vazgeçemem', puan: 4 },
+            { text: 'İstemem ama mecbur kalırsam yaparım', puan: 3 },
+            { text: 'Biraz zorlanırım ama yapabilirim', puan: 1 },
+            { text: 'Gerekirse rahatımdan feragat ederim', puan: 0 },
+          ],
+          aciklama: 'Şehvet dürtüsü sadece cinsellik değildir; her türlü bedensel konfor arayışını kapsar.'
+        },
+        {
+          soru: 'İnsanların senin hakkında ne düşündüğü seni ne kadar etkiler?',
+          secenekler: [
+            { text: 'Çok etkiler, sürekli düşünürüm', puan: 4 },
+            { text: 'Önemli kişilerin görüşü çok etkiler', puan: 3 },
+            { text: 'Biraz etkiler ama hayatımı yönetmez', puan: 1 },
+            { text: 'Allah rızası yeter, insanların görüşü ikinci planda', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Uyuşmazlık durumunda affetmek sana ne kadar zor gelir?',
+          secenekler: [
+            { text: 'Çok zor, kin tutarım', puan: 4 },
+            { text: 'Zamanla affederim ama uzun sürer', puan: 3 },
+            { text: 'Bilinçli çaba ile affedebilirim', puan: 1 },
+            { text: 'Kolayca affederim', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Gece yalnızken en çok hangi dürtü seni zorlar?',
+          secenekler: [
+            { text: 'Cinsel dürtüler veya aşırı yeme-içme', puan: 4 },
+            { text: 'Sosyal medyada kıyas ve gösteriş', puan: 3 },
+            { text: 'Geçmiş tartışmaları tekrar yaşama, öfke', puan: 2 },
+            { text: 'Genelde sakin ve kontrollüyüm', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Hangi cümle seni en iyi tanımlar?',
+          secenekler: [
+            { text: '"Zevklerimden vazgeçmek en zor şey"', puan: 4 },
+            { text: '"İnsanların beni takdir etmesine ihtiyacım var"', puan: 3 },
+            { text: '"Haksızlığa tahammül edemem"', puan: 2 },
+            { text: '"Üçünde de dengeyi kurabiliyorum"', puan: 0 },
+          ],
+          aciklama: 'Nefsin üç ana kapısı: Şehvet (dopamin/haz), Şöhret (serotonin/statü), Gadab (kortizol/öfke).'
+        },
+      ],
+      resultRanges: [
+        { min: 0, max: 20, label: 'Dengeli Nefs', text: 'Üç dürtüde de makul bir denge kurmuşsun. Nefs-i levvame veya üstü bir mertebede olabilirsin. Uyanık kalmaya devam et.', emoji: '🛡️' },
+        { min: 21, max: 45, label: 'Kısmi Hakimiyet', text: 'Bazı dürtülerde kontrol sağlıyorsun ama zayıf noktaların var. Bu alanları tespit edip alternatif ikame stratejileri kur.', emoji: '⚖️' },
+        { min: 46, max: 70, label: 'Aktif Dürtü Baskısı', text: 'Bir veya daha fazla dürtü hayatını belirgin şekilde etkiliyor. Bilinçli müdahale zamanı — hangi dürtü baskın, oradan başla.', emoji: '⚠️' },
+        { min: 71, max: 100, label: 'Nefs-i Emmare Bölgesi', text: 'Dürtüler çok güçlü ve kontrol zayıf. Ama tanımak başarmanın yarısıdır. Küçük adımlarla başla, bir seferde bir dürtüye odaklan.', emoji: '🚨' },
+      ]
+    });
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

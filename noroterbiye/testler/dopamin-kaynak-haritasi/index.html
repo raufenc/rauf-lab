@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dopamin Kaynak Haritası — NöroTerbiye</title>
+  <meta name="description" content="Hazzını nereden alıyorsun? Hızlı dopamin mi, derin dopamin mi? Kaynak haritanı çıkar.">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Testi</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">💎 Dopamin Kaynak Haritası</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Hazzını nereden alıyorsun? Hızlı mı derin mi? Kaynak haritanı çıkar. 10 soru, 3 dakika.
+      </p>
+      <div id="test-area" class="nt-card nt-fade-in" style="padding:32px;animation-delay:0.2s"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script src="/noroterbiye/js/test-engine.js"></script>
+  <script>
+    TestEngine.init({
+      containerId: 'test-area',
+      title: 'Dopamin Kaynak Haritası',
+      slug: 'dopamin-kaynak-haritasi',
+      questions: [
+        {
+          soru: 'Bir başarı elde ettiğinde haz ne kadar sürer?',
+          secenekler: [
+            { text: 'Çok kısa, hemen yeni bir şey isterim', puan: 4 },
+            { text: 'Birkaç saat, sonra rutin devam eder', puan: 3 },
+            { text: 'Bir-iki gün keyifle hatırlarım', puan: 1 },
+            { text: 'Uzun süre tatmin eder, şükürle anarım', puan: 0 },
+          ],
+          aciklama: 'Hızlı dopamin kaynakları kısa süreli haz verir. Derin kaynaklar (başarı, ibadet, öğrenme) daha uzun ve doyurucu tatmin sağlar.'
+        },
+        {
+          soru: 'Boş zamanında en çok ne yaparsın?',
+          secenekler: [
+            { text: 'Sosyal medya, kısa video, oyun', puan: 4 },
+            { text: 'Dizi/film izlerim', puan: 3 },
+            { text: 'Kitap, spor veya hobi', puan: 1 },
+            { text: 'Öğrenme, ibadet veya üretken bir şey', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Yemek yerken ne yaşarsın?',
+          secenekler: [
+            { text: 'Hızlı yerim, lezzetten çok doyma önemli', puan: 3 },
+            { text: 'Lezzetli olmalı, sağlıklı olması ikinci planda', puan: 4 },
+            { text: 'Hem lezzetli hem sağlıklı tercih ederim', puan: 1 },
+            { text: 'Yavaş yerim, lezzeti bilinçli şekilde alırım', puan: 0 },
+          ],
+          aciklama: 'Fast food, şeker, işlenmiş gıda = hızlı dopamin. Yavaş yeme ve doğal gıda = derin, sürdürülebilir tatmin.'
+        },
+        {
+          soru: 'Ne sıklıkla "bir şeyler almalıyım" dürtüsü hissedersin?',
+          secenekler: [
+            { text: 'Sürekli, alışveriş beni mutlu ediyor', puan: 4 },
+            { text: 'Sık sık, özellikle stresli zamanlarda', puan: 3 },
+            { text: 'Bazen, ama genelde ihtiyaç odaklı alışveriş yaparım', puan: 1 },
+            { text: 'Nadiren, maddi şeyler bana haz vermez', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Uzun süreli bir projeye (kitap yazma, bir beceri öğrenme) ne kadar dayanabilirsin?',
+          secenekler: [
+            { text: 'Hiç başlayamam veya hemen bırakırım', puan: 4 },
+            { text: 'Başlarım ama birkaç hafta sonra bırakırım', puan: 3 },
+            { text: 'Zorlanırım ama tamamlayabilirim', puan: 1 },
+            { text: 'Severim, süreçten keyif alırım', puan: 0 },
+          ],
+          aciklama: 'Uzun vadeli projeler "derin dopamin" kaynaklarıdır. Dayanamama, beynin hızlı dopamine alışmış olduğunun göstergesidir.'
+        },
+        {
+          soru: 'Doğada vakit geçirmek seni nasıl etkiler?',
+          secenekler: [
+            { text: 'Sıkılırım, ne yapacağımı bilemem', puan: 4 },
+            { text: 'İlk başta güzel ama çabuk sıkılırım', puan: 3 },
+            { text: 'Rahatlatır ve iyi gelir', puan: 1 },
+            { text: 'Derin bir huzur ve yenilenme hissederim', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Namaz veya meditasyon gibi sessiz pratikler sana ne hissettirir?',
+          secenekler: [
+            { text: 'Sıkıntı, bir an önce bitmesini isterim', puan: 4 },
+            { text: 'Zorlanırım ama bazen iyi hissederim', puan: 2 },
+            { text: 'Genelde huzur verir', puan: 1 },
+            { text: 'Derin bir tatmin ve sükûnet kaynağıdır', puan: 0 },
+          ],
+          aciklama: 'Sessiz pratiklerde sıkılma, beynin aşırı uyarıya alıştığının işaretidir. Dopamin detoksu ile bu kapasite geri kazanılabilir.'
+        },
+        {
+          soru: 'Bir gün boyunca telefonsuz kalsan ne olur?',
+          secenekler: [
+            { text: 'Çok zorlanırım, neredeyse imkansız', puan: 4 },
+            { text: 'Huzursuz olurum ama dayabilirim', puan: 3 },
+            { text: 'Biraz garip ama rahatlatıcı olabilir', puan: 1 },
+            { text: 'Güzel olur, bazen bilinçli olarak yaparım', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Günlük en büyük haz kaynağın ne?',
+          secenekler: [
+            { text: 'Sosyal medya, oyun veya ekran', puan: 4 },
+            { text: 'Yemek ve alışveriş', puan: 3 },
+            { text: 'İnsan ilişkileri ve sosyal aktiviteler', puan: 1 },
+            { text: 'İbadet, öğrenme, doğa veya üretkenlik', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Hafta sonu planın genelde nasıl olur?',
+          secenekler: [
+            { text: 'Ekran maratonu — dizi, oyun, sosyal medya', puan: 4 },
+            { text: 'Dışarı çıkma, yeme-içme, eğlence', puan: 3 },
+            { text: 'Karışık — biraz eğlence, biraz üretkenlik', puan: 1 },
+            { text: 'Anlamlı aktiviteler — aile, doğa, okuma, ibadet', puan: 0 },
+          ],
+          aciklama: 'Hafta sonu planı, dopamin kaynak dağılımının en net aynasıdır. "Nasıl dinleniyorsun?" sorusu, aslında "nefsin nereye koşuyor?" sorusudur.'
+        },
+      ],
+      resultRanges: [
+        { min: 0, max: 20, label: 'Derin Dopamin Odaklı', text: 'Haz kaynaklarının çoğu derin ve sürdürülebilir. Bu çok değerli bir durum — beynin doğal ödül sistemini korumuşsun.', emoji: '💎' },
+        { min: 21, max: 45, label: 'Dengeli Portföy', text: 'Hız ve derinlik arasında bir denge kurmuşsun. Hızlı kaynakları bilinçli şekilde azaltarak dengeyi daha da iyileştirebilirsin.', emoji: '⚖️' },
+        { min: 46, max: 70, label: 'Hızlı Dopamin Ağırlıklı', text: 'Haz kaynaklarının çoğu hızlı ve geçici. Tolerans gelişme riski yüksek — dopamin detoksu ve kaynak çeşitlendirmesi önerilir.', emoji: '⚠️' },
+        { min: 71, max: 100, label: 'Dopamin Tuzağında', text: 'Neredeyse tüm haz kaynakların hızlı dopamin. Ciddi bir yeniden yapılanma gerekiyor — ama küçük adımlarla başlamak bile büyük fark yaratır.', emoji: '🚨' },
+      ]
+    });
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

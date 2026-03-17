@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ekran Baskısı Testi — NöroTerbiye</title>
+  <meta name="description" content="Ekranlar dikkatini, duygularını ve kıyasını ne kadar etkiliyor? Ekran baskısı testini çöz.">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Testi</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">📱 Ekran Baskısı Testi</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Ekranların dikkatine, duygularına ve kıyasına etkisini ölç. 10 soru.
+      </p>
+      <div id="test-area" class="nt-card nt-fade-in" style="padding:32px;animation-delay:0.2s"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script src="/noroterbiye/js/test-engine.js"></script>
+  <script>
+    TestEngine.init({
+      containerId: 'test-area',
+      title: 'Ekran Baskısı Testi',
+      slug: 'ekran-baskisi',
+      questions: [
+        {
+          soru: 'Günde ortalama kaç saat ekrana (telefon + bilgisayar + TV) bakarsın?',
+          secenekler: [
+            { text: '8 saatten fazla', puan: 4 },
+            { text: '5-8 saat', puan: 3 },
+            { text: '3-5 saat', puan: 2 },
+            { text: '3 saatten az', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Sabah uyandığında ilk 5 dakikada telefona bakar mısın?',
+          secenekler: [
+            { text: 'Evet, gözümü açar açmaz', puan: 4 },
+            { text: 'Genellikle 10-15 dakika içinde', puan: 2 },
+            { text: 'Hayır, başka şeylerle başlarım', puan: 0 },
+          ],
+          aciklama: 'Sabahın ilk dakikaları beyni gün boyu şekillendiren zamandır. Telefon ile başlamak dopamin talebi yükseltir.'
+        },
+        {
+          soru: 'Sosyal medyada ne kadar süre geçirdiğinin farkında mısın?',
+          secenekler: [
+            { text: 'Hayır, zaman nasıl geçtiğini anlamıyorum', puan: 4 },
+            { text: 'Bazen fark edip şaşırıyorum', puan: 3 },
+            { text: 'Evet, kontrol etmeye çalışıyorum', puan: 1 },
+            { text: 'Süre sınırı koydum', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Reklam gördüğünde ihtiyacın olmayan bir ürünü almak istedin mi?',
+          secenekler: [
+            { text: 'Sık sık, hatta aldım', puan: 4 },
+            { text: 'Bazen istek oluşuyor', puan: 2 },
+            { text: 'Nadiren', puan: 1 },
+            { text: 'Reklamları fark etmem bile', puan: 0 },
+          ],
+          aciklama: 'Reklamlar ayna nöronları kullanarak beyinde "sahip olma provası" yaptırır.'
+        },
+        {
+          soru: 'Bir dizi/film izledikten sonra ruh halin nasıl değişir?',
+          secenekler: [
+            { text: 'İçerideki duyguları taşıyarak kalırım', puan: 4 },
+            { text: 'Biraz etkilenir ama çabuk geçer', puan: 2 },
+            { text: 'Çoğunlukla etkilenmem', puan: 0 },
+          ],
+          aciklama: 'Beynin bazı bölgeleri izlediğinin kurgu olduğunu bilse de duygusal merkez tam ikna olmaz.'
+        },
+        {
+          soru: 'Bildirimlerini kontrol etmeden ne kadar çalışabilirsin?',
+          secenekler: [
+            { text: '10 dakikadan az', puan: 4 },
+            { text: '10-30 dakika', puan: 3 },
+            { text: '30 dakika - 1 saat', puan: 1 },
+            { text: '1 saatten fazla', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Sosyal medyada gördüğün hayatlarla kendini kıyaslar mısın?',
+          secenekler: [
+            { text: 'Evet, sık sık yetersiz hissederim', puan: 4 },
+            { text: 'Bazen oluyor, engel olamıyorum', puan: 3 },
+            { text: 'Farkındayım ve uzak durmaya çalışıyorum', puan: 1 },
+            { text: 'Hayır, herkesin farklı bir hikayesi var', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Telefon yanında değilken nasıl hissedersin?',
+          secenekler: [
+            { text: 'Tedirgin ve eksik', puan: 4 },
+            { text: 'Biraz rahatsız ama idare ederim', puan: 2 },
+            { text: 'Rahat, hatta ferahlık hissederim', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Kısa video platformlarında (Reels, TikTok, Shorts) kaybolur musun?',
+          secenekler: [
+            { text: 'Evet, başladığımda durduramam', puan: 4 },
+            { text: 'Bazen 30 dakikayı geçer', puan: 3 },
+            { text: 'Nadiren, kısa tutarım', puan: 1 },
+            { text: 'Kullanmam', puan: 0 },
+          ],
+          aciklama: 'Kısa videolar art arda değişen uyaran bombardımanıyla beyni "daha fazla" moduna sokar.'
+        },
+        {
+          soru: 'Ekransız bir gün geçirmeyi hayal ettiğinde ne hissedersin?',
+          secenekler: [
+            { text: 'İmkansız gibi görünüyor', puan: 4 },
+            { text: 'Zor ama deneyebilirim', puan: 2 },
+            { text: 'Güzel olurdu, özlüyorum aslında', puan: 0 },
+          ]
+        },
+      ],
+      resultRanges: [
+        { min: 0, max: 20, label: 'Dijital Denge', text: 'Ekranlarla ilişkin sağlıklı görünüyor. Bu dengeyi korumaya devam et.', emoji: '✅' },
+        { min: 21, max: 45, label: 'Hafif Baskı', text: 'Ekranların seni kısmen etkiliyor ama farkındalığın var. Belirli saatlerde dijital detoks dene.', emoji: '📲' },
+        { min: 46, max: 70, label: 'Dikkat Erozyonu', text: 'Ekranlar dikkatini, duygularını ve zamanını ciddi şekilde etkiliyor. Ekran süresi sözleşmesi aracımız işine yarayabilir.', emoji: '📱' },
+        { min: 71, max: 100, label: 'Ekran Esareti', text: 'Ekranlar hayatının büyük bölümünü şekillendiriyor. Ama farkındalık ilk adımdır. Küçük ve kararlı adımlarla başla.', emoji: '🚨' },
+      ]
+    });
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

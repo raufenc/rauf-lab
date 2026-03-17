@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kitap Haritası — NöroTerbiye</title>
+  <meta name="description" content="NöroTerbiye kitabının 4 ana kısmı ve tüm alt başlıklarının interaktif haritası.">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .km-part { margin-bottom: 32px; }
+    .km-part-header {
+      display: flex; align-items: center; gap: 16px;
+      padding: 20px 24px; border-radius: var(--radius-lg);
+      cursor: pointer; transition: all var(--transition-fast);
+      border: 1px solid var(--border);
+    }
+    .km-part-header:hover { border-color: var(--border-hover); }
+    .km-part-num { font-size: 2rem; font-weight: 800; line-height: 1; }
+    .km-part-title { font-size: 1.2rem; font-weight: 700; }
+    .km-part-pages { font-size: 0.78rem; color: var(--muted); }
+    .km-chapters {
+      margin-top: 8px; padding-left: 20px;
+      border-left: 2px solid var(--border);
+      margin-left: 32px;
+      display: none;
+    }
+    .km-chapters.open { display: block; }
+    .km-chapter {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      transition: background var(--transition-fast);
+    }
+    .km-chapter:hover { background: var(--surface-hover); }
+    .km-chapter:last-child { border-bottom: none; }
+    .km-ch-title { font-size: 0.9rem; font-weight: 500; }
+    .km-ch-page { font-size: 0.75rem; color: var(--muted); }
+    .km-sub { padding-left: 20px; font-size: 0.82rem; color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <h1 class="nt-title nt-fade-in" style="font-size:2rem;margin-bottom:8px">🗺️ Kitap Haritası</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        272 sayfa, 4 ana kısım, her biri bir keşif yolculuğu. Tıkla, aç, keşfet.
+      </p>
+
+      <!-- İlk Adım -->
+      <div class="km-part nt-fade-in" style="animation-delay:0.15s">
+        <div class="km-part-header" onclick="toggle(this)" style="background:var(--warm-soft)">
+          <div class="km-part-num" style="color:var(--warm)">•</div>
+          <div>
+            <div class="km-part-title">İlk Adım</div>
+            <div class="km-part-pages">s. 11-17</div>
+          </div>
+        </div>
+        <div class="km-chapters">
+          <div class="km-chapter"><span class="km-ch-title">Kıymetli Yol Arkadaşım</span><span class="km-ch-page">s.11</span></div>
+          <div class="km-chapter"><span class="km-ch-title">NöroTerbiye Nedir?</span><span class="km-ch-page">s.13</span></div>
+        </div>
+      </div>
+
+      <!-- KISIM 1: İnsan + Nefsin Biyolojisi -->
+      <div class="km-part nt-fade-in" style="animation-delay:0.2s">
+        <div class="km-part-header" onclick="toggle(this)" style="background:var(--nt-green-soft)">
+          <div class="km-part-num" style="color:var(--nt-green)">1</div>
+          <div>
+            <div class="km-part-title">İnsan & Nefsin Biyolojisi</div>
+            <div class="km-part-pages">s. 21-49</div>
+          </div>
+        </div>
+        <div class="km-chapters">
+          <div class="km-chapter"><span class="km-ch-title">Madde ve Mana</span><span class="km-ch-page">s.21</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Bütün ve Parça</span><span class="km-ch-page">s.22</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Adalet?</span><span class="km-ch-page">s.25</span></div>
+          <div class="km-chapter"><span class="km-ch-title">İkili Sistem</span><span class="km-ch-page">s.26</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Gemi (Metafor)</span><span class="km-ch-page">s.27</span></div>
+          <div class="km-chapter" style="font-weight:700;background:var(--nt-green-soft)"><span class="km-ch-title">NEFSİN BİYOLOJİSİ</span><span class="km-ch-page">s.29</span></div>
+          <div class="km-chapter"><span class="km-ch-title">ŞEHVET (Dopamin)</span><span class="km-ch-page">s.33</span></div>
+          <div class="km-chapter"><span class="km-ch-title">ŞÖHRET (Serotonin)</span><span class="km-ch-page">s.36</span></div>
+          <div class="km-chapter"><span class="km-ch-title">GADAB (Kortizol)</span><span class="km-ch-page">s.38</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Ve DİĞERLERİ (Oksitosin, Endorfin...)</span><span class="km-ch-page">s.41</span></div>
+          <div class="km-chapter"><span class="km-ch-title">ÖDÜL ve CEZA</span><span class="km-ch-page">s.44</span></div>
+          <div class="km-chapter"><span class="km-ch-title">ÇEVRE</span><span class="km-ch-page">s.47</span></div>
+          <div class="km-chapter"><span class="km-ch-title">GELECEĞİ GÖRMEK</span><span class="km-ch-page">s.48</span></div>
+        </div>
+      </div>
+
+      <!-- KISIM 2: Modern Dünyanın Hileleri -->
+      <div class="km-part nt-fade-in" style="animation-delay:0.25s">
+        <div class="km-part-header" onclick="toggle(this)" style="background:var(--nt-red-soft)">
+          <div class="km-part-num" style="color:var(--nt-red)">2</div>
+          <div>
+            <div class="km-part-title">Modern Dünyanın Hileleri</div>
+            <div class="km-part-pages">s. 51-118</div>
+          </div>
+        </div>
+        <div class="km-chapters">
+          <div class="km-chapter"><span class="km-ch-title">Mayın Tarlası</span><span class="km-ch-page">s.53</span></div>
+          <div class="km-chapter"><span class="km-ch-title">"1984" mü "Cesur Yeni Dünya" mı?</span><span class="km-ch-page">s.54</span></div>
+          <div class="km-chapter" style="font-weight:700"><span class="km-ch-title">MASUM GÖRÜNENLER</span><span class="km-ch-page">s.58</span></div>
+          <div class="km-chapter"><span class="km-ch-title">YEMEK (Hedonik Açlık, Kola ve Şeker)</span><span class="km-ch-page">s.58</span></div>
+          <div class="km-chapter"><span class="km-ch-title">EKRAN (Reklam, Dizi, Sosyal Medya)</span><span class="km-ch-page">s.68</span></div>
+          <div class="km-chapter"><span class="km-ch-title">OYUN (Taraftarlık)</span><span class="km-ch-page">s.79</span></div>
+          <div class="km-chapter"><span class="km-ch-title">PARA (Doyumsuzluk, Alışveriş)</span><span class="km-ch-page">s.86</span></div>
+          <div class="km-chapter"><span class="km-ch-title">MÜZİK</span><span class="km-ch-page">s.90</span></div>
+          <div class="km-chapter" style="font-weight:700"><span class="km-ch-title">DENGEYİ BOZANLAR</span><span class="km-ch-page">s.93</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Sigara · Alkol · Uyuşturucu · İlaçlar</span><span class="km-ch-page">s.97</span></div>
+          <div class="km-chapter" style="font-weight:700"><span class="km-ch-title">DOLAYLI YOLDAN ETKİLEYENLER</span><span class="km-ch-page">s.108</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Pornografi · Kumar · Ahlakî Zaaflar</span><span class="km-ch-page">s.108</span></div>
+        </div>
+      </div>
+
+      <!-- KISIM 3: Farklı Nefsler -->
+      <div class="km-part nt-fade-in" style="animation-delay:0.3s">
+        <div class="km-part-header" onclick="toggle(this)" style="background:var(--nt-purple-soft)">
+          <div class="km-part-num" style="color:var(--nt-purple)">3</div>
+          <div>
+            <div class="km-part-title">Farklı Nefsler</div>
+            <div class="km-part-pages">s. 121-178</div>
+          </div>
+        </div>
+        <div class="km-chapters">
+          <div class="km-chapter"><span class="km-ch-title">Mizaç ve Kimya</span><span class="km-ch-page">s.121</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Nefsimiz Nasıl Bu Hale Geldi?</span><span class="km-ch-page">s.125</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Fıtri Nefs · Bencil Nefs</span><span class="km-ch-page">s.132</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Doğulu Nefs – Batılı Nefs</span><span class="km-ch-page">s.136</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Kadın Nefsi – Erkek Nefsi</span><span class="km-ch-page">s.143</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Çocuk Nefsi (Ebeveynlik Çeşitleri)</span><span class="km-ch-page">s.153</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Genç Nefsi</span><span class="km-ch-page">s.164</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Kimsin Sen?</span><span class="km-ch-page">s.171</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Nefsin Nöromertebeleri</span><span class="km-ch-page">s.173</span></div>
+        </div>
+      </div>
+
+      <!-- KISIM 4: NöroTerbiye Usulleri -->
+      <div class="km-part nt-fade-in" style="animation-delay:0.35s">
+        <div class="km-part-header" onclick="toggle(this)" style="background:var(--nt-cyan-soft)">
+          <div class="km-part-num" style="color:var(--nt-cyan)">4</div>
+          <div>
+            <div class="km-part-title">NöroTerbiye Usulleri</div>
+            <div class="km-part-pages">s. 181-265</div>
+          </div>
+        </div>
+        <div class="km-chapters">
+          <div class="km-chapter"><span class="km-ch-title">Geleceği Şekillendirmek</span><span class="km-ch-page">s.181</span></div>
+          <div class="km-chapter" style="font-weight:700"><span class="km-ch-title">ZİHİN</span><span class="km-ch-page">s.183</span></div>
+          <div class="km-chapter"><span class="km-ch-title">İnan! · Kendini Gerçekleştiren Kehanet</span><span class="km-ch-page">s.185</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Kelebek Etkisi · Bugüne Odaklan</span><span class="km-ch-page">s.193</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Savsaklama · Can Sıkıntısına İzin Ver</span><span class="km-ch-page">s.197</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Nefsin Dilini Öğren · Stresin Faydaları</span><span class="km-ch-page">s.203</span></div>
+          <div class="km-chapter" style="font-weight:700"><span class="km-ch-title">BEDEN</span><span class="km-ch-page">s.210</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Sıhhat İçin Ye! · Takviye Gıdalar</span><span class="km-ch-page">s.213</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Hareket · Uyku · İradeyi İdare Et</span><span class="km-ch-page">s.222</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Amel · Alternatifini İkame Et</span><span class="km-ch-page">s.232</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Azı Karar Çoğu Zarar</span><span class="km-ch-page">s.240</span></div>
+          <div class="km-chapter" style="font-weight:700"><span class="km-ch-title">ÇEVRE</span><span class="km-ch-page">s.243</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Kuvvetli Zamanlar · Dipten Dönmek</span><span class="km-ch-page">s.249</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Arkadaş · İlham Verenler</span><span class="km-ch-page">s.252</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Nerede O Eski Ramazanlar</span><span class="km-ch-page">s.259</span></div>
+          <div class="km-chapter" style="font-weight:700;background:var(--nt-cyan-soft)"><span class="km-ch-title">SON İKİ ADIM</span><span class="km-ch-page">s.262</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Yapılacaklar Listesi Hazırla</span><span class="km-ch-page">s.263</span></div>
+          <div class="km-chapter"><span class="km-ch-title">Hayata Geçir ve Devam Et</span><span class="km-ch-page">s.265</span></div>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:32px">
+        <a href="/noroterbiye/sozluk/" class="nt-btn nt-btn-secondary">Kavramları Keşfet</a>
+        <a href="/noroterbiye/testler/" class="nt-btn nt-btn-primary" style="margin-left:8px">Kendini Test Et</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    function toggle(header) {
+      const chapters = header.nextElementSibling;
+      chapters.classList.toggle('open');
+    }
+    // İlk kısmı otomatik aç
+    document.querySelector('.km-chapters').classList.add('open');
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

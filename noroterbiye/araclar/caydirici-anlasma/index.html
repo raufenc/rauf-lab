@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caydırıcı Anlaşma Sihirbazı — NöroTerbiye</title>
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .wizard-steps { display:flex; gap:4px; margin-bottom:32px; }
+    .wizard-step { flex:1; height:4px; border-radius:2px; background:var(--surface2); transition:background 0.3s; }
+    .wizard-step.done { background:var(--nt-green); }
+    .wizard-step.active { background:var(--nt-primary); }
+    .contract-card { background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%); border:2px solid var(--nt-primary); border-radius:var(--radius-xl); padding:40px 32px; max-width:500px; margin:0 auto; }
+    .contract-card h2 { text-align:center; font-size:1.3rem; margin-bottom:24px; }
+    .contract-field { margin-bottom:16px; }
+    .contract-field .label { font-size:0.72rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; }
+    .contract-field .value { font-size:0.95rem; font-weight:600; margin-top:4px; }
+    .contract-signatures { display:flex; gap:24px; margin-top:32px; padding-top:24px; border-top:1px dashed var(--border); }
+    .contract-sig { flex:1; text-align:center; }
+    .contract-sig .line { border-bottom:1px solid var(--text); margin-bottom:6px; min-height:30px; }
+    .contract-sig .name { font-size:0.78rem; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Araç</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">🤝 Caydırıcı Anlaşma Sihirbazı</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Zayıf anda değil, güçlü anda sözleşme kur. Adım adım kendi caydırıcı anlaşmanı oluştur.
+      </p>
+
+      <div class="wizard-steps nt-fade-in" style="animation-delay:0.12s" id="steps-bar"></div>
+
+      <div class="nt-card nt-fade-in" style="padding:32px;animation-delay:0.15s" id="wizard-area"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const steps = [
+      { key:'aliskanlik', label:'Kötü Alışkanlık', question:'Bırakmak veya azaltmak istediğin alışkanlık ne?', placeholder:'Örn: Gece geç saatte telefona bakmak', type:'input' },
+      { key:'neden', label:'Neden Bırakmak İstiyorsun?', question:'Bu alışkanlığı bırakmak isteme sebebin ne?', placeholder:'Örn: Uyku kalitem düşüyor, sabah yorgun kalkıyorum', type:'textarea' },
+      { key:'taahhut', label:'Taahhüt', question:'Kendine ne söz veriyorsun?', placeholder:'Örn: Saat 22:00\'dan sonra telefonu odadan çıkaracağım', type:'input' },
+      { key:'sure', label:'Süre', question:'Bu anlaşma ne kadar süre geçerli olacak?', placeholder:'', type:'select', options:['7 gün','14 gün','21 gün','30 gün','60 gün','90 gün'] },
+      { key:'takipci', label:'Hesap Sorma Kişisi', question:'Seni takip edecek, hesap soracak kişi kim?', placeholder:'Örn: Ahmet (abi), Ayşe (arkadaş)', type:'input' },
+      { key:'ceza', label:'Ceza / Yaptırım', question:'Sözünü tutmazsan ne olacak?', placeholder:'Örn: O hafta cep harçlığımın yarısını bağışlayacağım', type:'input' },
+      { key:'odul', label:'Ödül', question:'Sözünü tutarsan kendine ne ödül vereceksin?', placeholder:'Örn: Haftasonunda istediğim yere gidebilirim', type:'input' },
+    ];
+
+    let current = 0;
+    let data = {};
+    let agreements = NT.load('anlasmalar', []);
+
+    function renderSteps() {
+      const bar = document.getElementById('steps-bar');
+      bar.innerHTML = steps.map((s, i) =>
+        `<div class="wizard-step ${i < current ? 'done' : ''} ${i === current ? 'active' : ''}"></div>`
+      ).join('');
+    }
+
+    function renderStep() {
+      const area = document.getElementById('wizard-area');
+      renderSteps();
+
+      if (current >= steps.length) {
+        renderContract();
+        return;
+      }
+
+      const s = steps[current];
+      let inputHTML = '';
+      if (s.type === 'input') {
+        inputHTML = `<input class="nt-input" id="step-input" placeholder="${s.placeholder}" value="${data[s.key] || ''}">`;
+      } else if (s.type === 'textarea') {
+        inputHTML = `<textarea class="nt-textarea" id="step-input" placeholder="${s.placeholder}">${data[s.key] || ''}</textarea>`;
+      } else if (s.type === 'select') {
+        inputHTML = `<select class="nt-select" id="step-input">${s.options.map(o => `<option ${data[s.key]===o?'selected':''}>${o}</option>`).join('')}</select>`;
+      }
+
+      area.innerHTML = `
+        <p class="nt-label" style="margin-bottom:8px">Adım ${current+1}/${steps.length}</p>
+        <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:16px">${s.question}</h3>
+        <div class="nt-form-group">${inputHTML}</div>
+        <div style="display:flex;gap:10px;justify-content:space-between">
+          <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="prev()" ${current===0?'disabled style="opacity:0.3"':''}>← Geri</button>
+          <button class="nt-btn nt-btn-primary nt-btn-sm" onclick="next()">
+            ${current === steps.length - 1 ? 'Anlaşmayı Oluştur' : 'İleri →'}
+          </button>
+        </div>
+      `;
+
+      const input = document.getElementById('step-input');
+      if (input && s.type !== 'select') input.focus();
+    }
+
+    function next() {
+      const input = document.getElementById('step-input');
+      const s = steps[current];
+      const val = input.value.trim();
+      if (!val && s.type !== 'select') { NT.toast('Bu alan boş olamaz'); return; }
+      data[s.key] = val;
+      current++;
+      renderStep();
+    }
+
+    function prev() {
+      if (current > 0) { current--; renderStep(); }
+    }
+
+    function renderContract() {
+      const area = document.getElementById('wizard-area');
+      const today = new Date().toLocaleDateString('tr-TR');
+      area.innerHTML = `
+        <div class="contract-card" id="contract">
+          <p style="text-align:center;font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">NöroTerbiye Caydırıcı Anlaşma</p>
+          <h2>📜 Anlaşma</h2>
+          <div class="contract-field"><div class="label">Bırakılacak Alışkanlık</div><div class="value">${data.aliskanlik}</div></div>
+          <div class="contract-field"><div class="label">Sebep</div><div class="value" style="font-size:0.88rem;font-weight:400">${data.neden}</div></div>
+          <div class="contract-field"><div class="label">Taahhüt</div><div class="value">${data.taahhut}</div></div>
+          <div class="contract-field"><div class="label">Süre</div><div class="value">${data.sure}</div></div>
+          <div class="contract-field"><div class="label">Ceza</div><div class="value" style="color:var(--nt-red)">${data.ceza}</div></div>
+          <div class="contract-field"><div class="label">Ödül</div><div class="value" style="color:var(--nt-green)">${data.odul}</div></div>
+          <div class="contract-field"><div class="label">Tarih</div><div class="value">${today}</div></div>
+          <div class="contract-signatures">
+            <div class="contract-sig"><div class="line"></div><div class="name">Ben</div></div>
+            <div class="contract-sig"><div class="line"></div><div class="name">${data.takipci}</div></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:24px;flex-wrap:wrap">
+          <button class="nt-btn nt-btn-primary nt-btn-sm" onclick="saveAgreement()">💾 Kaydet</button>
+          <button class="nt-btn nt-btn-secondary nt-btn-sm" onclick="window.print()">🖨️ Yazdır</button>
+          <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="restart()">Yeniden Başla</button>
+        </div>
+      `;
+    }
+
+    function saveAgreement() {
+      agreements.push({ ...data, id: Date.now(), tarih: new Date().toLocaleDateString('tr-TR') });
+      NT.save('anlasmalar', agreements);
+      NT.toast('Anlaşma kaydedildi!');
+    }
+
+    function restart() {
+      current = 0;
+      data = {};
+      renderStep();
+    }
+
+    renderStep();
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ebeveynlik Tarzı Farkındalık — NöroTerbiye</title>
+  <meta name="description" content="Ebeveynlik yaklaşımını NöroTerbiye perspektifinden keşfet. Çocuğun nefsini nasıl yönlendiriyorsun?">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Testi</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">👶 Ebeveynlik Tarzı Farkındalık</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Ebeveynlik yaklaşımını ve çocuğun nefsi üzerindeki etkini keşfet. 10 soru, 3 dakika.
+      </p>
+      <div id="test-area" class="nt-card nt-fade-in" style="padding:32px;animation-delay:0.2s"></div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script src="/noroterbiye/js/test-engine.js"></script>
+  <script>
+    TestEngine.init({
+      containerId: 'test-area',
+      title: 'Ebeveynlik Tarzı Farkındalık',
+      slug: 'ebeveynlik-tarzi',
+      questions: [
+        {
+          soru: 'Çocuğun bir şey istediğinde ve sen hayır dediğinde ağlarsa ne yaparsın?',
+          secenekler: [
+            { text: 'Hemen veririm, ağlamasına dayanamam', puan: 4 },
+            { text: 'Bazen veririm, bazen diretirim — tutarsız', puan: 3 },
+            { text: 'Hayır demeye devam ederim ama açıklarım', puan: 1 },
+            { text: 'Sınırı korur, duyguyu kabul eder, alternatif sunarım', puan: 0 },
+          ],
+          aciklama: 'Her "hayır"a rağmen verme, çocuğun beyninde "ısrar = ödül" devresini güçlendirir. Bu, nefs-i emmarenin temelini atar.'
+        },
+        {
+          soru: 'Çocuğunun ekran süresini nasıl yönetirsin?',
+          secenekler: [
+            { text: 'Sınır yok, istediği kadar kullanır', puan: 4 },
+            { text: 'Sınır koyarım ama uygulamak zor', puan: 3 },
+            { text: 'Belirli kurallarım var, çoğunlukla uygularım', puan: 1 },
+            { text: 'Net sınırlar var, alternatif aktiviteler sunuyorum', puan: 0 },
+          ],
+          aciklama: 'Sınırsız ekran, çocuğun dopamin sistemini erken yaşta bozar. Alternatif sunmadan sınır koymak ise çatışma yaratır.'
+        },
+        {
+          soru: 'Çocuğunun başarısını nasıl kutlarsın?',
+          secenekler: [
+            { text: 'Maddi ödülle (oyuncak, para, hediye)', puan: 4 },
+            { text: 'Aşırı övgüyle ("Sen dahi misin!")', puan: 3 },
+            { text: 'Çabayı vurgulayan övgüyle', puan: 1 },
+            { text: 'Çabayı takdir, nimeti şükürle birleştiririm', puan: 0 },
+          ],
+          aciklama: 'Maddi ödül dışsal motivasyonu güçlendirir. "Çok zekisin" yerine "çok çalıştın" demek gelişim zihniyetini besler.'
+        },
+        {
+          soru: 'Çocuğun hata yaptığında ilk tepkin ne olur?',
+          secenekler: [
+            { text: 'Bağırır veya cezalandırırım', puan: 4 },
+            { text: 'Kızarım ama sonra pişman olurum', puan: 3 },
+            { text: 'Sakin bir şekilde uyarırım', puan: 1 },
+            { text: 'Hatayı öğrenme fırsatına çevirmeye çalışırım', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Çocuğunun duygularına nasıl yaklaşırsın?',
+          secenekler: [
+            { text: '"Ağlama, bir şey yok" derim', puan: 4 },
+            { text: 'Dikkat ederim ama bazen geçiştiririm', puan: 2 },
+            { text: 'Duygularını adlandırmasına yardım ederim', puan: 1 },
+            { text: 'Duygularını kabul eder, yönetmesini öğretirim', puan: 0 },
+          ],
+          aciklama: 'Duygu bastırma, çocuğun kortizol düzenleme becerisini zayıflatır. Duyguyu kabul etmek, onu yönetmenin ilk adımıdır.'
+        },
+        {
+          soru: 'Ev kuralları ne kadar tutarlı uygulanır?',
+          secenekler: [
+            { text: 'Kural yok veya çok gevşek', puan: 4 },
+            { text: 'Kurallar var ama çoğu zaman uygulanmaz', puan: 3 },
+            { text: 'Genelde tutarlıyız ama istisnalar olur', puan: 1 },
+            { text: 'Tutarlı kurallarımız var, herkes bilir', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Çocuğunla birlikte ne sıklıkla kaliteli zaman geçirirsin?',
+          secenekler: [
+            { text: 'Çok nadir, zaman bulamıyorum', puan: 4 },
+            { text: 'Haftada bir-iki kez', puan: 2 },
+            { text: 'Neredeyse her gün kısa süre', puan: 1 },
+            { text: 'Her gün bilinçli, kaliteli zaman ayırırım', puan: 0 },
+          ],
+          aciklama: 'Kaliteli zaman çocuğun oksitosin (bağlanma hormonu) sistemini güçlendirir. Bu, güvenli bağlanmanın temelidir.'
+        },
+        {
+          soru: 'Çocuğuna "hayır" demek sana ne kadar zor gelir?',
+          secenekler: [
+            { text: 'Çok zor, genellikle evet derim', puan: 4 },
+            { text: 'Zor ama bazen diyebiliyorum', puan: 3 },
+            { text: 'Gerektiğinde rahatlıkla derim', puan: 1 },
+            { text: 'Sevgiyle ama kararlılıkla hayır diyebilirim', puan: 0 },
+          ]
+        },
+        {
+          soru: 'Kendi davranışlarının çocuk üzerindeki etkisini ne kadar düşünürsün?',
+          secenekler: [
+            { text: 'Hiç düşünmem', puan: 4 },
+            { text: 'Bazen aklıma gelir', puan: 3 },
+            { text: 'Sıkça düşünür ve kendimi düzeltmeye çalışırım', puan: 1 },
+            { text: 'Sürekli öz-değerlendirme yaparım', puan: 0 },
+          ],
+          aciklama: 'Çocuklar söylediklerinden çok yaptıklarını taklit eder. Ayna nöronlar ebeveyn davranışını doğrudan kopyalar.'
+        },
+        {
+          soru: 'Çocuğuna sabır ve şükrü nasıl öğretirsin?',
+          secenekler: [
+            { text: 'Özel bir çaba göstermiyorum', puan: 4 },
+            { text: 'Sözel olarak söylerim ama pratik az', puan: 3 },
+            { text: 'Bazen beraber pratik yaparız', puan: 1 },
+            { text: 'Günlük hayatta model olurum ve birlikte pratik yaparız', puan: 0 },
+          ]
+        },
+      ],
+      resultRanges: [
+        { min: 0, max: 20, label: 'Bilinçli Ebeveyn', text: 'Çocuğunun nefs gelişimini bilinçli şekilde destekliyorsun. Tutarlı sınırlar, duygusal kabul ve model olma — harika bir denge.', emoji: '🌟' },
+        { min: 21, max: 45, label: 'Gelişen Ebeveyn', text: 'İyi niyetin ve farkındalığın var, bazı alanlarda güçlenmen gerekiyor. Tutarlılık ve duygusal koçluk becerilerini geliştir.', emoji: '🌱' },
+        { min: 46, max: 70, label: 'Dikkat Gerektiren Alanlar', text: 'Ebeveynlik tarzında çocuğun nefs gelişimini olumsuz etkileyebilecek kalıplar var. Farkındalık güçlü bir başlangıç — buradan düzelt.', emoji: '⚠️' },
+        { min: 71, max: 100, label: 'Acil Farkındalık', text: 'Ebeveynlik yaklaşımın çocuğun nefs terbiyesini ciddi şekilde zorlaştırıyor olabilir. Ama değişim her zaman mümkün — tek bir adımla başla.', emoji: '🚨' },
+      ]
+    });
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

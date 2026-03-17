@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bir Yanlış Bir Doğru — NöroTerbiye</title>
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .swap-container { display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:center; margin:32px 0; }
+    .swap-card { padding:32px 24px; border-radius:var(--radius-xl); text-align:center; min-height:200px; display:flex; flex-direction:column; justify-content:center; }
+    .swap-card.wrong { background:var(--nt-red-soft); border:2px solid var(--nt-red); }
+    .swap-card.right { background:var(--nt-green-soft); border:2px solid var(--nt-green); }
+    .swap-icon { font-size:2.5rem; margin-bottom:12px; }
+    .swap-label { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; }
+    .swap-text { font-size:1.05rem; font-weight:600; line-height:1.5; }
+    .swap-arrow { font-size:2rem; color:var(--nt-primary); }
+    .alt-list { display:flex; flex-direction:column; gap:8px; margin-top:16px; }
+    .alt-item { padding:14px 18px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); font-size:0.88rem; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; gap:10px; }
+    .alt-item:hover { border-color:var(--nt-green); background:var(--nt-green-soft); }
+    .alt-item .num { width:24px; height:24px; border-radius:50%; background:var(--nt-green-soft); color:var(--nt-green); font-size:0.72rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    @media(max-width:600px) { .swap-container { grid-template-columns:1fr; } .swap-arrow { transform:rotate(90deg); justify-self:center; } }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+      <p class="nt-label nt-fade-in" style="margin-bottom:8px">NöroTerbiye Araç</p>
+      <h1 class="nt-title nt-fade-in" style="font-size:1.8rem;margin-bottom:8px;animation-delay:0.05s">🔄 Bir Yanlış Bir Doğru</h1>
+      <p class="nt-subtitle nt-fade-in" style="animation-delay:0.1s;margin-bottom:32px">
+        Yanlış davranışı seç, anında alternatiflerini gör. Hızlı ve pratik.
+      </p>
+
+      <div class="nt-card nt-fade-in" style="padding:24px;animation-delay:0.15s">
+        <label class="nt-form-label">Yanlış davranışı seç veya yaz</label>
+        <select class="nt-select" id="yanlis-select" style="margin-bottom:12px">
+          <option value="">-- Listeden seç --</option>
+        </select>
+        <input class="nt-input" id="yanlis-custom" placeholder="Veya kendi yanlış davranışını yaz...">
+      </div>
+
+      <div id="result-area" style="display:none">
+        <div class="swap-container" id="swap-display"></div>
+
+        <div class="nt-card" style="padding:24px">
+          <h3 style="font-size:1rem;font-weight:700;margin-bottom:4px">Tüm Alternatifler</h3>
+          <p style="font-size:0.78rem;color:var(--muted);margin-bottom:12px">Birini seç veya kendi alternatifini ekle</p>
+          <div class="alt-list" id="alt-list"></div>
+          <div style="display:flex;gap:8px;margin-top:16px">
+            <input class="nt-input" id="custom-alt" placeholder="Kendi alternatifin...">
+            <button class="nt-btn nt-btn-secondary nt-btn-sm" onclick="addCustomAlt()">+</button>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;text-align:center">
+          <button class="nt-btn nt-btn-ghost nt-btn-sm" onclick="reset()">🔄 Başka bir davranış seç</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const database = [
+      {
+        yanlis: 'Kısa video / sosyal medya kaydırma',
+        icon: '📱',
+        alternatifler: ['10 dakika yürüyüş','Bir sözlük kavramı oku','Bir arkadaşına mesaj at','5 dakika nefes egzersizi','Bir sayfa kitap oku','Not defterine bir şey yaz']
+      },
+      {
+        yanlis: 'Şekerli atıştırma / abur cubur',
+        icon: '🍬',
+        alternatifler: ['Bir bardak su iç','Meyve ye','5 dakika yürü','Elini yüzünü yıka','Sakız çiğne','Bir avuç kuruyemiş ye']
+      },
+      {
+        yanlis: 'Oyun oynama (saatlerce)',
+        icon: '🎮',
+        alternatifler: ['Gerçek hayatta bir görev tamamla','Bulmaca veya satranç çöz','Fiziksel aktivite yap','Bir şey inşa et veya tamir et','Yeni bir beceri öğren','Arkadaşlarla dışarı çık']
+      },
+      {
+        yanlis: 'Gıybet / dedikodu',
+        icon: '🗣️',
+        alternatifler: ['O kişi için dua et','Konu değiştir','Bir biyografi anlat','Kendi hatanı düşün','Sessizce oradan ayrıl','Güzel bir haber paylaş']
+      },
+      {
+        yanlis: 'Erteleme / savsaklama',
+        icon: '⏳',
+        alternatifler: ['İşin ilk 10 dakikasını yap','Pomodoro (25 dk) başlat','Görevi küçük parçalara böl','Masanı düzenle','Bir kağıda 3 görev yaz','Birini ara ve söz ver']
+      },
+      {
+        yanlis: 'Öfke patlaması / bağırma',
+        icon: '😤',
+        alternatifler: ['Derin nefes al (4-4-4)','Bir bardak su iç','Odadan çık, 5 dk yürü','Not defterine yaz','Abdest al','10\'a kadar say']
+      },
+      {
+        yanlis: 'Gereksiz alışveriş',
+        icon: '🛒',
+        alternatifler: ['24 saat bekle','İhtiyaç listesi yap','Sepeti boşalt, bir gün sonra bak','Elindekine şükret listesi yaz','Birine hediye planla','Birikim hedefi koy']
+      },
+      {
+        yanlis: 'Geç yatma / uykuyu geciktirme',
+        icon: '🌙',
+        alternatifler: ['Telefonu başka odaya koy','Kağıt kitap oku','Yarının planını yaz','Işıkları kıs','Lavanta veya sıcak çay','Uyku alarmı kur']
+      },
+      {
+        yanlis: 'Sürekli müzik dinleme',
+        icon: '🎧',
+        alternatifler: ['Sessizlik aralığı koy','Kur\'an dinle','Podcast veya sesli kitap geç','Doğa sesleri aç','Kulaklığı çıkar, çevreyi dinle','Bir enstrüman çalmayı dene']
+      },
+      {
+        yanlis: 'Sosyal medyada kıyas yapma',
+        icon: '📊',
+        alternatifler: ['Kendi başarılarını listele','Uygulamayı sil veya sınırla','Bir dosta mesaj at','Günlük yaz','Ana ekrandan kaldır','Gerçek hayatta bir şey yap']
+      },
+      {
+        yanlis: 'Yalan söyleme',
+        icon: '🤥',
+        alternatifler: ['Doğruyu nazikçe söyle','Susma hakkını kullan','Konu değiştir ama yalan söyleme','Özür dile','Kendine neden yalan söylediğini sor','Güvenilir biri ol hedefi koy']
+      },
+      {
+        yanlis: 'Aşırı yemek yeme',
+        icon: '🍔',
+        alternatifler: ['Küçük tabak kullan','Yavaş ye, 20 dakika kural','Su iç, 10 dk bekle','Sofrayı erken topla','Yemek öncesi niyet et','Tok karnına alışveriş yapma']
+      },
+    ];
+
+    // Populate select
+    const sel = document.getElementById('yanlis-select');
+    database.forEach((d, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = d.icon + ' ' + d.yanlis;
+      sel.appendChild(opt);
+    });
+
+    let currentAlts = [];
+    let currentItem = null;
+
+    sel.addEventListener('change', () => {
+      if (sel.value === '') return;
+      currentItem = database[parseInt(sel.value)];
+      currentAlts = [...currentItem.alternatifler];
+      showResult();
+    });
+
+    document.getElementById('yanlis-custom').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const val = e.target.value.trim();
+        if (!val) return;
+        // Find closest match or use generic
+        const match = database.find(d => d.yanlis.toLowerCase().includes(val.toLowerCase().slice(0, 5)));
+        if (match) {
+          currentItem = match;
+          currentAlts = [...match.alternatifler];
+        } else {
+          currentItem = { yanlis: val, icon: '❌', alternatifler: ['Nefes al ve dur','Alternatif bir aktivite bul','Birine haber ver','5 dakika bekle','Not al: neden yaptım?'] };
+          currentAlts = [...currentItem.alternatifler];
+        }
+        showResult();
+      }
+    });
+
+    function showResult() {
+      document.getElementById('result-area').style.display = 'block';
+      const randomAlt = currentAlts[Math.floor(Math.random() * currentAlts.length)];
+
+      document.getElementById('swap-display').innerHTML = `
+        <div class="swap-card wrong">
+          <div class="swap-label" style="color:var(--nt-red)">Yanlış</div>
+          <div class="swap-icon">${currentItem.icon}</div>
+          <div class="swap-text">${currentItem.yanlis}</div>
+        </div>
+        <div class="swap-arrow">→</div>
+        <div class="swap-card right">
+          <div class="swap-label" style="color:var(--nt-green)">Doğru</div>
+          <div class="swap-icon">✅</div>
+          <div class="swap-text">${randomAlt}</div>
+        </div>
+      `;
+
+      renderAlts();
+    }
+
+    function renderAlts() {
+      const list = document.getElementById('alt-list');
+      list.innerHTML = currentAlts.map((a, i) => `
+        <div class="alt-item" onclick="selectAlt(${i})">
+          <div class="num">${i + 1}</div>
+          <span>${a}</span>
+        </div>
+      `).join('');
+    }
+
+    function selectAlt(idx) {
+      const swap = document.querySelector('.swap-card.right .swap-text');
+      if (swap) swap.textContent = currentAlts[idx];
+    }
+
+    function addCustomAlt() {
+      const input = document.getElementById('custom-alt');
+      const val = input.value.trim();
+      if (!val) return;
+      currentAlts.push(val);
+      input.value = '';
+      renderAlts();
+      NT.toast('Alternatif eklendi!');
+    }
+
+    function reset() {
+      document.getElementById('result-area').style.display = 'none';
+      sel.value = '';
+      document.getElementById('yanlis-custom').value = '';
+      currentItem = null;
+      currentAlts = [];
+    }
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>

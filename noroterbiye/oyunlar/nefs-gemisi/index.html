@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nefs Gemisi — NöroTerbiye</title>
+  <meta name="description" content="Gemiyi yönet! Kalp, Akıl, Nefs ve Çevre dengesini koruyarak fırtınalardan geç.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
+  <link rel="stylesheet" href="/lib/design-system/tokens.css">
+  <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
+  <script src="/lib/design-system/theme.js"></script>
+  <style>
+    .ship-display { text-align: center; padding: 20px; margin-bottom: 16px; position: relative; overflow: hidden; }
+    .ship-icon { font-size: 4rem; position: relative; transition: transform 0.5s; }
+    .ship-icon.storm { animation: rock 0.5s ease-in-out infinite; }
+    @keyframes rock { 0%,100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+    .sea { height: 40px; background: linear-gradient(180deg, transparent 0%, var(--nt-cyan-soft) 100%); border-radius: 0 0 var(--radius-lg) var(--radius-lg); margin-top: -8px; }
+    .crew-gauges { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; }
+    .crew-gauge { padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+    .crew-name { font-size: 0.8rem; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .crew-bar { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+    .crew-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+    .crew-fill.kalp { background: var(--nt-rose); }
+    .crew-fill.akil { background: var(--nt-primary); }
+    .crew-fill.nefs { background: var(--nt-amber); }
+    .crew-fill.cevre { background: var(--nt-green); }
+    .journey-progress { margin-bottom: 16px; }
+    .journey-dots { display: flex; gap: 4px; justify-content: center; margin-top: 8px; }
+    .journey-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); }
+    .journey-dot.passed { background: var(--nt-green); border-color: var(--nt-green); }
+    .journey-dot.current { background: var(--nt-primary); border-color: var(--nt-primary); animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 var(--nt-primary-glow); } 50% { box-shadow: 0 0 0 6px transparent; } }
+    .journey-dot.sunk { background: var(--nt-red); border-color: var(--nt-red); }
+    .storm-card { padding: 24px; margin-bottom: 16px; }
+    .storm-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+    .storm-desc { font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.6; }
+    .storm-choices { display: flex; flex-direction: column; gap: 8px; }
+    .storm-choice { text-align: left; padding: 14px 18px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); color: var(--text); font-size: 0.88rem; cursor: pointer; transition: all var(--transition-fast); font-family: var(--font-sans); line-height: 1.4; }
+    .storm-choice:hover { border-color: var(--nt-primary); background: var(--nt-primary-soft); }
+    .storm-choice .who { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+    .consequence-box { margin-top: 12px; padding: 14px; border-radius: var(--radius-md); font-size: 0.85rem; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <script src="/nav.js"></script>
+
+  <section class="nt-section" style="padding-top:80px">
+    <div class="nt-wrap nt-narrow">
+
+      <div id="intro" class="nt-fade-in">
+        <h1 class="nt-title" style="font-size:2rem;margin-bottom:12px">⛵ Nefs Gemisi</h1>
+        <p class="nt-subtitle" style="margin-bottom:20px">Gemiyi yönet, fırtınalardan geç!</p>
+        <div class="nt-card" style="margin-bottom:24px">
+          <h3 style="font-weight:700;margin-bottom:8px">Nasıl Oynanır?</h3>
+          <ul style="font-size:0.88rem;color:var(--text-secondary);line-height:1.8;padding-left:20px">
+            <li>Sen bir geminin kaptanısın. Mürettebatın:
+              <strong>Kalp</strong> (kaptan), <strong>Akıl</strong> (navigator), <strong>Nefs</strong> (makine dairesi), <strong>Çevre</strong> (rüzgar/deniz)</li>
+            <li>Her turda bir fırtına/olay gelir, 3 yaklaşımdan birini seç</li>
+            <li>Her seçim mürettebat dengesini etkiler</li>
+            <li>Herhangi bir değer <strong>0'a düşerse</strong> gemi batar!</li>
+            <li>8 fırtınadan geçerek limana ulaş!</li>
+          </ul>
+        </div>
+        <button class="nt-btn nt-btn-primary nt-btn-lg" onclick="startGame()">Yelken Aç!</button>
+      </div>
+
+      <div id="game" style="display:none">
+        <div class="nt-card ship-display">
+          <div class="ship-icon" id="ship-icon">⛵</div>
+          <div class="sea"></div>
+        </div>
+        <div class="crew-gauges">
+          <div class="crew-gauge"><div class="crew-name"><span>❤️ Kalp</span><span id="kalp-val">70</span></div><div class="crew-bar"><div class="crew-fill kalp" id="kalp-fill"></div></div></div>
+          <div class="crew-gauge"><div class="crew-name"><span>🧠 Akıl</span><span id="akil-val">70</span></div><div class="crew-bar"><div class="crew-fill akil" id="akil-fill"></div></div></div>
+          <div class="crew-gauge"><div class="crew-name"><span>🔥 Nefs</span><span id="nefs-val">70</span></div><div class="crew-bar"><div class="crew-fill nefs" id="nefs-fill"></div></div></div>
+          <div class="crew-gauge"><div class="crew-name"><span>🌊 Çevre</span><span id="cevre-val">70</span></div><div class="crew-bar"><div class="crew-fill cevre" id="cevre-fill"></div></div></div>
+        </div>
+        <div class="journey-progress">
+          <div style="text-align:center;font-size:0.8rem;color:var(--muted)" id="journey-label"></div>
+          <div class="journey-dots" id="journey-dots"></div>
+        </div>
+        <div class="nt-card storm-card" id="storm-card"></div>
+      </div>
+
+      <div id="result" style="display:none">
+        <div class="nt-card nt-result">
+          <div class="nt-result-score" id="final-score"></div>
+          <div class="nt-result-label" id="final-label"></div>
+          <div class="nt-result-text" id="final-text"></div>
+          <div class="nt-result-actions">
+            <button class="nt-btn nt-btn-primary" onclick="location.reload()">Tekrar Oyna</button>
+            <a href="/noroterbiye/oyunlar/" class="nt-btn nt-btn-secondary">Diğer Oyunlar</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="/noroterbiye/js/common.js"></script>
+  <script>
+    const storms = [
+      { title: '🌊 Haz Fırtınası', desc: 'Denizde bir ada görünüyor. Üzerinde lezzetler, eğlenceler var. Nefs "dur!" diyor.',
+        choices: [
+          { text: 'Adaya yanaş, biraz eğlen', who: 'Nefsin isteği', fx: { kalp: -10, akil: -5, nefs: 15, cevre: -5 } },
+          { text: 'Uzaktan bak, rotada kal', who: 'Aklın kararı', fx: { kalp: 5, akil: 10, nefs: -10, cevre: 5 } },
+          { text: 'Adayı haritana işaretle, dönüşte uğrarsın', who: 'Kalbin hikmeti', fx: { kalp: 10, akil: 5, nefs: -5, cevre: 0 } },
+        ], info: 'Nefs hemen ister, akıl erteler, kalp dengeyi kurar. Hazzı tamamen reddetmek de doğru değildir; zamanlama önemlidir.' },
+      { title: '⚡ Öfke Şimşeği', desc: 'Başka bir gemi seni sıkıştırdı, mürettebat sinirleniyor.',
+        choices: [
+          { text: 'Karşılık ver, topları ateşle!', who: 'Gadab dürtüsü', fx: { kalp: -15, akil: -10, nefs: 10, cevre: -15 } },
+          { text: 'Manevra yap, uzaklaş', who: 'Aklın stratejisi', fx: { kalp: 5, akil: 10, nefs: -5, cevre: 5 } },
+          { text: 'Beyaz bayrak çek, diyalog kur', who: 'Kalbin cesareti', fx: { kalp: 15, akil: 5, nefs: -10, cevre: 10 } },
+        ], info: 'Öfke anında en güçlü kişi kendini tutan kişidir. Gadab kontrol edilmezse gemiyi batırır.' },
+      { title: '🌫️ Şüphe Sisi', desc: 'Yoğun sis. Yol görünmüyor. Mürettebat "dönelim" diyor.',
+        choices: [
+          { text: 'Geri dön, güvenli limana', who: 'Korku tepkisi', fx: { kalp: -10, akil: 5, nefs: 10, cevre: 0 } },
+          { text: 'Pusulaya güven, yavaş ilerle', who: 'İmanın rehberliği', fx: { kalp: 15, akil: 10, nefs: -5, cevre: 5 } },
+          { text: 'Hızlan, bir an önce çık', who: 'Sabırsızlık', fx: { kalp: -5, akil: -10, nefs: 5, cevre: -10 } },
+        ], info: 'Belirsizlikte sabır ve pusulaya (ilme/imana) güven en güvenli yoldur. Panik hem gemiyi hem mürettebatı tehlikeye atar.' },
+      { title: '👥 Yanlış Mürettebat', desc: 'Limanda yeni mürettebat aldın ama hırsızlık ve dedikodu yayıyorlar.',
+        choices: [
+          { text: 'Göz yum, ihtiyacın var', who: 'Tembellik', fx: { kalp: -10, akil: -5, nefs: 5, cevre: -15 } },
+          { text: 'Uyar, şans ver, izle', who: 'Adaletle merhamet', fx: { kalp: 10, akil: 10, nefs: 0, cevre: 5 } },
+          { text: 'Hemen at, yerine yenisini al', who: 'Sert karar', fx: { kalp: -5, akil: 5, nefs: -5, cevre: 10 } },
+        ], info: 'Çevre tasarımı geminin kaderidir. Kötü mürettebat tüm gemiyi zehirler. Ama adalet merhametsiz olmak değildir.' },
+      { title: '🏝️ Konfor Adası', desc: 'Güzel bir ada, hava güzel. "Burada kalabiliriz" diyor nefs.',
+        choices: [
+          { text: 'Kal, neden risk alasın ki?', who: 'Nefsin konforu', fx: { kalp: -15, akil: -10, nefs: 15, cevre: 0 } },
+          { text: 'Bir gece kal, sabah devam et', who: 'Dengeli karar', fx: { kalp: 5, akil: 5, nefs: 0, cevre: 0 } },
+          { text: 'Durmadan devam et', who: 'Azim ve hedef', fx: { kalp: 10, akil: 10, nefs: -10, cevre: 5 } },
+        ], info: 'Konfor bölgesi nefsin en sevdiği limandır. Gelişim her zaman konfor alanının dışındadır. Ama mola vermek de gereklidir.' },
+      { title: '💰 Hazine Haritası', desc: 'Bir şişe içinde harita buldun. Hazine rotadan uzakta.',
+        choices: [
+          { text: 'Rotayı değiştir, hazineye git', who: 'Hırs dürtüsü', fx: { kalp: -10, akil: -5, nefs: 10, cevre: -10 } },
+          { text: 'Haritayı sakla, önce hedefine ulaş', who: 'Öncelik bilinci', fx: { kalp: 10, akil: 10, nefs: -5, cevre: 5 } },
+          { text: 'Haritayı yırt, tuzak olabilir', who: 'Aşırı ihtiyat', fx: { kalp: 0, akil: -5, nefs: -10, cevre: 5 } },
+        ], info: 'Dünya malı cazip ama asıl hazine hedefe ulaşmaktır. Ne tamamen reddet, ne de peşinden koş; zamanlama ve öncelik önemli.' },
+      { title: '🌪️ Büyük Fırtına', desc: 'Devasa dalgalar, şimşekler. Geminin en zor anı.',
+        choices: [
+          { text: 'Tüm yelkenleri aç, fırtınanın içinden geç', who: 'Cüretkar risk', fx: { kalp: 5, akil: -15, nefs: 10, cevre: -10 } },
+          { text: 'Yelkenleri indir, dua et, sabret', who: 'Tevekkül + tedbir', fx: { kalp: 15, akil: 10, nefs: -10, cevre: 10 } },
+          { text: 'En yakın kıyıya sığın', who: 'Stratejik geri çekilme', fx: { kalp: 0, akil: 10, nefs: 0, cevre: 5 } },
+        ], info: 'Büyük fırtınalarda tevekkül ve tedbir birlikte gerekir. Yelkenleri indirip dua etmek hem akıl hem kalbin birlikteliğidir.' },
+      { title: '🌅 Liman Göründü!', desc: 'Uzakta hedef liman görünüyor. Ama son bir engel var: kayalıklar.',
+        choices: [
+          { text: 'Hızlan, bir an önce ulaş!', who: 'Sabırsızlık', fx: { kalp: -5, akil: -10, nefs: 10, cevre: -10 } },
+          { text: 'Yavaşla, haritayı kontrol et, güvenli geçiş bul', who: 'Sabırlı akıl', fx: { kalp: 10, akil: 15, nefs: -5, cevre: 10 } },
+          { text: 'Mürettebatla istişare et', who: 'Kolektif hikmet', fx: { kalp: 10, akil: 10, nefs: 0, cevre: 10 } },
+        ], info: 'Hedefe yakınken en çok sabır gerekir. Son metrelerde yapılan hatalar tüm yolculuğu boşa çıkarabilir.' },
+    ];
+
+    let vals = { kalp: 70, akil: 70, nefs: 70, cevre: 70 };
+    let round = 0, shuffled = [], sunk = false;
+
+    function startGame() {
+      document.getElementById('intro').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+      shuffled = [...storms].sort(() => Math.random() - 0.5);
+      updateUI();
+      showStorm();
+    }
+
+    function updateUI() {
+      ['kalp','akil','nefs','cevre'].forEach(k => {
+        vals[k] = Math.max(0, Math.min(100, vals[k]));
+        document.getElementById(k + '-fill').style.width = vals[k] + '%';
+        document.getElementById(k + '-val').textContent = vals[k];
+      });
+      document.getElementById('journey-label').textContent = `Etap ${round + 1} / ${shuffled.length}`;
+      let dots = '';
+      for (let i = 0; i < shuffled.length; i++) {
+        if (i < round) dots += '<div class="journey-dot passed"></div>';
+        else if (i === round) dots += '<div class="journey-dot current"></div>';
+        else dots += '<div class="journey-dot"></div>';
+      }
+      document.getElementById('journey-dots').innerHTML = dots;
+      const isStormy = shuffled[round]?.title.includes('Fırtına') || shuffled[round]?.title.includes('Şimşek');
+      document.getElementById('ship-icon').className = 'ship-icon' + (isStormy ? ' storm' : '');
+    }
+
+    function showStorm() {
+      if (round >= shuffled.length) return endGame(true);
+      updateUI();
+      const s = shuffled[round];
+      document.getElementById('storm-card').innerHTML = `
+        <div class="storm-title">${s.title}</div>
+        <div class="storm-desc">${s.desc}</div>
+        <div class="storm-choices">
+          ${s.choices.map((c, i) => `<button class="storm-choice" onclick="pick(${i})">
+            ${c.text}<div class="who">${c.who}</div>
+          </button>`).join('')}
+        </div>
+        <div id="consequence"></div>
+      `;
+    }
+
+    function pick(i) {
+      const s = shuffled[round];
+      const c = s.choices[i];
+      vals.kalp += c.fx.kalp;
+      vals.akil += c.fx.akil;
+      vals.nefs += c.fx.nefs;
+      vals.cevre += c.fx.cevre;
+      updateUI();
+
+      document.querySelectorAll('.storm-choice').forEach(b => { b.disabled = true; b.onclick = null; });
+
+      const sunkNow = vals.kalp <= 0 || vals.akil <= 0 || vals.nefs <= 0 || vals.cevre <= 0;
+      let sunkReason = '';
+      if (vals.kalp <= 0) sunkReason = 'Kalp (niyet/iman) tükendi! Kaptan düşmeni yönetemiyor.';
+      if (vals.akil <= 0) sunkReason = 'Akıl tükendi! Navigator kayboldu, gemi rotasız.';
+      if (vals.nefs <= 0) sunkReason = 'Nefs tamamen ezildi! Motivasyon kalmadı, mürettebat çalışmıyor.';
+      if (vals.cevre <= 0) sunkReason = 'Çevre desteği sıfırlandı! Deniz ve rüzgar artık düşman.';
+
+      const fxText = Object.entries(c.fx).map(([k,v]) => {
+        if (v === 0) return null;
+        const names = { kalp: '❤️ Kalp', akil: '🧠 Akıl', nefs: '🔥 Nefs', cevre: '🌊 Çevre' };
+        return `${names[k]} ${v > 0 ? '+' : ''}${v}`;
+      }).filter(Boolean).join(' | ');
+
+      const cons = document.getElementById('consequence');
+      cons.innerHTML = `
+        <div class="consequence-box" style="background:var(--surface2);border-left:3px solid var(--nt-primary)">
+          <div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px">${fxText}</div>
+          <div>${s.info}</div>
+          ${sunkNow ? `<div style="color:var(--nt-red);font-weight:700;margin-top:8px">💥 ${sunkReason}</div>` : ''}
+        </div>
+        <button class="nt-btn nt-btn-primary nt-btn-sm" style="margin-top:12px" onclick="${sunkNow ? 'endGame(false)' : 'nextStorm()'}">
+          ${sunkNow ? 'Sonucu Gör' : 'Sonraki Etap →'}
+        </button>
+      `;
+      round++;
+    }
+
+    function nextStorm() { showStorm(); }
+
+    function endGame(reached) {
+      document.getElementById('game').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      let label, text, scoreText;
+      if (reached) {
+        const total = vals.kalp + vals.akil + vals.nefs + vals.cevre;
+        scoreText = total + '/400';
+        if (total >= 300) { label = 'Muhteşem Kaptan!'; text = 'Gemiyi mükemmel dengede limana ulaştırdın! Kalp, akıl, nefs ve çevre uyum içinde çalıştı.'; }
+        else if (total >= 200) { label = 'İyi Yolculuk!'; text = 'Limana ulaştın ama bazı hasarlar var. Denge sürekli dikkat gerektirir.'; }
+        else { label = 'Zar Zor Ulaştın'; text = 'Limana ulaştın ama gemi harap. Daha dengeli kararlarla tekrar dene.'; }
+      } else {
+        scoreText = `${round}/${shuffled.length}`;
+        label = 'Gemi Battı!';
+        text = 'Denge bozuldu ve gemi battı. İnsan gemisinde kalp, akıl, nefs ve çevre birlikte çalışmalıdır. Birinin tükenmesi tüm sistemi çökertir.';
+      }
+      document.getElementById('final-score').textContent = scoreText;
+      document.getElementById('final-label').textContent = label;
+      document.getElementById('final-text').textContent = text;
+      NT.save('nefs_gemisi', { reached, round, vals, date: new Date().toISOString() });
+    }
+
+    NT.renderNav();
+    NT.renderFooter();
+  </script>
+</body>
+</html>
