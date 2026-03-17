@@ -1,3 +1,11 @@
 {
-  "trailingSlash": true
+  "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "lab.raufenc.com" }],
+      "destination": "https://raufenc.com/:path*",
+      "permanent": true
+    }
+  ]
 }
