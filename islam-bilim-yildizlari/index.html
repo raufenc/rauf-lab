@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+<script src="/lib/design-system/theme.js"></script>
+  <link rel="stylesheet" href="/lib/design-system/tokens.css" />
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>İslam Bilim Yıldızları — Lab</title>
@@ -9,21 +11,22 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #05050d;
-      --surface: #0e0e1a;
-      --surface2: #141420;
       --surface3: #1a1a2e;
-      --border: #1e1e30;
       --border2: #2a2a40;
-      --text: #e8e8f0;
-      --muted: #44445a;
-      --muted2: #7777a0;
       --gold: #c8a46e;
       --gold2: #e8c070;
       --gold-soft: rgba(200,164,110,0.1);
       --gold-glow: rgba(200,164,110,0.22);
       --indigo: #6366f1;
       --indigo-soft: rgba(99,102,241,0.1);
+    }
+
+    html.light {
+      --surface3: #e8e8f0;
+      --border2: #c8c8d4;
+      --gold-soft: rgba(180,140,80,0.1);
+      --gold-glow: rgba(180,140,80,0.18);
+      --indigo-soft: rgba(99,102,241,0.08);
     }
 
     body {
@@ -133,7 +136,7 @@
     /* ── Controls (Keşfet) ── */
     .controls {
       position: sticky; top: 0; z-index: 20;
-      background: rgba(5,5,13,0.85);
+      background: var(--nav-bg);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
       padding: 14px 0;
@@ -224,7 +227,7 @@
     /* ── Modal ── */
     .modal-overlay {
       display: none; position: fixed; inset: 0; z-index: 100;
-      background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
       justify-content: center; align-items: flex-start;
       padding: 40px 20px; overflow-y: auto;
     }

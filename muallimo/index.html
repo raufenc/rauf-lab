@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+<script src="/lib/design-system/theme.js"></script>
+<link rel="stylesheet" href="/lib/design-system/tokens.css" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>MUALLİMO — Resim Kartları Kütüphanesi</title>
@@ -9,13 +11,9 @@
 /* ── RESET & TEMEL ─────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg:       #0a0c14;
   --bg2:      #111420;
   --bg3:      #181c2e;
-  --border:   #1e2338;
   --border2:  #252b42;
-  --text:     #eef0f8;
-  --text2:    #8890b0;
   --text3:    #4a5070;
   --accent:   #7c6fff;
   --accent2:  #a78bfa;
@@ -23,6 +21,15 @@
   --radius:   16px;
   --radius-sm:10px;
   --shadow:   0 8px 40px rgba(0,0,0,.5);
+}
+html.light {
+  --bg2:      #f0f0f5;
+  --bg3:      #e8e8f0;
+  --border2:  #c8c8d4;
+  --text3:    #888898;
+  --accent:   #7c6fff;
+  --accent2:  #6d5ce0;
+  --shadow:   0 8px 40px rgba(0,0,0,.08);
 }
 html { scroll-behavior: smooth; }
 body {
@@ -36,7 +43,7 @@ body {
 /* ── HEADER ─────────────────────────────────────────────────── */
 #header {
   position: sticky; top: 0; z-index: 200;
-  background: rgba(10,12,20,.85);
+  background: var(--nav-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);

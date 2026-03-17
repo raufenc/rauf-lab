@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+<script src="/lib/design-system/theme.js"></script>
+<link rel="stylesheet" href="/lib/design-system/tokens.css" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Elveda Endülüs</title>
@@ -12,16 +14,37 @@
   --surface:  #120d09;
   --surface2: #1c1410;
   --border:   #2e2016;
+  --text:     #e0cead;
+  --muted:    #6b5840;
+  --muted2:   #9c8060;
   --gold:     #c4952a;
   --gold-dim: #7a5c18;
   --gold-soft:rgba(196,149,42,0.12);
   --red:      #8b2020;
   --red-soft: rgba(139,32,32,0.15);
   --green:    #2a5e40;
-  --text:     #e0cead;
-  --muted:    #6b5840;
-  --muted2:   #9c8060;
   --white:    #f5ead8;
+  --nav-bg:   rgba(8,6,4,0.92);
+  --nav-border: rgba(255,220,150,0.1);
+}
+
+html.light {
+  --bg:       #f5f0e8;
+  --surface:  #faf6ef;
+  --surface2: #f0ead8;
+  --border:   #d4c4a8;
+  --text:     #2e2418;
+  --muted:    #9c8a70;
+  --muted2:   #6b5840;
+  --gold:     #a07820;
+  --gold-dim: #8a6818;
+  --gold-soft:rgba(160,120,32,0.10);
+  --red:      #7a1818;
+  --red-soft: rgba(122,24,24,0.10);
+  --green:    #1e4e30;
+  --white:    #2e2418;
+  --nav-bg:   rgba(245,240,232,0.92);
+  --nav-border: rgba(0,0,0,0.08);
 }
 
 html { font-size: 16px; }
@@ -94,7 +117,7 @@ body::after {
   justify-content: center;
   gap: 24px;
   padding: 10px 20px;
-  background: rgba(8,6,4,0.92);
+  background: var(--nav-bg);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(8px);
   font-size: 12px;

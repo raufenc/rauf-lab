@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+<script src="/lib/design-system/theme.js"></script>
+<link rel="stylesheet" href="/lib/design-system/tokens.css" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Osmanlı Padişahları — İnteraktif Kart Seti</title>
@@ -9,15 +11,22 @@
 /* ── RESET & ROOT ──────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0a0f;--bg2:#12121c;--bg3:#1a1a2e;--bg4:#222240;
-  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
-  --text:#f0ead6;--text2:#a09882;--text3:#605848;
+  --bg2:#12121c;--bg3:#1a1a2e;--bg4:#222240;
+  --border2:rgba(255,255,255,.14);
+  --text2:#a09882;--text3:#605848;
   --gold:#d4a24e;--gold2:#b8860b;--gold-dim:rgba(212,162,78,.12);
   --red:#c0392b;--green:#27ae60;--blue:#2980b9;--purple:#8e44ad;
   --radius:16px;--radius-sm:10px;
   --shadow:0 8px 32px rgba(0,0,0,.6);
   --card-w:min(280px,42vw);
   --font:'Segoe UI',system-ui,-apple-system,sans-serif;
+}
+html.light{
+  --bg2:#f0f0f5;--bg3:#e8e8f0;--bg4:#dddde5;
+  --border2:rgba(0,0,0,.12);
+  --text2:#555570;--text3:#888898;
+  --gold-dim:rgba(212,162,78,.08);
+  --shadow:0 8px 32px rgba(0,0,0,.08);
 }
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100dvh;overflow-x:hidden}
@@ -30,7 +39,7 @@ button{font-family:inherit;cursor:pointer;border:none}
   background-size:60px 60px}
 
 /* ── HEADER ────────────────────────────────────────────────── */
-#header{position:sticky;top:0;z-index:200;background:rgba(10,10,15,.88);
+#header{position:sticky;top:0;z-index:200;background:var(--nav-bg);
   backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);height:54px;
   display:flex;align-items:center;padding:0 16px;gap:12px}

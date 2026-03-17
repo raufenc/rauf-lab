@@ -3,7 +3,7 @@
    Tema renkleri her projede :root override ile değiştirilir.
    ============================================================ */
 
-@import url('../base.css');
+@import url('/lib/design-system/tokens.css');
 
 /* -- Default theme (yeşil / Arapça) -- */
 :root {

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+<script src="/lib/design-system/theme.js"></script>
+  <link rel="stylesheet" href="/lib/design-system/tokens.css" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kalbinin Haritası — Ahlak Pusulası</title>
@@ -9,28 +11,82 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: "Inter", sans-serif; background-color: #111827;
-      background-image: radial-gradient(circle at 1% 1%, rgba(6,78,59,0.5) 0%, transparent 40%),
-        radial-gradient(circle at 99% 99%, rgba(16,185,129,0.4) 0%, transparent 35%);
-      min-height: 100vh; color: #f9fafb; }
+    /* ── Project-specific variables (dark default) ── */
+    :root {
+      --accent-green: #059669;
+      --accent-green-hover: #10b981;
+      --accent-green-light: #6ee7b7;
+      --card-bg: rgba(31,41,55,0.85);
+      --card-border: rgba(75,85,99,0.6);
+      --card-hover-shadow: rgba(6,78,59,0.4);
+      --option-border: #4b5563;
+      --option-hover-bg: rgba(55,65,81,0.5);
+      --option-selected-bg: rgba(16,185,129,0.2);
+      --progress-bg: rgba(55,65,81,0.5);
+      --btn-disabled-bg: #4b5563;
+      --btn-gray-bg: #374151;
+      --btn-gray-hover: #4b5563;
+      --body-bg: #111827;
+      --body-gradient-1: rgba(6,78,59,0.5);
+      --body-gradient-2: rgba(16,185,129,0.4);
+      --body-color: #f9fafb;
+      --gemini-panel-bg: rgba(17,24,39,0.5);
+      --hr-color: #374151;
+    }
+    html.light {
+      --card-bg: rgba(255,255,255,0.85);
+      --card-border: rgba(200,200,215,0.6);
+      --card-hover-shadow: rgba(6,78,59,0.15);
+      --option-border: #c8c8d4;
+      --option-hover-bg: rgba(220,230,225,0.5);
+      --option-selected-bg: rgba(16,185,129,0.12);
+      --progress-bg: rgba(200,200,215,0.4);
+      --btn-disabled-bg: #b0b0c0;
+      --btn-gray-bg: #d4d4dc;
+      --btn-gray-hover: #c0c0cc;
+      --body-bg: #f5f5fa;
+      --body-gradient-1: rgba(6,78,59,0.12);
+      --body-gradient-2: rgba(16,185,129,0.1);
+      --body-color: #1a1a2e;
+      --gemini-panel-bg: rgba(240,240,245,0.7);
+      --hr-color: #dddde5;
+    }
+
+    body { font-family: "Inter", sans-serif; background-color: var(--body-bg);
+      background-image: radial-gradient(circle at 1% 1%, var(--body-gradient-1) 0%, transparent 40%),
+        radial-gradient(circle at 99% 99%, var(--body-gradient-2) 0%, transparent 35%);
+      min-height: 100vh; color: var(--body-color); }
     @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
     .fade-in { animation: fadeIn 0.4s ease both; }
-    .card { background:rgba(31,41,55,0.85); backdrop-filter:blur(8px); border:1px solid rgba(75,85,99,0.6); border-radius:0.75rem; padding:1.5rem; transition:all 0.3s ease; }
-    .card.clickable:hover { transform:translateY(-4px); box-shadow:0 20px 40px rgba(6,78,59,0.4); cursor:pointer; }
-    .btn { display:inline-flex; align-items:center; justify-content:center; background:#059669; color:white; font-weight:700; padding:0.75rem 2rem; border-radius:0.5rem; border:none; cursor:pointer; transition:all 0.2s ease; font-size:1rem; font-family:inherit; }
-    .btn:hover { background:#10b981; transform:scale(1.05); }
+    .card { background:var(--card-bg); backdrop-filter:blur(8px); border:1px solid var(--card-border); border-radius:0.75rem; padding:1.5rem; transition:all 0.3s ease; }
+    .card.clickable:hover { transform:translateY(-4px); box-shadow:0 20px 40px var(--card-hover-shadow); cursor:pointer; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; background:var(--accent-green); color:white; font-weight:700; padding:0.75rem 2rem; border-radius:0.5rem; border:none; cursor:pointer; transition:all 0.2s ease; font-size:1rem; font-family:inherit; }
+    .btn:hover { background:var(--accent-green-hover); transform:scale(1.05); }
     .btn:active { transform:scale(0.97); }
-    .btn:disabled { background:#4b5563; cursor:not-allowed; transform:none; }
-    .btn-gray { background:#374151; } .btn-gray:hover { background:#4b5563; transform:scale(1.02); }
+    .btn:disabled { background:var(--btn-disabled-bg); cursor:not-allowed; transform:none; }
+    .btn-gray { background:var(--btn-gray-bg); } .btn-gray:hover { background:var(--btn-gray-hover); transform:scale(1.02); }
     .btn-indigo { background:#4f46e5; } .btn-indigo:hover { background:#6366f1; }
     .btn-blue { background:#2563eb; } .btn-blue:hover { background:#3b82f6; }
-    .option-label { display:block; padding:1rem; border-radius:0.5rem; cursor:pointer; border:2px solid #4b5563; transition:all 0.2s; margin-bottom:0.75rem; }
-    .option-label:hover { border-color:#10b981; background:rgba(55,65,81,0.5); }
-    .option-label.selected { background:rgba(16,185,129,0.2); border-color:#10b981; box-shadow:0 0 0 2px #6ee7b7; transform:scale(1.02); }
-    .progress-wrap { background:rgba(55,65,81,0.5); border-radius:9999px; height:8px; overflow:hidden; margin-bottom:1.5rem; }
-    .progress-fill { height:100%; background:#10b981; border-radius:9999px; transition:width 0.5s ease; }
+    .option-label { display:block; padding:1rem; border-radius:0.5rem; cursor:pointer; border:2px solid var(--option-border); transition:all 0.2s; margin-bottom:0.75rem; }
+    .option-label:hover { border-color:var(--accent-green-hover); background:var(--option-hover-bg); }
+    .option-label.selected { background:var(--option-selected-bg); border-color:var(--accent-green-hover); box-shadow:0 0 0 2px var(--accent-green-light); transform:scale(1.02); }
+    .progress-wrap { background:var(--progress-bg); border-radius:9999px; height:8px; overflow:hidden; margin-bottom:1.5rem; }
+    .progress-fill { height:100%; background:var(--accent-green-hover); border-radius:9999px; transition:width 0.5s ease; }
     @keyframes spin { to { transform:rotate(360deg); } }
-    .spinner { width:3rem; height:3rem; border:3px solid transparent; border-bottom-color:#10b981; border-radius:50%; animation:spin 0.8s linear infinite; }
+    .spinner { width:3rem; height:3rem; border:3px solid transparent; border-bottom-color:var(--accent-green-hover); border-radius:50%; animation:spin 0.8s linear infinite; }
+
+    /* ── Tailwind overrides for light theme ── */
+    html.light .text-gray-100 { color: #1a1a2e !important; }
+    html.light .text-gray-200 { color: #2a2a40 !important; }
+    html.light .text-gray-300 { color: #333350 !important; }
+    html.light .text-gray-400 { color: #555570 !important; }
+    html.light .text-gray-500 { color: #666680 !important; }
+    html.light .text-white { color: #1a1a2e !important; }
+    html.light .bg-gray-900\/50,
+    html.light .bg-gray-900\/70 { background-color: var(--gemini-panel-bg) !important; }
+    html.light .border-gray-700 { border-color: var(--hr-color) !important; }
+    html.light hr.border-gray-700 { border-color: var(--hr-color) !important; }
+    html.light .btn-gray { color: #333350; }
   </style>
   <script src="/nav.js"></script>
 </head>

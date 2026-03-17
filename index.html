@@ -3,108 +3,233 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rauf Enç — Lab</title>
-  <link rel="stylesheet" href="./lib/base.css" />
+  <title>Rauf Enç</title>
+  <meta name="description" content="Rauf Enç — Eğitimci yazar. Nöroterbiye kitabının yazarı. Dil öğrenme uygulamaları ve dijital projeler." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>" />
+  <link rel="stylesheet" href="/lib/design-system/tokens.css" />
+  <link rel="stylesheet" href="/lib/design-system/animations.css" />
+  <script src="/lib/design-system/theme.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --accent: #6366f1;
-      --accent-soft: rgba(99,102,241,0.1);
-      --accent-glow: rgba(99,102,241,0.25);
-    }
+    :root { --mx: 50%; --my: 50%; }
+
+    html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      line-height: 1.6;
-      min-height: 100vh;
+      font-family: var(--font-sans);
+      line-height: 1.7;
       overflow-x: hidden;
     }
 
-    /* ── Arka plan gradient ── */
+    /* ── Ambient gradient ── */
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background:
-        radial-gradient(ellipse 80% 50% at 10% 0%, rgba(99,102,241,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 90% 80%, rgba(139,92,246,0.06) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: 0;
+        radial-gradient(ellipse 70% 50% at 20% 0%, var(--warm-soft) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 90%, rgba(99,102,241,0.04) 0%, transparent 50%);
+      pointer-events: none; z-index: 0;
     }
 
-    /* ── Animasyonlar ── */
-    @keyframes fadeUp   { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
-    @keyframes pulse    { 0%,100% { opacity:1; } 50% { opacity:.4; } }
-    @keyframes shimmer  { from { background-position: -200% center; } to { background-position: 200% center; } }
-    @keyframes cardIn   { from { opacity:0; transform:translateY(16px) scale(0.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+    /* ── Noise texture ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 999;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 200px 200px;
+    }
+    html.light body::after { opacity: 0.015; }
 
-    .fade-up  { animation: fadeUp  0.6s ease both; }
-    .fade-in  { animation: fadeIn  0.4s ease both; }
-
-    /* ── Layout ── */
     .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
 
-    /* ── Header ── */
-    header { padding: 80px 0 52px; }
-
-    .badge {
-      display: inline-flex; align-items: center; gap: 7px;
-      background: var(--surface2); border: 1px solid var(--border);
-      color: var(--muted2); font-size: 11px; padding: 5px 14px;
-      border-radius: 100px; margin-bottom: 28px;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      animation: fadeUp 0.5s 0.05s ease both;
+    /* ── NAV ── */
+    .site-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      background: var(--nav-bg);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
     }
-    .badge-dot {
-      width: 6px; height: 6px; background: var(--accent);
-      border-radius: 50%; animation: pulse 2s infinite;
+    .site-nav.scrolled {
+      box-shadow: var(--shadow-sm);
     }
-
-    h1 {
-      font-size: clamp(36px, 6vw, 60px);
-      font-weight: 800; letter-spacing: -0.035em; line-height: 1.05;
-      margin-bottom: 18px;
-      animation: fadeUp 0.5s 0.1s ease both;
+    .site-nav .wrap {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
     }
-    h1 .accent {
-      color: transparent;
-      background: linear-gradient(135deg, #818cf8, #6366f1, #a78bfa);
-      -webkit-background-clip: text; background-clip: text;
+    .nav-logo {
+      font-size: 15px; font-weight: 800; color: var(--text);
+      text-decoration: none; letter-spacing: -0.02em;
     }
+    .nav-logo span { color: var(--warm); }
 
-    .subtitle {
-      color: var(--muted2); font-size: 15px;
-      max-width: 420px; line-height: 1.75;
-      animation: fadeUp 0.5s 0.15s ease both;
+    .nav-right { display: flex; align-items: center; gap: 24px; }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a {
+      color: var(--muted2); font-size: 13px; font-weight: 500;
+      text-decoration: none; transition: color 0.2s;
     }
+    .nav-links a:hover { color: var(--text); }
 
-    /* ── Stats ── */
-    .stats {
-      display: flex; gap: 24px; margin-top: 32px; flex-wrap: wrap;
-      animation: fadeUp 0.5s 0.2s ease both;
+    .theme-btn {
+      background: none; border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 6px 10px; cursor: pointer;
+      color: var(--muted2); display: inline-flex; align-items: center;
+      transition: border-color var(--transition-fast), color var(--transition-fast);
     }
-    .stat { display: flex; flex-direction: column; gap: 2px; }
-    .stat-val { font-size: 22px; font-weight: 700; color: var(--text); }
-    .stat-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .theme-btn:hover { border-color: var(--warm); color: var(--text); }
 
-    /* ── Divider ── */
-    .divider { border: none; border-top: 1px solid var(--border); }
-
-    /* ── Controls ── */
-    .controls {
-      padding: 28px 0 0;
-      display: flex; flex-direction: column; gap: 16px;
-      animation: fadeUp 0.5s 0.25s ease both;
-    }
-
-    /* Arama */
-    .search-wrap {
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 80px 0 60px;
       position: relative;
     }
+    #neural-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    html.light #neural-canvas { opacity: 0.3; }
+
+    .cursor-glow {
+      position: fixed;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--warm-glow) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+      transform: translate(-50%, -50%);
+      left: var(--mx); top: var(--my);
+      transition: left 0.15s ease-out, top 0.15s ease-out;
+      will-change: left, top;
+    }
+
+    .hero-inner {
+      display: flex; flex-direction: column; align-items: flex-start;
+      width: 100%;
+      position: relative; z-index: 2;
+    }
+    .hero-text { animation: fadeUp 0.7s ease both; }
+    .hero-label {
+      display: inline-block;
+      font-size: 11px; font-weight: 700; color: var(--warm);
+      letter-spacing: 0.15em; text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 56px);
+      font-weight: 800; line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+    .hero h1 .thin {
+      font-weight: 300;
+      background: linear-gradient(90deg, var(--muted2) 0%, var(--muted2) 40%, var(--warm) 50%, var(--muted2) 60%, var(--muted2) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 5s linear infinite;
+    }
+    .hero-desc {
+      font-size: 16px; color: var(--muted2); line-height: 1.8;
+      max-width: 480px;
+    }
+    .hero-cta { display: flex; gap: 12px; margin-top: 32px; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px; border-radius: var(--radius-full);
+      font-size: 13px; font-weight: 700; font-family: inherit;
+      text-decoration: none; cursor: pointer;
+      transition: all var(--transition-normal); border: none;
+    }
+    .btn svg { width: 16px; height: 16px; }
+    .btn-warm { background: var(--warm); color: #0a0a0f; }
+    .btn-warm:hover {
+      box-shadow: 0 4px 20px var(--warm-glow);
+      transform: translateY(-1px);
+    }
+    .btn-ghost {
+      background: transparent; color: var(--muted2);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--warm); color: var(--text); }
+
+    /* ── SECTIONS ── */
+    section { padding: 80px 0; }
+    .section-label {
+      font-size: 11px; font-weight: 700; color: var(--warm);
+      letter-spacing: 0.15em; text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 800; letter-spacing: -0.02em;
+      margin-bottom: 32px; line-height: 1.2;
+    }
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+    }
+
+    /* ── HAKKINDA ── */
+    .about-text {
+      font-size: 15px; color: var(--muted2); line-height: 2; max-width: 640px;
+    }
+
+    /* ── KİTAP ── */
+    .book-grid {
+      display: grid; grid-template-columns: 220px 1fr;
+      gap: 48px; align-items: center;
+    }
+    .book-cover img {
+      width: 100%; border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      transition: transform var(--transition-slow), box-shadow var(--transition-slow);
+    }
+    .book-cover:hover img {
+      transform: translateY(-4px) rotate(-1deg);
+      box-shadow: 0 24px 56px var(--warm-glow);
+    }
+    .book-info h3 {
+      font-size: 28px; font-weight: 800;
+      letter-spacing: -0.02em; margin-bottom: 8px;
+    }
+    .book-info .tagline {
+      font-size: 14px; color: var(--warm);
+      font-weight: 600; margin-bottom: 16px;
+    }
+    .book-info p {
+      font-size: 14px; color: var(--muted2);
+      line-height: 1.8; margin-bottom: 24px;
+    }
+
+    /* ── PROJELER ── */
+    .projects-header { text-align: center; margin-bottom: 8px; }
+    .projects-header .section-label,
+    .projects-header .section-title { text-align: center; }
+    .projects-sub {
+      font-size: 15px; color: var(--muted2); text-align: center;
+      margin-bottom: 32px;
+    }
+
+    /* Kontroller */
+    .controls {
+      display: flex; flex-direction: column; gap: 16px;
+      margin-bottom: 8px;
+    }
+    .search-wrap { position: relative; }
     .search-icon {
       position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
       color: var(--muted); width: 16px; height: 16px; pointer-events: none;
@@ -122,12 +247,11 @@
       box-shadow: 0 0 0 3px var(--accent-soft);
     }
 
-    /* Kategori filtreleri */
     .filters { display: flex; gap: 8px; flex-wrap: wrap; }
     .filter-btn {
       background: var(--surface); border: 1px solid var(--border);
       color: var(--muted2); font-size: 12px; font-weight: 600;
-      padding: 6px 14px; border-radius: 100px; cursor: pointer;
+      padding: 6px 14px; border-radius: var(--radius-full); cursor: pointer;
       font-family: inherit; transition: all 0.18s ease;
       letter-spacing: 0.03em;
     }
@@ -137,7 +261,6 @@
       color: white; box-shadow: 0 0 12px var(--accent-glow);
     }
 
-    /* ── Sonuç satırı ── */
     .results-bar {
       display: flex; justify-content: space-between; align-items: center;
       padding: 24px 0 16px;
@@ -152,14 +275,14 @@
     .clear-btn.visible { display: block; }
     .clear-btn:hover { color: var(--text); }
 
-    /* ── Grid ── */
+    /* Grid */
     #grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
       gap: 14px;
     }
 
-    /* ── Kart ── */
+    /* Kart */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -175,53 +298,40 @@
       overflow: hidden;
       animation: cardIn 0.35s ease both;
     }
-
     .card-glow {
-      content: '';
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background: radial-gradient(circle at top left, var(--accent-soft), transparent 65%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      opacity: 0; transition: opacity 0.3s ease;
       pointer-events: none;
     }
-
     .card:hover {
       border-color: var(--accent);
       background: var(--surface2);
       transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(99,102,241,0.15);
+      box-shadow: 0 12px 32px var(--accent-glow);
     }
     .card:hover .card-glow { opacity: 1; }
-
     .card-icon { font-size: 28px; line-height: 1; }
-
-    .card-title {
-      font-size: 15px; font-weight: 650; letter-spacing: -0.01em;
-    }
-
-    .card-desc {
-      font-size: 13px; color: var(--muted2); line-height: 1.6; flex: 1;
-    }
-
+    .card-title { font-size: 15px; font-weight: 650; letter-spacing: -0.01em; }
+    .card-desc { font-size: 13px; color: var(--muted2); line-height: 1.6; flex: 1; }
     .card-footer {
       display: flex; align-items: center; justify-content: space-between;
       margin-top: 4px;
     }
-
     .card-tag {
       display: inline-block;
       font-size: 10px; font-weight: 700;
-      padding: 3px 10px; border-radius: 100px;
+      padding: 3px 10px; border-radius: var(--radius-full);
       letter-spacing: 0.06em; text-transform: uppercase;
     }
-    .tag-oyun      { background: rgba(16,185,129,0.1);  color: #34d399; }
-    .tag-uygulama  { background: rgba(99,102,241,0.12); color: #818cf8; }
-    .tag-yarışma   { background: rgba(245,158,11,0.12); color: #fbbf24; }
-    .tag-alıştırma { background: rgba(59,130,246,0.12); color: #60a5fa; }
-    .tag-sunum     { background: rgba(236,72,153,0.12); color: #f472b6; }
-    .tag-yazı      { background: rgba(251,191,36,0.12); color: #fcd34d; }
-    .tag-varsayılan{ background: var(--accent-soft);    color: var(--accent); }
+    .tag-oyun       { background: rgba(16,185,129,0.1);  color: #34d399; }
+    .tag-uygulama   { background: rgba(99,102,241,0.12); color: #818cf8; }
+    .tag-yarışma    { background: rgba(245,158,11,0.12); color: #fbbf24; }
+    .tag-alıştırma  { background: rgba(59,130,246,0.12); color: #60a5fa; }
+    .tag-sunum      { background: rgba(236,72,153,0.12); color: #f472b6; }
+    .tag-yazı       { background: rgba(251,191,36,0.12); color: #fcd34d; }
+    .tag-ansiklopedi{ background: rgba(168,85,247,0.12); color: #c084fc; }
+    .tag-varsayılan { background: var(--accent-soft);     color: var(--accent); }
 
     .card-arrow {
       color: var(--muted); width: 14px; height: 14px;
@@ -229,16 +339,50 @@
     }
     .card:hover .card-arrow { color: var(--accent); transform: translate(2px,-2px); }
 
-    /* ── Boş durum ── */
     #empty {
       display: none; grid-column: 1/-1;
       text-align: center; padding: 60px 24px; color: var(--muted2);
     }
     #empty.show { display: block; }
     #empty p:first-child { font-size: 36px; margin-bottom: 12px; }
-    #empty p:last-child { font-size: 14px; }
 
-    /* ── Footer ── */
+    /* ── Sınıf Araçları Bölümü ── */
+    .classroom-section { margin-top: 48px; }
+    .classroom-label {
+      font-size: 12px; font-weight: 700; color: var(--muted2);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    #classroom-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
+      gap: 14px;
+    }
+
+    /* ── SOSYAL ── */
+    .social-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .social-link {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 22px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 14px; font-weight: 600;
+      transition: all 0.2s;
+    }
+    .social-link:hover {
+      border-color: var(--warm);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .social-link svg { width: 20px; height: 20px; color: var(--muted2); }
+    .social-link:hover svg { color: var(--warm); }
+
+    /* ── FOOTER ── */
     footer {
       text-align: center; padding: 40px 24px;
       color: var(--muted); font-size: 12px;
@@ -246,306 +390,519 @@
       position: relative; z-index: 1;
       margin-top: 40px;
     }
-    footer a { color: var(--muted2); text-decoration: none; transition: color 0.2s; }
-    footer a:hover { color: var(--text); }
 
-    /* ── Responsive ── */
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .cursor-glow { display: none; }
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 40px; text-align: center;
+      }
+      .hero-desc { margin: 0 auto; }
+      .hero-cta { justify-content: center; }
+      .book-grid {
+        grid-template-columns: 1fr;
+        text-align: center; gap: 32px;
+      }
+      .book-cover { max-width: 180px; margin: 0 auto; }
+      .book-info .btn { margin: 0 auto; }
+      .social-row { justify-content: center; }
+      .nav-links { gap: 16px; }
+      .nav-links a { font-size: 12px; }
+    }
     @media (max-width: 520px) {
-      header { padding: 52px 0 40px; }
-      #grid { grid-template-columns: 1fr; }
-      .stats { gap: 16px; }
+      #grid, #classroom-grid { grid-template-columns: 1fr; }
+      .nav-links { gap: 12px; }
+    }
+    @media (max-width: 400px) {
+      .nav-links a { font-size: 11px; }
     }
   </style>
-  <script src="/nav.js"></script>
 </head>
-<body>
+<body data-nav-skip="true">
 
-<div class="wrap">
-  <header>
-    <div class="badge"><span class="badge-dot"></span> Lab</div>
-    <h1>Rauf <span class="accent">Enç</span></h1>
-    <p class="subtitle">Denemeler, oyunlar, uygulamalar ve fikirler.<br>Burada yaptığım şeyleri bulabilirsiniz.</p>
-    <div class="stats">
-      <div class="stat"><span class="stat-val" id="total-count">0</span><span class="stat-lbl">Proje</span></div>
-      <div class="stat"><span class="stat-val" id="cat-count">0</span><span class="stat-lbl">Kategori</span></div>
-    </div>
-  </header>
-</div>
+<!-- Cursor glow -->
+<div class="cursor-glow" aria-hidden="true"></div>
 
-<hr class="divider" />
-
-<div class="wrap">
-  <div class="controls">
-    <div class="search-wrap">
-      <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 111 11a6 6 0 0116 0z"/>
-      </svg>
-      <input id="search" type="search" placeholder="Proje ara..." autocomplete="off" spellcheck="false" />
-    </div>
-    <div class="filters" id="filters"></div>
-  </div>
-
-  <div class="results-bar">
-    <span class="results-count" id="results-count"></span>
-    <button class="clear-btn" id="clear-btn" onclick="clearFilters()">Filtreyi temizle</button>
-  </div>
-
-  <div id="grid">
-    <div id="empty">
-      <p>🔍</p>
-      <p>Aramanla eşleşen proje bulunamadı.</p>
+<!-- NAV -->
+<nav class="site-nav">
+  <div class="wrap">
+    <a href="#" class="nav-logo">rauf<span>enç</span></a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#hakkinda">Hakkında</a>
+        <a href="#kitap">Kitap</a>
+        <a href="#projeler">Projeler</a>
+        <a href="#iletisim">İletişim</a>
+      </div>
+      <button class="theme-btn" id="theme-toggle" type="button" aria-label="Tema degistir">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
     </div>
   </div>
-</div>
+</nav>
 
+<!-- HERO -->
+<section class="hero">
+  <canvas id="neural-canvas" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <span class="hero-label">Eğitimci · Yazar</span>
+        <h1>Rauf Enç<br><span class="thin">İçindeki düşmanı<br>dosta çevirmek</span></h1>
+        <p class="hero-desc">Kendini tanımak için çıktığı yolda, içindeki düşmanla yüzleşip şaşkınlık yaşayan bir yolcu. Öğrendiklerini paylaşmak için kaleme sarılan bir yazar.</p>
+        <div class="hero-cta">
+          <a href="#kitap" class="btn btn-warm">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            Nöroterbiye
+          </a>
+          <a href="#projeler" class="btn btn-ghost">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            Projeler
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<!-- HAKKINDA -->
+<section id="hakkinda" class="reveal">
+  <div class="wrap">
+    <span class="section-label">Hakkında</span>
+    <h2 class="section-title">Disiplinler arası bir seyyah</h2>
+    <p class="about-text">
+      Yıldız Teknik Üniversitesi Elektronik ve Haberleşme Mühendisliği ile Ankara İlahiyat mezunu. Modern bilimin keşifleriyle İslam alimlerinin nasihatlerini birlikte sunmaya gayret eden bir talebe. Kendi kusurlarını gözetmeye çalışan ve herkesi önce kendine hocalık etmeye çağıran bir muallim.
+    </p>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<!-- KiTAP -->
+<section id="kitap" class="reveal">
+  <div class="wrap">
+    <span class="section-label">Kitap</span>
+    <h2 class="section-title">Nöroterbiye</h2>
+    <div class="book-grid">
+      <div class="book-cover">
+        <img src="images/noroterbiye.webp" alt="Nöroterbiye — Rauf Enç" width="220" />
+      </div>
+      <div class="book-info">
+        <h3>İçimizdeki Düşmanı Dosta Çevirmek</h3>
+        <p class="tagline">Neden hep aynı hataları tekrarlıyoruz?</p>
+        <p>
+          "Bunu neden yaptım?" diye pişmanlık duyduğun anlar ne kadar sık? Belki sabah "artık telefonumu azaltacağım" deyip akşamın nasıl geldiğini bile fark etmiyorsun. Nöroterbiye işte tam da bu döngüye ayna tutuyor.
+        </p>
+        <a href="https://www.ktbkitap.com/urun/noroterbiye-rauf-enc" target="_blank" rel="noopener" class="btn btn-warm">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg>
+          Satın Al
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<!-- PROJELER -->
+<section id="projeler" class="reveal">
+  <div class="wrap">
+    <div class="projects-header">
+      <span class="section-label">Projeler</span>
+      <h2 class="section-title">Dijital Denemeler</h2>
+    </div>
+    <p class="projects-sub">İnteraktif sunumlar, dil araçları, oyunlar ve eğitim uygulamaları</p>
+
+    <div class="controls">
+      <div class="search-wrap">
+        <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 111 11a6 6 0 0116 0z"/>
+        </svg>
+        <input id="search" type="search" placeholder="Proje ara..." autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="filters" id="filters"></div>
+    </div>
+
+    <div class="results-bar">
+      <span class="results-count" id="results-count"></span>
+      <button class="clear-btn" id="clear-btn" onclick="clearFilters()">Filtreyi temizle</button>
+    </div>
+
+    <div id="grid">
+      <div id="empty">
+        <p>&#128270;</p>
+        <p>Aramanla eslesen proje bulunamadi.</p>
+      </div>
+    </div>
+
+    <!-- Sinif Araclari -->
+    <div class="classroom-section">
+      <div class="classroom-label">Sınıf Araçları</div>
+      <div id="classroom-grid"></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<!-- iLETiSiM -->
+<section id="iletisim" class="reveal">
+  <div class="wrap">
+    <span class="section-label">İletişim</span>
+    <h2 class="section-title">Takip Et</h2>
+    <div class="social-row">
+      <a href="https://www.instagram.com/raufenc/" target="_blank" rel="noopener" class="social-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        Instagram
+      </a>
+      <a href="https://www.youtube.com/@raufenc" target="_blank" rel="noopener" class="social-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        YouTube
+      </a>
+      <a href="https://x.com/raufenc" target="_blank" rel="noopener" class="social-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        X
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
 <footer>
-  <a href="https://raufenc.com">raufenc.com</a>
-  &nbsp;·&nbsp;
   Rauf Enç &copy; 2026
 </footer>
 
 <script>
-// ── PROJE VERİSİ ─────────────────────────────────────────────
-// Yeni proje eklemek için buraya bir nesne ekle:
-const PROJELER = [
-  {
-    emoji: '📚',
-    title: 'MUALLİMO — Resim Kartları',
-    desc: '1.899 kart, 21 kitap, 5 seri. Çocuklar için görsel eğitim kartları: Okuryazarlık, İslam, Osmanlı, Sağlık ve daha fazlası.',
-    tag: 'Uygulama',
-    href: '/muallimo/'
-  },
-  {
-    emoji: '🇬🇧',
-    title: 'İngilizce Kelime Kartları',
-    desc: '238 kelime, 9 kategori. Görsel, ses ve Türkçe karşılıklarıyla İngilizce kelime öğren.',
-    tag: 'Uygulama',
-    href: '/ingilizce-kelime/'
-  },
-  {
-    emoji: '🇸🇦',
-    title: 'Arapça Kelime Kartları',
-    desc: '224 kelime, 18 kategori. Görsel, ses ve Türkçe karşılıklarıyla günlük Arapça ifadeler.',
-    tag: 'Uygulama',
-    href: '/arapca-kelime/'
-  },
-  {
-    emoji: '📜',
-    title: 'Osmanlıca Lügat',
-    desc: '454 Osmanlıca terim, hat görselleri ve anlamlarıyla interaktif sözlük. Arama, fihrist ve keşfet modları.',
-    tag: 'Uygulama',
-    href: '/osmanlica/'
-  },
-  {
-    emoji: '🧭',
-    title: 'Kalbinin Haritası',
-    desc: '17 farklı testte kalbine ayna tut. Kibir, sabır, ihlas... Yapay zeka destekli nefs muhasebesi.',
-    tag: 'Uygulama',
-    href: '/kalbinin-haritasi/'
-  },
-  {
-    emoji: '🎮',
-    title: 'İHO 7. Sınıf 1. Ünite Oyunlar',
-    desc: '16 benzersiz Arapça oyun tek bir yerde: kelime, cümle, hafıza, saat, diyalog ve sınıf yarışması.',
-    tag: 'Oyun',
-    href: '/iho-oyunlar/'
-  },
-  {
-    emoji: '🌙',
-    title: 'Namaz Vakitleri',
-    desc: 'Güneşin gökyüzündeki yolculuğu ve İslam\'ın beş vakit namazının astronomik sırları. Temkin, ta\'dîl-i zemân ve daha fazlası.',
-    tag: 'Uygulama',
-    href: '/namaz-vakitleri/'
-  },
-  {
-    emoji: '🕌',
-    title: 'Özbekistan Evliyaları ve Âlimleri',
-    desc: '55 evliya ve âlim, Buhara, Semerkant, Taşkent. İnteraktif harita, zaman çizelgesi, Nakşibendî silsilesi. Türkçe ve Özbekçe.',
-    tag: 'Ansiklopedi',
-    href: '/evliyalar/'
-  },
-  {
-    emoji: '🗺️',
-    title: 'Osmanlı Harita Timelapse',
-    desc: '623 yıllık Osmanlı İmparatorluğu tarihini 3D küre üzerinde izle. 18 dönem, 36 padişah, toprak değişimleri ve tarihi olaylar.',
-    tag: 'Uygulama',
-    href: '/osmanli-haritasi/'
-  },
-  {
-    emoji: '🃏',
-    title: 'Osmanlı Padişahları Kart Seti',
-    desc: '36 padişah, 623 yıl. İnteraktif kart galerisi, quiz, sıralama, eşleştirme, Jeopardy ve daha fazlası. Oyna, öğren, keşfet!',
-    tag: 'Oyun',
-    href: '/osmanli-kartlari/'
-  },
-  {
-    emoji: '🌟',
-    title: 'İslam Bilim Yıldızları',
-    desc: 'İslam altın çağının bilim devlerini keşfet! 14 büyük bilginin keşifleri, modern etkileri ve 3 farklı oyun modu.',
-    tag: 'Oyun',
-    href: '/islam-bilim-yildizlari/'
-  },
-  {
-    emoji: '🔬',
-    title: 'Bilim Nedir, Ne Değildir?',
-    desc: 'Bilimin türleri, yöntemleri ve sınırları üzerine felsefi bir yolculuk. Teori yüklü gözlem, nedensellik ve Heisenberg.',
-    tag: 'Sunum',
-    href: '/bilim/'
-  },
-  {
-    emoji: '🕵️',
-    title: 'Safsata Dedektifi',
-    desc: '13 mantıksal hatayı öğren ve gerçek diyaloglarda tespit et. İnteraktif sunum + dedektif oyunu.',
-    tag: 'Sunum',
-    href: '/safsatalar/'
-  },
-  {
-    emoji: '🌙',
-    title: 'Elveda Endülüs',
-    desc: '896 H. / 1491. Gırnata kuşatma altında. Bir kâtip olarak ilim, kılıç ve hizmet yolları arasında seç — ve Endülüs\'ün son günlerini yaşa. 3 dal, 5 farklı son.',
-    tag: 'Oyun',
-    href: '/endulus/'
-  },
-];
+(function() {
+  'use strict';
 
-// ── DURUM ────────────────────────────────────────────────────
-let aktifTag = 'Tümü';
-let aramaMetni = '';
+  // ── PROJE VERiSi ──
+  var PROJELER = [
+    { emoji: '📚', title: 'MUALLİMO — Resim Kartları', desc: '1.899 kart, 21 kitap, 5 seri. Çocuklar için görsel eğitim kartları.', tag: 'Uygulama', href: '/muallimo/' },
+    { emoji: '🇬🇧', title: 'İngilizce Kelime Kartları', desc: '238 kelime, 9 kategori. Görsel, ses ve Türkçe karşılıklarıyla İngilizce kelime öğren.', tag: 'Uygulama', href: '/ingilizce-kelime/' },
+    { emoji: '🇸🇦', title: 'Arapça Kelime Kartları', desc: '224 kelime, 18 kategori. Görsel, ses ve Türkçe karşılıklarıyla günlük Arapça ifadeler.', tag: 'Uygulama', href: '/arapca-kelime/' },
+    { emoji: '📜', title: 'Osmanlıca Lügat', desc: '454 Osmanlıca terim, hat görselleri ve anlamlarıyla interaktif sözlük.', tag: 'Uygulama', href: '/osmanlica/' },
+    { emoji: '🧭', title: 'Kalbinin Haritası', desc: '17 farklı testte kalbine ayna tut. Kibir, sabır, ihlas... Yapay zeka destekli nefs muhasebesi.', tag: 'Uygulama', href: '/kalbinin-haritasi/' },
+    { emoji: '🌙', title: 'Namaz Vakitleri', desc: 'Güneşin gökyüzündeki yolculuğu ve beş vakit namazın astronomik sırları.', tag: 'Uygulama', href: '/namaz-vakitleri/' },
+    { emoji: '🕌', title: 'Özbekistan Evliyaları ve Âlimleri', desc: '55 evliya ve âlim, Buhara, Semerkant, Taşkent. İnteraktif harita, zaman çizelgesi.', tag: 'Ansiklopedi', href: '/evliyalar/' },
+    { emoji: '🃏', title: 'Osmanlı Padişahları Kart Seti', desc: '36 padişah, 623 yıl. Kart galerisi, quiz, sıralama, eşleştirme ve Jeopardy.', tag: 'Oyun', href: '/osmanli-kartlari/' },
+    { emoji: '🌟', title: 'İslam Bilim Yıldızları', desc: 'İslam altın çağının bilim devlerini keşfet! 14 büyük bilginin keşifleri ve 3 farklı oyun modu.', tag: 'Oyun', href: '/islam-bilim-yildizlari/' },
+    { emoji: '🔬', title: 'Bilim Nedir, Ne Değildir?', desc: 'Bilimin türleri, yöntemleri ve sınırları üzerine felsefi bir yolculuk.', tag: 'Sunum', href: '/sunumlar/bilim/' },
+    { emoji: '🕵️', title: 'Safsata Dedektifi', desc: '13 mantıksal hatayı öğren ve gerçek diyaloglarda tespit et. İnteraktif sunum + dedektif oyunu.', tag: 'Sunum', href: '/sunumlar/safsatalar/' },
+    { emoji: '🌙', title: 'Elveda Endülüs', desc: 'Gırnata kuşatma altında. İlim, kılıç ve hizmet yolları arasında seç — 3 dal, 5 farklı son.', tag: 'Oyun', href: '/endulus/' },
+  ];
 
-// ── BAŞLAT ───────────────────────────────────────────────────
-function başlat() {
-  // Kategorileri topla
-  const tagSet = ['Tümü', ...new Set(PROJELER.map(p => p.tag))];
+  var SINIF_ARACLARI = [
+    { emoji: '🎮', title: 'İHO 7. Sınıf 1. Ünite Oyunlar', desc: '16 benzersiz Arapça oyun: kelime, cümle, hafıza, saat, diyalog ve sınıf yarışması.', tag: 'Oyun', href: '/iho-oyunlar/' },
+  ];
 
-  // Filtre butonları
-  const filtersEl = document.getElementById('filters');
-  tagSet.forEach(tag => {
-    const btn = document.createElement('button');
-    btn.className = 'filter-btn' + (tag === 'Tümü' ? ' active' : '');
-    btn.textContent = tag;
-    btn.onclick = () => setTag(tag);
-    btn.dataset.tag = tag;
-    filtersEl.appendChild(btn);
-  });
+  // ── DURUM ──
+  var aktifTag = 'Tümü';
+  var aramaMetni = '';
 
-  // Stats
-  document.getElementById('total-count').textContent = PROJELER.length;
-  document.getElementById('cat-count').textContent = tagSet.length - 1;
+  // ── BASLAT ──
+  function baslat() {
+    var tagSet = ['Tümü'];
+    var seen = {};
+    PROJELER.forEach(function(p) {
+      if (!seen[p.tag]) { seen[p.tag] = true; tagSet.push(p.tag); }
+    });
 
-  // Arama
-  document.getElementById('search').addEventListener('input', e => {
-    aramaMetni = e.target.value.trim();
+    // Filtre butonlari
+    var filtersEl = document.getElementById('filters');
+    tagSet.forEach(function(tag) {
+      var btn = document.createElement('button');
+      btn.className = 'filter-btn' + (tag === 'Tümü' ? ' active' : '');
+      btn.textContent = tag;
+      btn.onclick = function() { setTag(tag); };
+      btn.dataset.tag = tag;
+      filtersEl.appendChild(btn);
+    });
+
+    // Arama
+    document.getElementById('search').addEventListener('input', function(e) {
+      aramaMetni = e.target.value.trim();
+      renderCards();
+      updateClearBtn();
+    });
+
+    renderCards();
+    renderClassroom();
+  }
+
+  function filtrele() {
+    return PROJELER.filter(function(p) {
+      var tagOK = aktifTag === 'Tümü' || p.tag === aktifTag;
+      var aramaOK = !aramaMetni ||
+        p.title.toLowerCase().indexOf(aramaMetni.toLowerCase()) !== -1 ||
+        p.desc.toLowerCase().indexOf(aramaMetni.toLowerCase()) !== -1 ||
+        p.tag.toLowerCase().indexOf(aramaMetni.toLowerCase()) !== -1;
+      return tagOK && aramaOK;
+    });
+  }
+
+  window.setTag = function(tag) {
+    aktifTag = tag;
+    document.querySelectorAll('.filter-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.dataset.tag === tag);
+    });
     renderCards();
     updateClearBtn();
-  });
-
-  renderCards();
-}
-
-// ── FİLTRELE ─────────────────────────────────────────────────
-function filtrele() {
-  return PROJELER.filter(p => {
-    const tagOK = aktifTag === 'Tümü' || p.tag === aktifTag;
-    const aramaOK = !aramaMetni ||
-      p.title.toLowerCase().includes(aramaMetni.toLowerCase()) ||
-      p.desc.toLowerCase().includes(aramaMetni.toLowerCase()) ||
-      p.tag.toLowerCase().includes(aramaMetni.toLowerCase());
-    return tagOK && aramaOK;
-  });
-}
-
-// ── TAG SEÇ ──────────────────────────────────────────────────
-function setTag(tag) {
-  aktifTag = tag;
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.tag === tag);
-  });
-  renderCards();
-  updateClearBtn();
-}
-
-// ── TEMİZLE ──────────────────────────────────────────────────
-function clearFilters() {
-  aktifTag = 'Tümü';
-  aramaMetni = '';
-  document.getElementById('search').value = '';
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.tag === 'Tümü');
-  });
-  renderCards();
-  updateClearBtn();
-}
-
-// ── CLEAR BTN ────────────────────────────────────────────────
-function updateClearBtn() {
-  const aktif = aktifTag !== 'Tümü' || aramaMetni !== '';
-  document.getElementById('clear-btn').classList.toggle('visible', aktif);
-}
-
-// ── TAG RENK SINIFI ──────────────────────────────────────────
-function tagClass(tag) {
-  const map = {
-    'Oyun': 'tag-oyun', 'Uygulama': 'tag-uygulama',
-    'Yarışma': 'tag-yarışma', 'Alıştırma': 'tag-alıştırma',
-    'Sunum': 'tag-sunum', 'Yazı': 'tag-yazı'
   };
-  return map[tag] || 'tag-varsayılan';
-}
 
-// ── KARTLARI RENDER ET ────────────────────────────────────────
-function renderCards() {
-  const sonuclar = filtrele();
-  const grid = document.getElementById('grid');
-  const empty = document.getElementById('empty');
-  const countEl = document.getElementById('results-count');
+  window.clearFilters = function() {
+    aktifTag = 'Tümü';
+    aramaMetni = '';
+    document.getElementById('search').value = '';
+    document.querySelectorAll('.filter-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.dataset.tag === 'Tümü');
+    });
+    renderCards();
+    updateClearBtn();
+  };
 
-  // Eski kartları temizle (empty'i koru)
-  grid.querySelectorAll('.card').forEach(c => c.remove());
-
-  // Sayaç
-  const total = PROJELER.length;
-  const shown = sonuclar.length;
-  countEl.textContent = aktifTag === 'Tümü' && !aramaMetni
-    ? `${total} proje`
-    : `${shown} / ${total} proje`;
-
-  if (sonuclar.length === 0) {
-    empty.classList.add('show');
-    return;
+  function updateClearBtn() {
+    var aktif = aktifTag !== 'Tümü' || aramaMetni !== '';
+    document.getElementById('clear-btn').classList.toggle('visible', aktif);
   }
-  empty.classList.remove('show');
 
-  sonuclar.forEach((p, i) => {
-    const a = document.createElement('a');
+  function tagClass(tag) {
+    var map = {
+      'Oyun': 'tag-oyun', 'Uygulama': 'tag-uygulama',
+      'Yarışma': 'tag-yarışma', 'Alıştırma': 'tag-alıştırma',
+      'Sunum': 'tag-sunum', 'Yazı': 'tag-yazı',
+      'Ansiklopedi': 'tag-ansiklopedi'
+    };
+    return map[tag] || 'tag-varsayılan';
+  }
+
+  function createCard(p, i) {
+    var a = document.createElement('a');
     a.className = 'card';
     a.href = p.href;
-    a.style.animationDelay = `${i * 50}ms`;
-    a.innerHTML = `
-      <div class="card-glow"></div>
-      <div class="card-icon">${p.emoji}</div>
-      <div class="card-title">${p.title}</div>
-      <div class="card-desc">${p.desc}</div>
-      <div class="card-footer">
-        <span class="card-tag ${tagClass(p.tag)}">${p.tag}</span>
-        <svg class="card-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H7M17 7v10"/>
-        </svg>
-      </div>`;
-    grid.appendChild(a);
-  });
-}
+    a.style.animationDelay = (i * 50) + 'ms';
+    a.innerHTML =
+      '<div class="card-glow"></div>' +
+      '<div class="card-icon">' + p.emoji + '</div>' +
+      '<div class="card-title">' + p.title + '</div>' +
+      '<div class="card-desc">' + p.desc + '</div>' +
+      '<div class="card-footer">' +
+        '<span class="card-tag ' + tagClass(p.tag) + '">' + p.tag + '</span>' +
+        '<svg class="card-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">' +
+          '<path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H7M17 7v10"/>' +
+        '</svg>' +
+      '</div>';
+    return a;
+  }
 
-// ── SCROLL ANİMASYONU ─────────────────────────────────────────
-function scrollAnim() {
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.style.opacity = '1'; obs.unobserve(e.target); }
+  function renderCards() {
+    var sonuclar = filtrele();
+    var grid = document.getElementById('grid');
+    var empty = document.getElementById('empty');
+    var countEl = document.getElementById('results-count');
+
+    grid.querySelectorAll('.card').forEach(function(c) { c.remove(); });
+
+    var total = PROJELER.length;
+    var shown = sonuclar.length;
+    countEl.textContent = aktifTag === 'Tümü' && !aramaMetni
+      ? total + ' proje'
+      : shown + ' / ' + total + ' proje';
+
+    if (sonuclar.length === 0) { empty.classList.add('show'); return; }
+    empty.classList.remove('show');
+
+    sonuclar.forEach(function(p, i) {
+      grid.appendChild(createCard(p, i));
     });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.card').forEach(c => obs.observe(c));
-}
+  }
 
-başlat();
+  function renderClassroom() {
+    var grid = document.getElementById('classroom-grid');
+    SINIF_ARACLARI.forEach(function(p, i) {
+      grid.appendChild(createCard(p, i));
+    });
+  }
+
+  baslat();
+
+  // ── NEURAL CANVAS ──
+  var canvas = document.getElementById('neural-canvas');
+  var ctx = canvas.getContext('2d');
+  var mouse = { x: -1000, y: -1000 };
+  var NODE_COUNT = 50;
+  var CONNECTION_DIST = 150;
+  var MOUSE_RADIUS = 200;
+  var nodes = [];
+  var cw, ch;
+
+  function resizeCanvas() {
+    var hero = canvas.parentElement;
+    cw = canvas.width = hero.offsetWidth;
+    ch = canvas.height = hero.offsetHeight;
+  }
+
+  function initNodes() {
+    nodes = [];
+    for (var i = 0; i < NODE_COUNT; i++) {
+      nodes.push({
+        x: Math.random() * cw,
+        y: Math.random() * ch,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        r: Math.random() * 2 + 1
+      });
+    }
+  }
+
+  function drawCanvas() {
+    ctx.clearRect(0, 0, cw, ch);
+
+    for (var k = 0; k < nodes.length; k++) {
+      var n = nodes[k];
+      n.x += n.vx; n.y += n.vy;
+      if (n.x < 0 || n.x > cw) n.vx *= -1;
+      if (n.y < 0 || n.y > ch) n.vy *= -1;
+
+      var dx = mouse.x - n.x;
+      var dy = mouse.y - n.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < MOUSE_RADIUS && dist > 0) {
+        var force = (MOUSE_RADIUS - dist) / MOUSE_RADIUS * 0.015;
+        n.vx += dx / dist * force;
+        n.vy += dy / dist * force;
+      }
+      n.vx *= 0.99; n.vy *= 0.99;
+    }
+
+    // Connections
+    for (var i = 0; i < nodes.length; i++) {
+      for (var j = i + 1; j < nodes.length; j++) {
+        var ddx = nodes[i].x - nodes[j].x;
+        var ddy = nodes[i].y - nodes[j].y;
+        var dd = Math.sqrt(ddx * ddx + ddy * ddy);
+        if (dd < CONNECTION_DIST) {
+          var alpha = (1 - dd / CONNECTION_DIST) * 0.15;
+          var midX = (nodes[i].x + nodes[j].x) / 2;
+          var midY = (nodes[i].y + nodes[j].y) / 2;
+          var md = Math.sqrt(Math.pow(mouse.x - midX, 2) + Math.pow(mouse.y - midY, 2));
+          var warmth = md < MOUSE_RADIUS ? (1 - md / MOUSE_RADIUS) : 0;
+
+          var r = Math.round(200 * warmth + 136 * (1 - warmth));
+          var g = Math.round(164 * warmth + 136 * (1 - warmth));
+          var b = Math.round(110 * warmth + 160 * (1 - warmth));
+
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.strokeStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Nodes
+    for (var m = 0; m < nodes.length; m++) {
+      var nd = nodes[m];
+      var ndx = mouse.x - nd.x;
+      var ndy = mouse.y - nd.y;
+      var ndist = Math.sqrt(ndx * ndx + ndy * ndy);
+      var nwarm = ndist < MOUSE_RADIUS ? (1 - ndist / MOUSE_RADIUS) : 0;
+
+      var nr = Math.round(200 * nwarm + 136 * (1 - nwarm));
+      var ng = Math.round(164 * nwarm + 136 * (1 - nwarm));
+      var nb = Math.round(110 * nwarm + 160 * (1 - nwarm));
+      var na = 0.3 + nwarm * 0.5;
+
+      ctx.beginPath();
+      ctx.arc(nd.x, nd.y, nd.r + nwarm * 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(' + nr + ',' + ng + ',' + nb + ',' + na + ')';
+      ctx.fill();
+
+      if (nwarm > 0.5) {
+        ctx.beginPath();
+        ctx.arc(nd.x, nd.y, nd.r + 8, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(200,164,110,' + (nwarm * 0.1) + ')';
+        ctx.fill();
+      }
+    }
+
+    requestAnimationFrame(drawCanvas);
+  }
+
+  resizeCanvas();
+  initNodes();
+  drawCanvas();
+  window.addEventListener('resize', function() { resizeCanvas(); initNodes(); });
+
+  // ── MOUSE TRACKING ──
+  var root = document.documentElement;
+  document.addEventListener('mousemove', function(e) {
+    var heroRect = canvas.parentElement.getBoundingClientRect();
+    mouse.x = e.clientX - heroRect.left;
+    mouse.y = e.clientY - heroRect.top;
+    root.style.setProperty('--mx', e.clientX + 'px');
+    root.style.setProperty('--my', e.clientY + 'px');
+  });
+
+  document.addEventListener('touchmove', function(e) {
+    var t = e.touches[0];
+    var heroRect = canvas.parentElement.getBoundingClientRect();
+    mouse.x = t.clientX - heroRect.left;
+    mouse.y = t.clientY - heroRect.top;
+  }, { passive: true });
+
+  document.addEventListener('touchend', function() {
+    mouse.x = -1000; mouse.y = -1000;
+  });
+
+  // ── NAV SCROLL ──
+  var siteNav = document.querySelector('.site-nav');
+  var ticking = false;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      requestAnimationFrame(function() {
+        siteNav.classList.toggle('scrolled', window.scrollY > 50);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  // ── SCROLL REVEAL ──
+  var reveals = document.querySelectorAll('.reveal');
+  var revealObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(function(el) { revealObserver.observe(el); });
+
+  // ── TEMA TOGGLE ──
+  var themeBtn = document.getElementById('theme-toggle');
+  function updateThemeBtn() {
+    var isLight = document.documentElement.classList.contains('light');
+    themeBtn.innerHTML = isLight
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+    themeBtn.setAttribute('aria-label', isLight ? 'Gece moduna gec' : 'Gunduz moduna gec');
+  }
+  themeBtn.addEventListener('click', function() {
+    if (window.RaufTheme) { window.RaufTheme.toggle(); }
+    updateThemeBtn();
+  });
+  window.addEventListener('theme-changed', updateThemeBtn);
+  updateThemeBtn();
+
+})();
 </script>
+
 </body>
 </html>

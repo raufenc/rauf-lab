@@ -1,38 +1,89 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+<script src="/lib/design-system/theme.js"></script>
+<link rel="stylesheet" href="/lib/design-system/tokens.css" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>İHO 7. Sınıf 1. Ünite Oyunlar</title>
 <style>
 @font-face{font-family:'Arakom';src:url('Arakom-Regular.ttf') format('truetype');font-weight:normal}
 @font-face{font-family:'Arakom';src:url('Arakom-Bold.ttf') format('truetype');font-weight:bold}
+
+:root{
+  --iho-body-bg:linear-gradient(135deg,#0f0c29 0%,#1a1035 40%,#0f1323 100%);
+  --iho-text:#fff;
+  --iho-badge-bg:rgba(255,255,255,0.08);
+  --iho-badge-border:rgba(255,255,255,0.15);
+  --iho-badge-text:rgba(255,255,255,0.6);
+  --iho-subtitle:rgba(255,255,255,0.5);
+  --iho-count:rgba(255,255,255,0.3);
+  --iho-section-text:rgba(255,255,255,0.4);
+  --iho-section-line:rgba(255,255,255,0.08);
+  --iho-card-bg:rgba(255,255,255,0.05);
+  --iho-card-border:rgba(255,255,255,0.08);
+  --iho-card-hover-bg:rgba(255,255,255,0.1);
+  --iho-card-tr:rgba(255,255,255,0.45);
+  --iho-footer:rgba(255,255,255,0.2);
+  --iho-overlay-bg:#000;
+  --iho-overlay-bar:linear-gradient(180deg,#111,#0a0a0a);
+  --iho-overlay-bar-border:#222;
+  --iho-overlay-back-bg:rgba(255,255,255,0.08);
+  --iho-overlay-back-border:rgba(255,255,255,0.15);
+  --iho-overlay-name:rgba(255,255,255,0.5);
+  --iho-frame-bg:#1a1a2e;
+}
+html.light{
+  --iho-body-bg:linear-gradient(135deg,#eae8f2 0%,#e0ddf0 40%,#e8e6f2 100%);
+  --iho-text:var(--text);
+  --iho-badge-bg:rgba(0,0,0,0.05);
+  --iho-badge-border:rgba(0,0,0,0.1);
+  --iho-badge-text:rgba(0,0,0,0.5);
+  --iho-subtitle:rgba(0,0,0,0.45);
+  --iho-count:rgba(0,0,0,0.3);
+  --iho-section-text:rgba(0,0,0,0.4);
+  --iho-section-line:rgba(0,0,0,0.08);
+  --iho-card-bg:rgba(255,255,255,0.7);
+  --iho-card-border:rgba(0,0,0,0.08);
+  --iho-card-hover-bg:rgba(255,255,255,0.9);
+  --iho-card-tr:rgba(0,0,0,0.45);
+  --iho-footer:rgba(0,0,0,0.2);
+  --iho-overlay-bg:#fff;
+  --iho-overlay-bar:linear-gradient(180deg,#f8f8f8,#f0f0f0);
+  --iho-overlay-bar-border:var(--border);
+  --iho-overlay-back-bg:rgba(0,0,0,0.05);
+  --iho-overlay-back-border:rgba(0,0,0,0.1);
+  --iho-overlay-name:rgba(0,0,0,0.5);
+  --iho-frame-bg:var(--bg);
+}
+
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,#0f0c29 0%,#1a1035 40%,#0f1323 100%);min-height:100vh;color:#fff;overflow-x:hidden}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--iho-body-bg);min-height:100vh;color:var(--iho-text);overflow-x:hidden}
 
 /* ── HEADER ── */
 .hub-header{text-align:center;padding:48px 24px 28px}
-.hub-badge{display:inline-block;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);padding:8px 24px;border-radius:100px;font-size:15px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+.hub-badge{display:inline-block;background:var(--iho-badge-bg);border:1px solid var(--iho-badge-border);color:var(--iho-badge-text);padding:8px 24px;border-radius:100px;font-size:15px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
 .hub-title{font-size:clamp(28px,5vw,52px);font-weight:800;letter-spacing:-0.02em;line-height:1.1;margin-bottom:10px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hub-subtitle{font-family:'Arakom',sans-serif;color:rgba(255,255,255,0.5);font-size:clamp(16px,2.5vw,22px);margin-bottom:6px;direction:rtl}
-.hub-count{color:rgba(255,255,255,0.3);font-size:15px;margin-top:8px}
+.hub-subtitle{font-family:'Arakom',sans-serif;color:var(--iho-subtitle);font-size:clamp(16px,2.5vw,22px);margin-bottom:6px;direction:rtl}
+.hub-count{color:var(--iho-count);font-size:15px;margin-top:8px}
 
 /* ── SECTION LABELS ── */
-.section-label{max-width:1300px;margin:32px auto 14px;padding:0 24px;font-size:clamp(13px,1.8vw,16px);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:12px}
-.section-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.08)}
+.section-label{max-width:1300px;margin:32px auto 14px;padding:0 24px;font-size:clamp(13px,1.8vw,16px);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--iho-section-text);display:flex;align-items:center;gap:12px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--iho-section-line)}
 
 /* ── GAME GRID ── */
 .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;max-width:1300px;margin:0 auto;padding:0 24px 20px}
 
 /* ── GAME CARD ── */
-.game-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px 18px 20px;text-align:center;cursor:pointer;transition:all .3s cubic-bezier(.25,.8,.25,1);position:relative;overflow:hidden}
+.game-card{background:var(--iho-card-bg);border:1px solid var(--iho-card-border);border-radius:18px;padding:24px 18px 20px;text-align:center;cursor:pointer;transition:all .3s cubic-bezier(.25,.8,.25,1);position:relative;overflow:hidden}
 .game-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:18px 18px 0 0;transition:opacity .3s;opacity:0.7}
-.game-card:hover{background:rgba(255,255,255,0.1);transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,0.5)}
+.game-card:hover{background:var(--iho-card-hover-bg);transform:translateY(-6px);box-shadow:var(--shadow-lg)}
 .game-card:hover::before{opacity:1}
 .game-card:active{transform:translateY(-2px)}
+html.light .game-card{box-shadow:var(--shadow-sm)}
 .card-icon{font-size:2.8em;margin-bottom:12px;display:block;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3))}
-.card-name{font-family:'Arakom',sans-serif;font-size:clamp(1.1em,2vw,1.35em);font-weight:bold;margin-bottom:6px;direction:rtl;color:#fff;line-height:1.3}
-.card-tr{font-size:clamp(12px,1.4vw,14px);color:rgba(255,255,255,0.45);margin-bottom:10px;line-height:1.5;min-height:2.4em;display:flex;align-items:center;justify-content:center}
+.card-name{font-family:'Arakom',sans-serif;font-size:clamp(1.1em,2vw,1.35em);font-weight:bold;margin-bottom:6px;direction:rtl;color:var(--iho-text);line-height:1.3}
+.card-tr{font-size:clamp(12px,1.4vw,14px);color:var(--iho-card-tr);margin-bottom:10px;line-height:1.5;min-height:2.4em;display:flex;align-items:center;justify-content:center}
 .card-badge{display:inline-block;font-size:12px;padding:4px 14px;border-radius:100px;font-weight:600;letter-spacing:.04em}
 
 /* Badge types */
@@ -58,16 +109,16 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:linear-gr
 .group-ar .game-card:hover{border-color:rgba(245,158,11,0.35)}
 
 /* ── FOOTER ── */
-.hub-footer{text-align:center;padding:32px 20px 48px;color:rgba(255,255,255,0.2);font-size:13px}
+.hub-footer{text-align:center;padding:32px 20px 48px;color:var(--iho-footer);font-size:13px}
 
 /* ── GAME OVERLAY ── */
-#overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:#000;flex-direction:column}
+#overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:var(--iho-overlay-bg);flex-direction:column}
 #overlay.active{display:flex}
-.overlay-bar{height:54px;background:linear-gradient(180deg,#111,#0a0a0a);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;border-bottom:1px solid #222}
-.overlay-back{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:9px 20px;border-radius:10px;cursor:pointer;font-size:15px;font-family:inherit;transition:all .2s;white-space:nowrap}
-.overlay-back:hover{background:rgba(255,255,255,0.18)}
-.overlay-game-name{font-family:'Arakom',sans-serif;font-size:16px;color:rgba(255,255,255,0.5);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;direction:rtl;text-align:right}
-#gameFrame{flex:1;border:none;width:100%;background:#1a1a2e}
+.overlay-bar{height:54px;background:var(--iho-overlay-bar);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;border-bottom:1px solid var(--iho-overlay-bar-border)}
+.overlay-back{background:var(--iho-overlay-back-bg);border:1px solid var(--iho-overlay-back-border);color:var(--iho-text);padding:9px 20px;border-radius:10px;cursor:pointer;font-size:15px;font-family:inherit;transition:all .2s;white-space:nowrap}
+.overlay-back:hover{background:var(--iho-card-hover-bg)}
+.overlay-game-name{font-family:'Arakom',sans-serif;font-size:16px;color:var(--iho-overlay-name);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;direction:rtl;text-align:right}
+#gameFrame{flex:1;border:none;width:100%;background:var(--iho-frame-bg)}
 
 /* ── LANDSCAPE (1024+) ── */
 @media(min-width:1024px){

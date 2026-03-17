@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+<script src="/lib/design-system/theme.js"></script>
+<link rel="stylesheet" href="/lib/design-system/tokens.css" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Namaz Vakitleri — Astronomik Rehber | Rauf Enç</title>
@@ -9,18 +11,22 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  --bg:#06091a;--bg2:#0c1225;--bg3:#101a35;--card:#0f1830;
+  --bg2:#0c1225;--bg3:#101a35;--card:#0f1830;
   --sun:#f5c842;--sun2:#e87c2a;--accent:#f5c842;
-  --text:#e8e6df;--text2:#8a8a9a;--text3:#b8b6af;
+  --text2:#8a8a9a;--text3:#b8b6af;
   --blue:#3b82f6;--teal:#14b8a6;--green:#4ade80;--red:#f87171;
-  --border:rgba(255,255,255,0.08);
   --glow:rgba(245,200,66,0.15);
+}
+html.light{
+  --bg2:#eeeef5;--bg3:#e5e5ee;--card:#ffffff;
+  --text2:#666680;--text3:#555570;
+  --glow:rgba(200,160,40,0.12);
 }
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.7;overflow-x:hidden;}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,9,26,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1.5rem;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1.5rem;}
 .nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;}
 .nav-logo{font-family:'Amiri',serif;font-size:1.15rem;color:var(--accent);letter-spacing:1px;}
 .nav-links{display:flex;gap:0.2rem;flex-wrap:wrap;}
@@ -58,12 +64,12 @@ section{padding:80px 1.5rem;}
 .diagram-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
 #solar-canvas{width:100%;display:block;cursor:pointer;}
 .diagram-controls{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
-.ctrl-btn{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:8px;font-size:0.82rem;cursor:pointer;transition:all .2s;}
+.ctrl-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:8px;font-size:0.82rem;cursor:pointer;transition:all .2s;}
 .ctrl-btn:hover,.ctrl-btn.active{background:var(--glow);border-color:var(--accent);color:var(--accent);}
 .ctrl-btn.play{background:var(--accent);color:#06091a;border:none;font-weight:600;}
 .ctrl-btn.play:hover{background:#ffd966;}
 .timeline-bar{flex:1;min-width:200px;}
-.timeline-track{width:100%;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;cursor:pointer;position:relative;}
+.timeline-track{width:100%;height:8px;background:var(--surface2);border-radius:4px;cursor:pointer;position:relative;}
 .timeline-fill{height:100%;border-radius:4px;background:linear-gradient(to right,#1a3a6a,#2d6abf,#87ceeb,var(--sun),var(--sun2),#87ceeb,#2d6abf,#1a3a6a);transition:width .05s;}
 .timeline-handle{position:absolute;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;background:var(--accent);border-radius:50%;border:2px solid #06091a;cursor:grab;transition:left .05s;}
 .time-display{font-size:0.85rem;color:var(--text2);margin-top:0.3rem;}
@@ -78,11 +84,11 @@ section{padding:80px 1.5rem;}
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;}
 .prayer-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;position:relative;overflow:hidden;transition:all .3s;cursor:pointer;}
 .prayer-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
-.prayer-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,0.15);box-shadow:0 20px 40px rgba(0,0,0,0.4);}
+.prayer-card:hover{transform:translateY(-4px);border-color:var(--border-hover);box-shadow:var(--shadow-md);}
 .card-icon{font-size:2rem;margin-bottom:0.75rem;}
 .card-name{font-size:1.2rem;font-weight:700;margin-bottom:0.2rem;}
 .card-arabic{font-family:'Amiri',serif;font-size:1rem;color:var(--text2);margin-bottom:0.8rem;direction:rtl;}
-.card-angle{display:inline-flex;align-items:center;gap:0.4rem;background:rgba(255,255,255,0.06);border-radius:6px;padding:3px 10px;font-size:0.8rem;margin-bottom:0.8rem;}
+.card-angle{display:inline-flex;align-items:center;gap:0.4rem;background:var(--surface2);border-radius:6px;padding:3px 10px;font-size:0.8rem;margin-bottom:0.8rem;}
 .card-angle .angle-val{font-weight:700;color:var(--accent);}
 .card-desc{color:var(--text3);font-size:0.88rem;line-height:1.65;}
 .card-detail{color:var(--text2);font-size:0.82rem;margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid var(--border);}
@@ -100,7 +106,7 @@ section{padding:80px 1.5rem;}
 .tc-title{font-weight:700;font-size:0.9rem;margin-bottom:0.5rem;color:var(--text);}
 .tc-val{font-size:2rem;font-weight:700;margin-bottom:0.5rem;font-variant-numeric:tabular-nums;letter-spacing:-1px;transition:color 0.3s;}
 .tc-desc{color:var(--text3);font-size:0.83rem;line-height:1.65;}
-.tc-desc code{background:rgba(255,255,255,0.08);padding:0.15em 0.4em;border-radius:4px;font-size:0.85em;color:var(--text2);}
+.tc-desc code{background:var(--surface2);padding:0.15em 0.4em;border-radius:4px;font-size:0.85em;color:var(--text2);}
 .tc-formula{color:var(--text3);font-size:0.78rem;margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--border);font-variant-numeric:tabular-nums;}
 .temkin-formula-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;border-top:2px solid var(--accent);}
 .temkin-formula-card h4{color:var(--accent);margin-bottom:1rem;font-size:1rem;}
@@ -155,14 +161,14 @@ section{padding:80px 1.5rem;}
 .formula-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem;position:relative;overflow:hidden;}
 .formula-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(to right,var(--accent),var(--sun2));}
 .formula-title{font-family:'Amiri',serif;font-size:1.1rem;color:var(--accent);margin-bottom:1rem;}
-.formula-eq{font-size:1.05rem;color:var(--text);line-height:2.2;font-family:'Inter',sans-serif;text-align:center;padding:0.8rem;background:rgba(0,0,0,0.25);border-radius:10px;margin-bottom:1rem;}
+.formula-eq{font-size:1.05rem;color:var(--text);line-height:2.2;font-family:'Inter',sans-serif;text-align:center;padding:0.8rem;background:var(--surface2);border-radius:10px;margin-bottom:1rem;}
 .formula-eq .fv{display:inline-block;min-width:42px;text-align:center;padding:2px 6px;border-radius:6px;font-weight:700;transition:all 0.4s;}
 .formula-eq .fv-h{color:#4ade80;background:rgba(74,222,128,0.12);}
 .formula-eq .fv-phi{color:#60a5fa;background:rgba(96,165,250,0.12);}
 .formula-eq .fv-dec{color:#f97316;background:rgba(249,115,22,0.12);}
 .formula-eq .fv-ha{color:#a78bfa;background:rgba(167,139,250,0.12);}
 .formula-vars{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;}
-.formula-var{display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;padding:0.4rem 0.6rem;border-radius:8px;background:rgba(0,0,0,0.15);}
+.formula-var{display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;padding:0.4rem 0.6rem;border-radius:8px;background:var(--surface2);}
 .formula-var .fv-sym{font-weight:700;min-width:20px;text-align:center;}
 .formula-var .fv-name{color:var(--text2);font-size:0.75rem;}
 .formula-var .fv-val{margin-left:auto;font-weight:600;font-variant-numeric:tabular-nums;}
@@ -184,7 +190,7 @@ section{padding:80px 1.5rem;}
 .prayer-results h4{font-size:0.9rem;color:var(--accent);margin-bottom:0.8rem;font-family:'Amiri',serif;}
 .pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 1rem;}
 .pr-item{display:flex;justify-content:space-between;padding:0.35rem 0.5rem;border-radius:6px;font-size:0.82rem;}
-.pr-item:nth-child(odd){background:rgba(0,0,0,0.15);}
+.pr-item:nth-child(odd){background:var(--surface2);}
 .pr-item .pr-name{color:var(--text3);}
 .pr-item .pr-time{font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;}
 

@@ -2,6 +2,23 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
+    /* Project-specific accent colors (dark mode defaults) */
+    --green-dark: #2a7a5a;
+    --green-mid: #3d8b6f;
+    --green-light: #5aac8a;
+    --gold: #c9a84c;
+    --gold-light: #e8d48b;
+    --cream: #18181f;
+    --cream-dark: #222230;
+    --text-light: #9999b0;
+    --shadow-project: var(--shadow-md);
+    --shadow-strong: var(--shadow-lg);
+    --radius: 12px;
+    --font: 'Amiri', Georgia, serif;
+    --header-bg: linear-gradient(135deg, #0f2a1a, #1a4a30);
+}
+
+html.light {
     --green-dark: #1a3a2a;
     --green-mid: #2d5a3f;
     --green-light: #4a8c6a;
@@ -9,20 +26,17 @@
     --gold-light: #e8d48b;
     --cream: #faf6ee;
     --cream-dark: #f0e8d8;
-    --text: #2c2416;
     --text-light: #6b5d4a;
-    --border: #d4c9b4;
-    --shadow: rgba(44, 36, 22, 0.08);
+    --shadow-project: rgba(44, 36, 22, 0.08);
     --shadow-strong: rgba(44, 36, 22, 0.15);
-    --radius: 12px;
-    --font: 'Amiri', Georgia, serif;
+    --header-bg: linear-gradient(135deg, #1a3a2a, #2d5a3f);
 }
 
 html { scroll-behavior: smooth; }
 
 body {
     font-family: var(--font);
-    background: var(--cream);
+    background: var(--bg);
     color: var(--text);
     line-height: 1.7;
     min-height: 100vh;
@@ -30,7 +44,7 @@ body {
 
 /* === Header === */
 .site-header {
-    background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+    background: var(--header-bg);
     color: var(--cream);
     padding: 0;
     position: sticky;
@@ -118,7 +132,7 @@ body {
     border-radius: var(--radius);
     font-family: var(--font);
     font-size: 1.1rem;
-    background: #fff;
+    background: var(--surface);
     color: var(--text);
     transition: border-color 0.2s;
 }
@@ -164,7 +178,7 @@ body {
     border-radius: 8px;
     font-family: var(--font);
     font-size: 0.95rem;
-    background: #fff;
+    background: var(--surface);
     color: var(--text);
     cursor: pointer;
 }
@@ -176,7 +190,7 @@ body {
     gap: 4px;
     margin-bottom: 20px;
     padding: 12px;
-    background: #fff;
+    background: var(--surface);
     border-radius: var(--radius);
     border: 1px solid var(--border);
 }
@@ -197,7 +211,7 @@ body {
     color: var(--text);
     transition: all 0.2s;
 }
-.alpha-btn:hover { background: var(--green-light); color: #fff; }
+.alpha-btn:hover { background: var(--green-light); color: var(--bg); }
 .alpha-btn.active { background: var(--green-dark); color: var(--gold); }
 .alpha-btn.disabled { opacity: 0.3; cursor: default; }
 
@@ -209,7 +223,7 @@ body {
 }
 
 .scholar-card {
-    background: #fff;
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 20px;
@@ -231,7 +245,7 @@ body {
 }
 .scholar-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 30px var(--shadow-strong);
+    box-shadow: var(--shadow-strong);
     border-color: var(--green-light);
 }
 .scholar-card:hover::before { opacity: 1; }
@@ -260,26 +274,36 @@ body {
     letter-spacing: 0.3px;
 }
 .tag-date {
-    background: var(--cream-dark);
-    color: var(--text-light);
+    background: var(--surface2);
+    color: var(--text-secondary);
 }
 .tag-field {
-    background: #e8f5e9;
-    color: #2e7d32;
+    background: rgba(46,125,50,0.12);
+    color: #4caf50;
 }
-.tag-field-hadis { background: #e3f2fd; color: #1565c0; }
-.tag-field-fikih { background: #fce4ec; color: #c62828; }
-.tag-field-tasavvuf { background: #f3e5f5; color: #6a1b9a; }
-.tag-field-tefsir { background: #fff3e0; color: #e65100; }
-.tag-field-dil { background: #e0f2f1; color: #00695c; }
-.tag-field-tarih { background: #fff8e1; color: #f57f17; }
-.tag-field-sahabe { background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; }
-.tag-field-tabiin { background: #f1f8e9; color: #33691e; }
+.tag-field-hadis { background: rgba(21,101,192,0.12); color: #42a5f5; }
+.tag-field-fikih { background: rgba(198,40,40,0.12); color: #ef5350; }
+.tag-field-tasavvuf { background: rgba(106,27,154,0.12); color: #ab47bc; }
+.tag-field-tefsir { background: rgba(230,81,0,0.12); color: #ff7043; }
+.tag-field-dil { background: rgba(0,105,92,0.12); color: #26a69a; }
+.tag-field-tarih { background: rgba(245,127,23,0.12); color: #ffca28; }
+.tag-field-sahabe { background: rgba(27,94,32,0.12); color: #66bb6a; border: 1px solid rgba(27,94,32,0.25); }
+.tag-field-tabiin { background: rgba(51,105,30,0.12); color: #7cb342; }
 .tag-region {
-    background: var(--cream-dark);
-    color: var(--text-light);
+    background: var(--surface2);
+    color: var(--text-secondary);
     border: 1px solid var(--border);
 }
+
+html.light .tag-field { background: #e8f5e9; color: #2e7d32; }
+html.light .tag-field-hadis { background: #e3f2fd; color: #1565c0; }
+html.light .tag-field-fikih { background: #fce4ec; color: #c62828; }
+html.light .tag-field-tasavvuf { background: #f3e5f5; color: #6a1b9a; }
+html.light .tag-field-tefsir { background: #fff3e0; color: #e65100; }
+html.light .tag-field-dil { background: #e0f2f1; color: #00695c; }
+html.light .tag-field-tarih { background: #fff8e1; color: #f57f17; }
+html.light .tag-field-sahabe { background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; }
+html.light .tag-field-tabiin { background: #f1f8e9; color: #33691e; }
 
 .card-summary {
     font-size: 0.92rem;
@@ -299,7 +323,7 @@ body {
 
 .load-more button {
     background: var(--green-dark);
-    color: var(--cream);
+    color: #fff;
     border: none;
     padding: 12px 32px;
     border-radius: 8px;
@@ -326,7 +350,7 @@ body {
     color: var(--text);
     transition: all 0.2s;
 }
-.back-btn:hover { background: var(--cream-dark); }
+.back-btn:hover { background: var(--surface-hover); }
 
 .detail-container {
     display: grid;
@@ -335,7 +359,7 @@ body {
 }
 
 .detail-main {
-    background: #fff;
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 32px;
@@ -364,7 +388,7 @@ body {
 }
 
 .info-box {
-    background: #fff;
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 20px;
@@ -384,7 +408,7 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 6px 0;
-    border-bottom: 1px dashed var(--cream-dark);
+    border-bottom: 1px dashed var(--border);
 }
 .info-row:last-child { border: none; }
 
@@ -405,7 +429,7 @@ body {
 
 /* === Map Page === */
 .map-controls {
-    background: #fff;
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 16px;
@@ -488,7 +512,7 @@ body {
 }
 
 .timeline-card {
-    background: #fff;
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 12px 16px;
@@ -496,7 +520,7 @@ body {
     transition: all 0.2s;
 }
 .timeline-card:hover {
-    box-shadow: 0 4px 16px var(--shadow);
+    box-shadow: var(--shadow-sm);
     border-color: var(--green-light);
 }
 
@@ -521,9 +545,9 @@ body {
     right: 16px;
     width: 380px;
     max-height: calc(100vh - 280px);
-    background: #fff;
+    background: var(--surface);
     border-radius: var(--radius);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    box-shadow: var(--shadow-lg);
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -562,11 +586,11 @@ body {
 .map-list-item {
     padding: 10px 16px;
     cursor: pointer;
-    border-bottom: 1px solid var(--cream-dark);
+    border-bottom: 1px solid var(--border);
     transition: background 0.15s;
 }
 .map-list-item:hover {
-    background: var(--cream);
+    background: var(--surface-hover);
 }
 .map-list-item:last-child { border-bottom: none; }
 
@@ -599,7 +623,7 @@ body {
 .site-footer {
     text-align: center;
     padding: 24px;
-    color: var(--text-light);
+    color: var(--text-secondary);
     font-size: 0.85rem;
     border-top: 1px solid var(--border);
     margin-top: 40px;
