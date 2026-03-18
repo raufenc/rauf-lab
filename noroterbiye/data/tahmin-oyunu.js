@@ -17,7 +17,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Muhammed sallallahu aleyhi ve sellem"
+  "dogruCevap": "Hazret-i Muhammed sallallahu aleyhi ve sellem"
  },
  {
   "id": 2,
@@ -37,7 +37,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Adem"
+  "dogruCevap": "Hazret-i Adem"
  },
  {
   "id": 3,
@@ -57,7 +57,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Nuh"
+  "dogruCevap": "Hazret-i Nuh"
  },
  {
   "id": 4,
@@ -77,7 +77,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Hud"
+  "dogruCevap": "Hazret-i Hud"
  },
  {
   "id": 5,
@@ -97,7 +97,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Salih"
+  "dogruCevap": "Hazret-i Salih"
  },
  {
   "id": 6,
@@ -117,7 +117,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. İbrahim"
+  "dogruCevap": "Hazret-i İbrahim"
  },
  {
   "id": 7,
@@ -137,7 +137,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Lut"
+  "dogruCevap": "Hazret-i Lut"
  },
  {
   "id": 8,
@@ -153,11 +153,11 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    },
    {
-    "soru": "Babam Hz. İbrahim midir?",
+    "soru": "Babam Hazret-i İbrahim midir?",
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. İsmail"
+  "dogruCevap": "Hazret-i İsmail"
  },
  {
   "id": 9,
@@ -165,11 +165,11 @@ const TAHMIN_OYUNU_DATA = [
   "zorluk": "Orta",
   "sorular": [
    {
-    "soru": "Hz. İbrahim’in oğullarından biri miyim?",
+    "soru": "Hazret-i İbrahim’in oğullarından biri miyim?",
     "cevap": "Evet."
    },
    {
-    "soru": "Hz. Yakub’un babası mıyım?",
+    "soru": "Hazret-i Yakub’un babası mıyım?",
     "cevap": "Evet."
    },
    {
@@ -177,7 +177,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. İshak"
+  "dogruCevap": "Hazret-i İshak"
  },
  {
   "id": 10,
@@ -185,7 +185,7 @@ const TAHMIN_OYUNU_DATA = [
   "zorluk": "Kolay",
   "sorular": [
    {
-    "soru": "Hz. Yusuf’un babası mıyım?",
+    "soru": "Hazret-i Yusuf’un babası mıyım?",
     "cevap": "Evet."
    },
    {
@@ -197,7 +197,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Yakub"
+  "dogruCevap": "Hazret-i Yakub"
  },
  {
   "id": 11,
@@ -217,7 +217,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Yusuf"
+  "dogruCevap": "Hazret-i Yusuf"
  },
  {
   "id": 12,
@@ -237,7 +237,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Eyyub"
+  "dogruCevap": "Hazret-i Eyyub"
  },
  {
   "id": 13,
@@ -257,7 +257,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Şuayb"
+  "dogruCevap": "Hazret-i Şuayb"
  },
  {
   "id": 14,
@@ -277,7 +277,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Musa"
+  "dogruCevap": "Hazret-i Musa"
  },
  {
   "id": 15,
@@ -285,7 +285,7 @@ const TAHMIN_OYUNU_DATA = [
   "zorluk": "Orta",
   "sorular": [
    {
-    "soru": "Hz. Musa’nın kardeşi miyim?",
+    "soru": "Hazret-i Musa’nın kardeşi miyim?",
     "cevap": "Evet."
    },
    {
@@ -297,7 +297,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Harun"
+  "dogruCevap": "Hazret-i Harun"
  },
  {
   "id": 16,
@@ -317,7 +317,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Davud"
+  "dogruCevap": "Hazret-i Davud"
  },
  {
   "id": 17,
@@ -337,7 +337,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Süleyman"
+  "dogruCevap": "Hazret-i Süleyman"
  },
  {
   "id": 18,
@@ -357,7 +357,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Yunus"
+  "dogruCevap": "Hazret-i Yunus"
  },
  {
   "id": 19,
@@ -365,7 +365,7 @@ const TAHMIN_OYUNU_DATA = [
   "zorluk": "Zor",
   "sorular": [
    {
-    "soru": "Hz. Yahya’nın babası mıyım?",
+    "soru": "Hazret-i Yahya’nın babası mıyım?",
     "cevap": "Evet."
    },
    {
@@ -377,7 +377,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Zekeriyya"
+  "dogruCevap": "Hazret-i Zekeriyya"
  },
  {
   "id": 20,
@@ -389,7 +389,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    },
    {
-    "soru": "Hz. Zekeriyya’nın oğlu muyum?",
+    "soru": "Hazret-i Zekeriyya’nın oğlu muyum?",
     "cevap": "Evet."
    },
    {
@@ -397,7 +397,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Yahya"
+  "dogruCevap": "Hazret-i Yahya"
  },
  {
   "id": 21,
@@ -417,7 +417,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. İsa"
+  "dogruCevap": "Hazret-i İsa"
  },
  {
   "id": 22,
@@ -437,7 +437,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Ebu Bekir"
+  "dogruCevap": "Hazret-i Ebu Bekir"
  },
  {
   "id": 23,
@@ -457,7 +457,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Ömer"
+  "dogruCevap": "Hazret-i Ömer"
  },
  {
   "id": 24,
@@ -477,7 +477,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Osman"
+  "dogruCevap": "Hazret-i Osman"
  },
  {
   "id": 25,
@@ -497,7 +497,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Ali"
+  "dogruCevap": "Hazret-i Ali"
  },
  {
   "id": 26,
@@ -505,7 +505,7 @@ const TAHMIN_OYUNU_DATA = [
   "zorluk": "Orta",
   "sorular": [
    {
-    "soru": "Hz. Ali ile Hz. Fâtıma’nın oğlu muyum?",
+    "soru": "Hazret-i Ali ile Hazret-i Fâtıma’nın oğlu muyum?",
     "cevap": "Evet."
    },
    {
@@ -517,7 +517,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Hasan"
+  "dogruCevap": "Hazret-i Hasan"
  },
  {
   "id": 27,
@@ -533,11 +533,11 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    },
    {
-    "soru": "Hz. Ali ile Hz. Fâtıma’nın oğlu muyum?",
+    "soru": "Hazret-i Ali ile Hazret-i Fâtıma’nın oğlu muyum?",
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Hüseyin"
+  "dogruCevap": "Hazret-i Hüseyin"
  },
  {
   "id": 28,
@@ -557,7 +557,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Hatice"
+  "dogruCevap": "Hazret-i Hatice"
  },
  {
   "id": 29,
@@ -577,7 +577,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Aişe"
+  "dogruCevap": "Hazret-i Aişe"
  },
  {
   "id": 30,
@@ -589,7 +589,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    },
    {
-    "soru": "Hz. Hasan ve Hz. Hüseyin’in annesi miyim?",
+    "soru": "Hazret-i Hasan ve Hazret-i Hüseyin’in annesi miyim?",
     "cevap": "Evet."
    },
    {
@@ -597,7 +597,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Fatıma"
+  "dogruCevap": "Hazret-i Fatıma"
  },
  {
   "id": 31,
@@ -613,11 +613,11 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    },
    {
-    "soru": "Hz. Ömer’in kızı mıyım?",
+    "soru": "Hazret-i Ömer’in kızı mıyım?",
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Hz. Hafsa"
+  "dogruCevap": "Hazret-i Hafsa"
  },
  {
   "id": 32,
@@ -653,7 +653,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    },
    {
-    "soru": "Hz. Ebû Bekir’in kızı mıyım?",
+    "soru": "Hazret-i Ebû Bekir’in kızı mıyım?",
     "cevap": "Evet."
    }
   ],
@@ -1657,7 +1657,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Kutuz"
+  "dogruCevap": "Sultan Kutuz"
  },
  {
   "id": 84,
@@ -1677,7 +1677,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "Alparslan"
+  "dogruCevap": "Sultan Alparslan"
  },
  {
   "id": 85,
@@ -1797,7 +1797,7 @@ const TAHMIN_OYUNU_DATA = [
     "cevap": "Evet."
    }
   ],
-  "dogruCevap": "II. Abdülhamid"
+  "dogruCevap": "Sultan II. Abdülhamid Han"
  },
  {
   "id": 91,

@@ -658,9 +658,9 @@ const KISA_BILGILER_DATA = [
  {
   "id": "K082",
   "tema": "Çevre",
-  "baslik": "Sabır öğretmenlerinin en büyüğü: Hz. Eyyub aleyhisselam",
-  "kisaBilgi": "Hz. Eyyub aleyhisselam yıllarca süren hastalığa rağmen şükrü bırakmadı. Sabrın sınırı yok, diye öğretti.",
-  "aciklama": "Nöroterbiyede sabrın nörokimyası anlatılır; Hz. Eyyub aleyhisselam bunun en somut örneğidir. Zorluk uzadıkça irade zayıflar, ama teslimiyet güçlendirir.",
+  "baslik": "Sabır öğretmenlerinin en büyüğü: Hazret-i Eyyub aleyhisselam",
+  "kisaBilgi": "Hazret-i Eyyub aleyhisselam yıllarca süren hastalığa rağmen şükrü bırakmadı. Sabrın sınırı yok, diye öğretti.",
+  "aciklama": "Nöroterbiyede sabrın nörokimyası anlatılır; Hazret-i Eyyub aleyhisselam bunun en somut örneğidir. Zorluk uzadıkça irade zayıflar, ama teslimiyet güçlendirir.",
   "ilgiliKavram": "Sabır"
  },
  {
@@ -674,8 +674,8 @@ const KISA_BILGILER_DATA = [
  {
   "id": "K084",
   "tema": "Çevre",
-  "baslik": "Hz. Ömer radıyallahu anh adaleti, nefse hâkim olmakla kurdu",
-  "kisaBilgi": "Hz. Ömer radıyallahu anh kendi nefsine en sert davranan liderdi. Gece sokakları dolaşır, milletinin halini kontrol ederdi.",
+  "baslik": "Hazret-i Ömer radıyallahu anh adaleti, nefse hâkim olmakla kurdu",
+  "kisaBilgi": "Hazret-i Ömer radıyallahu anh kendi nefsine en sert davranan liderdi. Gece sokakları dolaşır, milletinin halini kontrol ederdi.",
   "aciklama": "Liderlik ve adalet, önce kişinin kendi nefsini terbiye etmesiyle başlar. Gadab kontrolü olmadan adalet olmaz.",
   "ilgiliKavram": "Gadab"
  },

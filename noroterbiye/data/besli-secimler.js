@@ -2,9 +2,9 @@ const BESLI_SECIMLER_DATA = [
  {
   "tema": "Başlangıç 5'lisi",
   "isimler": [
-   "Hz. Muhammed sallallahu aleyhi ve sellem",
-   "Hz. Ebu Bekir",
-   "Hz. Ömer",
+   "Hazret-i Muhammed sallallahu aleyhi ve sellem",
+   "Hazret-i Ebu Bekir",
+   "Hazret-i Ömer",
    "İmam Gazali",
    "Fatih Sultan Mehmed"
   ],
@@ -13,9 +13,9 @@ const BESLI_SECIMLER_DATA = [
  {
   "tema": "Hanım rol modeller",
   "isimler": [
-   "Hz. Hatice",
-   "Hz. Aişe",
-   "Hz. Fatıma",
+   "Hazret-i Hatice",
+   "Hazret-i Aişe",
+   "Hazret-i Fatıma",
    "Esma bint Ebi Bekir",
    "Nesibe bint Ka'b"
   ],
@@ -24,9 +24,9 @@ const BESLI_SECIMLER_DATA = [
  {
   "tema": "Gençlere yakın 5'li",
   "isimler": [
-   "Hz. Yusuf",
+   "Hazret-i Yusuf",
    "Mus'ab b. Umeyr",
-   "Hz. Hasan",
+   "Hazret-i Hasan",
    "İmam Nevevi",
    "Fatih Sultan Mehmed"
   ],
@@ -35,9 +35,9 @@ const BESLI_SECIMLER_DATA = [
  {
   "tema": "Sabır ve sebat",
   "isimler": [
-   "Hz. Nuh",
-   "Hz. Yusuf",
-   "Hz. Eyyub",
+   "Hazret-i Nuh",
+   "Hazret-i Yusuf",
+   "Hazret-i Eyyub",
    "Bilal-i Habeşi",
    "İmam Ahmed b. Hanbel"
   ],
@@ -57,10 +57,10 @@ const BESLI_SECIMLER_DATA = [
  {
   "tema": "Liderlik ve adalet",
   "isimler": [
-   "Hz. Ömer",
+   "Hazret-i Ömer",
    "Ömer b. Abdülaziz",
    "Selahaddin Eyyubi",
-   "Alparslan",
+   "Sultan Alparslan",
    "Kanuni Sultan Süleyman"
   ],
   "ders": "Yönetimde adalet, strateji, kurum ve denge."
@@ -68,7 +68,7 @@ const BESLI_SECIMLER_DATA = [
  {
   "tema": "Kalp terbiyesi",
   "isimler": [
-   "Hz. Adem",
+   "Hazret-i Adem",
    "Hasan-ı Basri",
    "Abdülkadir Geylani",
    "İmam Rabbani Ahmed Faruki Serhendi",
