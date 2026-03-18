@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İslami Eğitim Programı</title>
+  <meta name="description" content="Kapsamlı bireysel ve topluluk İslami eğitim sistemi — 1.021 öğrenme kazanımı, 4 öğrenme yolu, 12 aylık plan">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ============================================================
+       SIDEBAR
+       ============================================================ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-arabic">بِسْمِ اللهِ</span>
+      <span class="logo-title">İslami Eğitim Programı</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-section="dashboard">
+        <span class="nav-icon">⊞</span>
+        Ana Sayfa
+      </div>
+      <div class="nav-item" data-section="kazanim">
+        <span class="nav-icon">◈</span>
+        Kazanım Havuzu
+      </div>
+      <div class="nav-item" data-section="roadmap">
+        <span class="nav-icon">◉</span>
+        Yol Haritaları
+      </div>
+      <div class="nav-item" data-section="etkinlik">
+        <span class="nav-icon">◆</span>
+        Etkinlik Bankası
+      </div>
+      <div class="nav-item" data-section="amel">
+        <span class="nav-icon">◐</span>
+        Amel Takip
+      </div>
+      <div class="nav-item" data-section="ahlak">
+        <span class="nav-icon">◑</span>
+        Ahlak Muhasebe
+      </div>
+      <div class="nav-item" data-section="ezber">
+        <span class="nav-icon">◌</span>
+        Ezber &amp; Okuma
+      </div>
+      <div class="nav-item" data-section="sozluk">
+        <span class="nav-icon">◎</span>
+        Sözlük
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      raufenc.com/islami-egitim
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       MAIN CONTENT
+       ============================================================ -->
+  <main class="main-content">
+
+    <!-- Top Header -->
+    <header class="top-header">
+      <div>
+        <div class="header-section-title" id="header-section-title">Ana Sayfa</div>
+        <div class="header-subtitle" id="header-subtitle">Program Genel Bakış</div>
+      </div>
+      <div class="header-bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ</div>
+    </header>
+
+    <!-- Content Area -->
+    <div class="content-area">
+
+      <!-- ==========================================================
+           SECTION 1: DASHBOARD
+           ========================================================== -->
+      <section id="section-dashboard" class="section active">
+
+        <!-- Hero -->
+        <div class="hero-section">
+          <div class="hero-geo-pattern"></div>
+          <span class="hero-bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ</span>
+          <h1 class="hero-title">İslami Eğitim Programı</h1>
+          <p class="hero-subtitle">Kapsamlı bireysel ve topluluk eğitim sistemi — bilgiden amele, amelden karaktere</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-number" data-target="1021">0</span>
+            <span class="stat-label">Kazanım</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number" data-target="11">0</span>
+            <span class="stat-label">Ana Alan</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number" data-target="4">0</span>
+            <span class="stat-label">Öğrenme Yolu</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number" data-target="52">0</span>
+            <span class="stat-label">Haftalık Plan</span>
+          </div>
+        </div>
+
+        <!-- Program Phases -->
+        <h2 class="section-title">Program Fazları</h2>
+        <div class="phases-row">
+          <div class="phase-card" onclick="navigateTo('roadmap')">
+            <div class="phase-num">Faz 1</div>
+            <div class="phase-title">Temeller</div>
+            <div class="phase-desc">Akâid · Kur'an · Siyer</div>
+          </div>
+          <div class="phase-card" onclick="navigateTo('roadmap')">
+            <div class="phase-num">Faz 2</div>
+            <div class="phase-title">İbadet İnşası</div>
+            <div class="phase-desc">Namaz · Oruç · Taharet</div>
+          </div>
+          <div class="phase-card" onclick="navigateTo('roadmap')">
+            <div class="phase-num">Faz 3</div>
+            <div class="phase-title">Karakter ve Disiplin</div>
+            <div class="phase-desc">Helal-Haram · Ahlak · Nefis</div>
+          </div>
+          <div class="phase-card" onclick="navigateTo('roadmap')">
+            <div class="phase-num">Faz 4</div>
+            <div class="phase-title">Toplumsal Hayat</div>
+            <div class="phase-desc">Aile · Dijital</div>
+          </div>
+          <div class="phase-card" onclick="navigateTo('roadmap')">
+            <div class="phase-num">Faz 5</div>
+            <div class="phase-title">Derinleşme</div>
+            <div class="phase-desc">Manevî Gelişim</div>
+          </div>
+        </div>
+
+        <!-- Area Distribution -->
+        <h2 class="section-title">Alan Dağılımı</h2>
+        <div class="card area-chart">
+          <div class="area-bar-item">
+            <span class="area-bar-label">İbadetler</span>
+            <div class="area-bar-track"><div class="area-bar-fill" data-pct="28.6"></div></div>
+            <span class="area-bar-pct">292 (28.6%)</span>
+          </div>
+          <div class="area-bar-item">
+            <span class="area-bar-label">Ahlâk</span>
+            <div class="area-bar-track"><div class="area-bar-fill" data-pct="16"></div></div>
+            <span class="area-bar-pct">163 (16%)</span>
+          </div>
+          <div class="area-bar-item">
+            <span class="area-bar-label">Helal-Haram</span>
+            <div class="area-bar-track"><div class="area-bar-fill" data-pct="15.7"></div></div>
+            <span class="area-bar-pct">160 (15.7%)</span>
+          </div>
+          <div class="area-bar-item">
+            <span class="area-bar-label">Kalp ve Nefis</span>
+            <div class="area-bar-track"><div class="area-bar-fill" data-pct="11.7"></div></div>
+            <span class="area-bar-pct">120 (11.7%)</span>
+          </div>
+          <div class="area-bar-item">
+            <span class="area-bar-label">Akâid</span>
+            <div class="area-bar-track"><div class="area-bar-fill" data-pct="10.2"></div></div>
+            <span class="area-bar-pct">104 (10.2%)</span>
+          </div>
+          <div class="area-bar-item">
+            <span class="area-bar-label">Taharet ve Günlük Fıkıh</span>
+            <div class="area-bar-track"><div class="area-bar-fill" data-pct="3.5"></div></div>
+            <span class="area-bar-pct">36 (3.5%)</span>
+          </div>
+          <div class="area-bar-item">
+            <span class="area-bar-label">Kur'an ve Tecvid</span>
+            <div class="area-bar-track"><div class="area-bar-fill" data-pct="3.5"></div></div>
+            <span class="area-bar-pct">36 (3.5%)</span>
+          </div>
+          <div class="area-bar-item">
+            <span class="area-bar-label">Siyer, Hadis ve Tarih</span>
+            <div class="area-bar-track"><div class="area-bar-fill" data-pct="3.1"></div></div>
+            <span class="area-bar-pct">32 (3.1%)</span>
+          </div>
+          <div class="area-bar-item">
+            <span class="area-bar-label">Aile ve Muamelat</span>
+            <div class="area-bar-track"><div class="area-bar-fill" data-pct="2.9"></div></div>
+            <span class="area-bar-pct">30 (2.9%)</span>
+          </div>
+          <div class="area-bar-item">
+            <span class="area-bar-label">Manevî Gelişim</span>
+            <div class="area-bar-track"><div class="area-bar-fill" data-pct="2.4"></div></div>
+            <span class="area-bar-pct">24 (2.4%)</span>
+          </div>
+          <div class="area-bar-item">
+            <span class="area-bar-label">Dijital ve Çağdaş Hayat</span>
+            <div class="area-bar-track"><div class="area-bar-fill" data-pct="2.4"></div></div>
+            <span class="area-bar-pct">24 (2.4%)</span>
+          </div>
+        </div>
+
+        <!-- 4 Tracks -->
+        <h2 class="section-title">Öğrenme Yolları</h2>
+        <div class="tracks-grid">
+          <div class="track-card" onclick="navigateTo('roadmap'); setTimeout(()=>switchTrack('Çocuk Temel'),100)">
+            <span class="track-icon">🌱</span>
+            <div class="track-name">Çocuk Temel</div>
+            <div class="track-age">7+ yaş</div>
+            <div class="track-desc">Temel iman, ibadete alışma ve güzel ahlak temelleri</div>
+          </div>
+          <div class="track-card" onclick="navigateTo('roadmap'); setTimeout(()=>switchTrack('Genç İnşa'),100)">
+            <span class="track-icon">🔥</span>
+            <div class="track-name">Genç İnşa</div>
+            <div class="track-age">13+ yaş</div>
+            <div class="track-desc">Kimlik inşası, helal-haram bilinciyle karakter gelişimi</div>
+          </div>
+          <div class="track-card" onclick="navigateTo('roadmap'); setTimeout(()=>switchTrack('Yetişkin Başlangıç'),100)">
+            <span class="track-icon">🌿</span>
+            <div class="track-name">Yetişkin Başlangıç</div>
+            <div class="track-age">18+ yaş</div>
+            <div class="track-desc">Temellerden başlayarak pratik İslami yaşam</div>
+          </div>
+          <div class="track-card" onclick="navigateTo('roadmap'); setTimeout(()=>switchTrack('Derinleşme / Rehberlik'),100)">
+            <span class="track-icon">✨</span>
+            <div class="track-name">Derinleşme</div>
+            <div class="track-age">İleri seviye</div>
+            <div class="track-desc">Tezkiye, maneviyat ve rehberlik odaklı ileri program</div>
+          </div>
+        </div>
+
+      </section><!-- /dashboard -->
+
+
+      <!-- ==========================================================
+           SECTION 2: KAZANIM HAVUZU
+           ========================================================== -->
+      <section id="section-kazanim" class="section">
+
+        <!-- Filters -->
+        <div class="filter-bar">
+          <div class="filter-row">
+            <div class="filter-search">
+              <span class="filter-search-icon">🔍</span>
+              <input type="text" id="kaz-search" placeholder="Kazanım ara... (ID veya metin)">
+            </div>
+            <select class="filter-select" id="kaz-alan">
+              <option value="">Tüm Alanlar</option>
+              <option>Akâid</option>
+              <option>Kur'an ve Tecvid</option>
+              <option>Siyer, Hadis ve Tarih</option>
+              <option>İbadetler</option>
+              <option>Taharet ve Günlük Fıkıh</option>
+              <option>Helal-Haram</option>
+              <option>Ahlâk</option>
+              <option>Kalp ve Nefis Terbiyesi</option>
+              <option>Aile ve Muamelat</option>
+              <option>Dijital ve Çağdaş Hayat</option>
+              <option>Manevî Gelişim</option>
+            </select>
+            <select class="filter-select" id="kaz-seviye">
+              <option value="">Tüm Seviyeler</option>
+              <option>Başlangıç</option>
+              <option>Temel</option>
+              <option>Gelişim</option>
+              <option>Derinleşme</option>
+            </select>
+            <select class="filter-select" id="kaz-oncelik">
+              <option value="">Tüm Öncelikler</option>
+              <option>Çekirdek</option>
+              <option>Yüksek</option>
+              <option>Destekleyici</option>
+            </select>
+            <select class="filter-select" id="kaz-faz">
+              <option value="">Tüm Fazlar</option>
+              <option value="Faz 1: Temeller">Faz 1: Temeller</option>
+              <option value="Faz 2: İbadet İnşası">Faz 2: İbadet İnşası</option>
+              <option value="Faz 3: Karakter ve Disiplin">Faz 3: Karakter</option>
+              <option value="Faz 4: Toplumsal Hayat">Faz 4: Toplumsal</option>
+              <option value="Faz 5: Derinleşme">Faz 5: Derinleşme</option>
+            </select>
+            <div class="filter-count" id="kaz-count"><span>1.021</span> kazanım gösteriliyor</div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="kazanim-table-wrap">
+          <table class="kazanim-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Kazanım</th>
+                <th>Alan</th>
+                <th>Seviye</th>
+                <th>Öncelik</th>
+                <th>Süre</th>
+                <th>Faz</th>
+              </tr>
+            </thead>
+            <tbody id="kazanim-tbody">
+            </tbody>
+          </table>
+          <div class="pagination" id="kazanim-pagination"></div>
+        </div>
+
+      </section><!-- /kazanim -->
+
+
+      <!-- ==========================================================
+           SECTION 3: YOL HARİTALARI
+           ========================================================== -->
+      <section id="section-roadmap" class="section">
+
+        <div class="tabs-bar">
+          <button class="tab-btn active" data-track="Çocuk Temel"
+            onclick="switchTrack('Çocuk Temel')">🌱 Çocuk Temel</button>
+          <button class="tab-btn" data-track="Genç İnşa"
+            onclick="switchTrack('Genç İnşa')">🔥 Genç İnşa</button>
+          <button class="tab-btn" data-track="Yetişkin Başlangıç"
+            onclick="switchTrack('Yetişkin Başlangıç')">🌿 Yetişkin Başlangıç</button>
+          <button class="tab-btn" data-track="Derinleşme / Rehberlik"
+            onclick="switchTrack('Derinleşme / Rehberlik')">✨ Derinleşme</button>
+        </div>
+
+        <div class="roadmap-grid" id="roadmap-grid">
+          <!-- Rendered by app.js -->
+        </div>
+
+      </section><!-- /roadmap -->
+
+
+      <!-- ==========================================================
+           SECTION 4: ETKİNLİK BANKASI
+           ========================================================== -->
+      <section id="section-etkinlik" class="section">
+
+        <div class="etkinlik-filters">
+          <select class="filter-select" id="etk-format">
+            <option value="">Tüm Formatlar</option>
+            <option value="bireysel">Bireysel</option>
+            <option value="grup">Grup</option>
+            <option value="eşli">Eşli Çalışma</option>
+            <option value="uygulama">Uygulama</option>
+            <option value="saha">Saha</option>
+          </select>
+          <select class="filter-select" id="etk-duration">
+            <option value="">Tüm Süreler</option>
+            <option value="short">Kısa (≤15 dk)</option>
+            <option value="medium">Orta (16–30 dk)</option>
+            <option value="long">Uzun (>30 dk)</option>
+          </select>
+          <span style="font-size:13px;color:var(--text-secondary)">30 etkinlik</span>
+        </div>
+
+        <div class="etkinlik-grid" id="etkinlik-grid">
+          <!-- Rendered by app.js -->
+        </div>
+
+      </section><!-- /etkinlik -->
+
+
+      <!-- ==========================================================
+           SECTION 5: AMEL TAKİP
+           ========================================================== -->
+      <section id="section-amel" class="section">
+
+        <div class="amel-month-tabs" id="amel-month-tabs">
+          <!-- Rendered by app.js -->
+        </div>
+
+        <div id="amel-form-body">
+          <!-- Rendered by app.js -->
+        </div>
+
+        <!-- Annual Summary -->
+        <div class="annual-summary">
+          <h3 class="section-title" style="margin-bottom:16px">Yıllık Özet (Ortalamalar)</h3>
+          <div class="annual-grid" id="annual-grid">
+            <div style="grid-column:span 4;text-align:center;color:var(--text-muted);padding:16px;font-size:13px;">Henüz kayıt yok</div>
+          </div>
+        </div>
+
+      </section><!-- /amel -->
+
+
+      <!-- ==========================================================
+           SECTION 6: AHLAK MUHASEBE
+           ========================================================== -->
+      <section id="section-ahlak" class="section">
+
+        <div class="amel-month-tabs" id="ahlak-month-tabs">
+          <!-- Rendered by app.js -->
+        </div>
+
+        <div class="ahlak-layout">
+          <!-- Left: Form -->
+          <div class="ahlak-form-section">
+            <div class="card">
+              <div class="amel-form-title" style="font-size:16px;font-weight:700;color:var(--accent-gold-light);margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border-color)">
+                Ahlak Değerlendirmesi
+              </div>
+              <div class="virtue-grid" id="ahlak-virtue-grid">
+                <!-- Rendered by app.js -->
+              </div>
+              <button class="save-btn" onclick="saveAhlak(state.ahlak.activeMonth)" id="ahlak-save-btn">Kaydet</button>
+              <span class="saved-badge" id="ahlak-saved-badge">✓ Kaydedildi</span>
+            </div>
+          </div>
+
+          <!-- Right: Radar Chart + Trends -->
+          <div class="radar-section">
+            <div class="radar-title">Bu Ay — Radar Grafiği</div>
+            <div id="radar-chart"></div>
+            <div class="radar-legend" id="radar-legend">
+              <!-- filled by JS -->
+            </div>
+            <div class="divider"></div>
+            <h4 style="font-size:13px;font-weight:700;color:var(--text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Değer Dağılımı</h4>
+            <div id="ahlak-trend-bars">
+              <!-- Rendered by app.js -->
+            </div>
+          </div>
+        </div>
+
+      </section><!-- /ahlak -->
+
+
+      <!-- ==========================================================
+           SECTION 7: EZBER & OKUMA
+           ========================================================== -->
+      <section id="section-ezber" class="section">
+
+        <!-- Progress Bar -->
+        <div class="ezber-progress">
+          <span style="font-size:13px;font-weight:600;color:var(--text-secondary);white-space:nowrap">İlerleme:</span>
+          <div class="ezber-progress-bar-wrap">
+            <div class="ezber-progress-bar" id="ezber-progress-bar" style="width:0%"></div>
+          </div>
+          <div class="ezber-progress-text" id="ezber-progress-text">0 / 37 tamamlandı</div>
+        </div>
+
+        <!-- Type Tabs -->
+        <div class="ezber-tabs-bar" id="ezber-tabs">
+          <!-- Rendered by app.js -->
+        </div>
+
+        <!-- List -->
+        <div class="ezber-list" id="ezber-list">
+          <!-- Rendered by app.js -->
+        </div>
+
+      </section><!-- /ezber -->
+
+
+      <!-- ==========================================================
+           SECTION 8: SÖZLÜK
+           ========================================================== -->
+      <section id="section-sozluk" class="section">
+
+        <div class="sozluk-search">
+          <span class="sozluk-search-icon">🔍</span>
+          <input type="text" id="sozluk-search" placeholder="Terim ara...">
+        </div>
+
+        <div class="sozluk-grid" id="sozluk-grid">
+          <!-- Rendered by app.js -->
+        </div>
+
+      </section><!-- /sozluk -->
+
+
+    </div><!-- /content-area -->
+  </main><!-- /main-content -->
+
+</div><!-- /app-layout -->
+
+
+<!-- ============================================================
+     KAZANIM MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="kazanim-modal" onclick="if(event.target===this)closeKazanimModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-id" id="modal-k-id"></div>
+        <div class="modal-title" id="modal-k-title"></div>
+      </div>
+      <button class="modal-close" onclick="closeKazanimModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-grid">
+        <div class="modal-field">
+          <label>Ana Alan</label>
+          <value id="modal-k-alan"></value>
+        </div>
+        <div class="modal-field">
+          <label>Alt Alan</label>
+          <value id="modal-k-altalan"></value>
+        </div>
+        <div class="modal-field">
+          <label>Modül</label>
+          <value id="modal-k-modul"></value>
+        </div>
+        <div class="modal-field">
+          <label>Program Fazı</label>
+          <value id="modal-k-faz"></value>
+        </div>
+        <div class="modal-field">
+          <label>Seviye</label>
+          <value id="modal-k-seviye"></value>
+        </div>
+        <div class="modal-field">
+          <label>Öncelik</label>
+          <value id="modal-k-oncelik"></value>
+        </div>
+        <div class="modal-field">
+          <label>Süre</label>
+          <value id="modal-k-sure"></value>
+        </div>
+        <div class="modal-field">
+          <label>Önerilen Profil</label>
+          <value id="modal-k-profil"></value>
+        </div>
+        <div class="modal-field-full">
+          <label>Öğretim Yöntemi</label>
+          <value id="modal-k-yontem"></value>
+        </div>
+        <div class="modal-field-full">
+          <label>Ölçme Türü</label>
+          <value id="modal-k-olcme"></value>
+        </div>
+        <div class="modal-field-full">
+          <label>Günlük Hayat Transferi</label>
+          <value id="modal-k-transfer"></value>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BOTTOM TAB BAR (Mobile)
+     ============================================================ -->
+<nav class="bottom-tab-bar">
+  <div class="bottom-tabs">
+    <button class="bottom-tab active" data-section="dashboard">
+      <span class="bottom-tab-icon">⊞</span>
+      <span class="bottom-tab-label">Ana Sayfa</span>
+    </button>
+    <button class="bottom-tab" data-section="kazanim">
+      <span class="bottom-tab-icon">◈</span>
+      <span class="bottom-tab-label">Kazanım</span>
+    </button>
+    <button class="bottom-tab" data-section="roadmap">
+      <span class="bottom-tab-icon">◉</span>
+      <span class="bottom-tab-label">Yol Haritası</span>
+    </button>
+    <button class="bottom-tab" data-section="amel">
+      <span class="bottom-tab-icon">◐</span>
+      <span class="bottom-tab-label">Amel</span>
+    </button>
+    <button class="bottom-tab" data-section="ezber">
+      <span class="bottom-tab-icon">◌</span>
+      <span class="bottom-tab-label">Ezber</span>
+    </button>
+  </div>
+</nav>
+
+
+<!-- Scripts -->
+<script src="data.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
