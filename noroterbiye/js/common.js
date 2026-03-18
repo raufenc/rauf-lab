@@ -8,7 +8,7 @@ const NT = {
     { href: '/noroterbiye/kisa-bilgiler/', label: 'Kısa Bilgiler' },
     { href: '/noroterbiye/testler/', label: 'Testler' },
     { href: '/noroterbiye/oyunlar/', label: 'Oyunlar' },
-    { href: '/noroterbiye/ilham-verenler/', label: 'İlham Verenler' },
+    { href: '/noroterbiye/oyunlar/rol-model-tahmini/', label: 'Rol Modeller' },
     { href: '/noroterbiye/araclar/', label: 'Araçlar' },
     { href: '/noroterbiye/kitap-haritasi/', label: 'Kitap Haritası' },
     { href: '/noroterbiye/kitap/', label: 'Kitap' },
@@ -128,16 +128,19 @@ const NT = {
   },
 
   // PDF indirme — kayıtlı veriyi PDF olarak indir
+  _pdfLoading: false,
   downloadPDF(elementId, filename) {
     const el = document.getElementById(elementId);
-    if (!el) return;
+    if (!el || this._pdfLoading) return;
     const fn = filename || document.title.replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ\s-]/g, '') + '.pdf';
 
-    // html2pdf.js CDN'den yükle (ilk kullanımda)
     if (typeof html2pdf === 'undefined') {
+      this._pdfLoading = true;
+      this.toast('PDF kütüphanesi yükleniyor...');
       const s = document.createElement('script');
       s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js';
-      s.onload = () => this._generatePDF(el, fn);
+      s.onload = () => { this._pdfLoading = false; this._generatePDF(el, fn); };
+      s.onerror = () => { this._pdfLoading = false; this.toast('PDF yüklenemedi, yazdırma açılıyor...'); window.print(); };
       document.head.appendChild(s);
     } else {
       this._generatePDF(el, fn);
@@ -149,25 +152,32 @@ const NT = {
     const opt = {
       margin: [10, 10, 10, 10],
       filename: filename,
-      image: { type: 'jpeg', quality: 0.95 },
+      image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
 
-    // Geçici olarak light renkleri uygula (PDF için)
+    // Dark mode'da tüm elementleri geçici olarak light yapma
+    const origStyles = new Map();
+    const forceLight = (node) => {
+      origStyles.set(node, node.style.cssText);
+      node.style.backgroundColor = '';
+      node.style.color = '#1a1a2e';
+    };
+    origStyles.set(el, el.style.cssText);
     el.style.cssText = 'background:#fff;color:#1a1a2e;padding:24px;border-radius:0';
-    el.querySelectorAll('*').forEach(c => {
-      const cs = getComputedStyle(c);
-      if (cs.color === 'rgba(0, 0, 0, 0)' || cs.opacity === '0') return;
-    });
+    el.querySelectorAll('*').forEach(forceLight);
+
+    const restore = () => {
+      origStyles.forEach((css, node) => { node.style.cssText = css; });
+    };
 
     html2pdf().set(opt).from(el).save().then(() => {
-      el.style.cssText = '';
+      restore();
       this.toast('PDF indirildi!');
     }).catch(() => {
-      el.style.cssText = '';
-      // Fallback: tarayıcı print diyaloğu
+      restore();
       window.print();
     });
   },

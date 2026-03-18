@@ -90,7 +90,9 @@ const TestEngine = {
     const { totalScore, total, answers } = this.state;
     const maxScore = this.config.questions.reduce((sum, q) =>
       sum + Math.max(...q.secenekler.map(s => s.puan || 0)), 0);
-    const pct = Math.round((totalScore / maxScore) * 100);
+    const rawPct = Math.round((totalScore / maxScore) * 100);
+    // Düşük puan = iyi olduğu için yüzdeyi tersle (kullanıcı %100 = en iyi görsün)
+    const pct = 100 - rawPct;
 
     // Sonuç aralığını bul
     let result = this.config.resultRanges[this.config.resultRanges.length - 1];
