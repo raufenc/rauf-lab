@@ -24,6 +24,18 @@
         <span class="nav-icon">⊞</span>
         Ana Sayfa
       </div>
+      <div class="nav-item" data-section="ogren">
+        <span class="nav-icon">☽</span>
+        Öğren
+      </div>
+      <div class="nav-item" data-section="flashcard">
+        <span class="nav-icon">⬡</span>
+        Flashcard
+      </div>
+      <div class="nav-item" data-section="quiz">
+        <span class="nav-icon">✦</span>
+        Quiz
+      </div>
       <div class="nav-item" data-section="kazanim">
         <span class="nav-icon">◈</span>
         Kazanım Havuzu
@@ -228,6 +240,166 @@
         </div>
 
       </section><!-- /dashboard -->
+
+
+      <!-- ==========================================================
+           SECTION: ÖĞREN (Günlük Ders)
+           ========================================================== -->
+      <section id="section-ogren" class="section">
+
+        <!-- Streak & Progress -->
+        <div class="ogren-hero">
+          <div class="ogren-streak-card">
+            <div class="streak-flame" id="streak-flame">☽</div>
+            <div class="streak-info">
+              <div class="streak-number" id="streak-number">0</div>
+              <div class="streak-label">gün seri</div>
+            </div>
+            <div class="streak-divider"></div>
+            <div class="streak-info">
+              <div class="streak-number" id="completed-count">0</div>
+              <div class="streak-label">ders tamamlandı</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bugünün Dersi -->
+        <div class="today-lesson-card" id="today-lesson-card">
+          <div class="today-badge">Bugünün Dersi</div>
+          <div class="today-id" id="today-lesson-id"></div>
+          <div class="today-alan" id="today-lesson-alan"></div>
+          <h2 class="today-title" id="today-lesson-title"></h2>
+          <div class="today-meta">
+            <span id="today-lesson-sure"></span>
+            <span id="today-lesson-oncelik"></span>
+            <span id="today-lesson-seviye"></span>
+          </div>
+          <button class="ogren-start-btn" id="ogren-start-btn" onclick="startDers()">Dersi Başlat</button>
+          <div class="today-done-msg" id="today-done-msg" style="display:none">
+            Bugünkü ders tamamlandı! Yarın yeni dersle devam.
+          </div>
+        </div>
+
+        <!-- Hızlı Erişim -->
+        <div class="quick-access">
+          <div class="quick-card" onclick="navigateTo('flashcard')">
+            <span class="quick-icon">⬡</span>
+            <span>Flashcard</span>
+            <span class="quick-count" id="fc-due-count">0 kart bekliyor</span>
+          </div>
+          <div class="quick-card" onclick="navigateTo('quiz')">
+            <span class="quick-icon">✦</span>
+            <span>Quiz</span>
+            <span class="quick-count">Bilgini test et</span>
+          </div>
+        </div>
+
+        <!-- Son Tamamlanan Dersler -->
+        <h2 class="section-title" style="margin-top:28px">Son Dersler</h2>
+        <div class="recent-lessons" id="recent-lessons">
+          <div style="color:var(--text-muted);font-size:13px;padding:16px;">Henüz ders tamamlanmadı.</div>
+        </div>
+
+      </section><!-- /ogren -->
+
+
+      <!-- ==========================================================
+           SECTION: FLASHCARD
+           ========================================================== -->
+      <section id="section-flashcard" class="section">
+
+        <div class="fc-controls">
+          <select class="filter-select" id="fc-alan-filter">
+            <option value="">Tüm Alanlar</option>
+            <option>Akâid</option>
+            <option>İbadetler</option>
+            <option>Ahlâk</option>
+            <option>Helal-Haram</option>
+            <option>Kalp ve Nefis Terbiyesi</option>
+            <option>Kur'an ve Tecvid</option>
+            <option>Siyer, Hadis ve Tarih</option>
+            <option>Taharet ve Günlük Fıkıh</option>
+            <option>Aile ve Muamelat</option>
+            <option>Dijital ve Çağdaş Hayat</option>
+            <option>Manevî Gelişim</option>
+          </select>
+          <div class="fc-progress-text" id="fc-progress-text">0 / 0</div>
+        </div>
+
+        <!-- Kart -->
+        <div class="fc-card-container">
+          <div class="fc-card" id="fc-card" onclick="flipCard()">
+            <div class="fc-front" id="fc-front">
+              <div class="fc-front-alan" id="fc-card-alan"></div>
+              <div class="fc-front-text" id="fc-card-front"></div>
+              <div class="fc-flip-hint">Cevabı görmek için tıkla</div>
+            </div>
+            <div class="fc-back" id="fc-back">
+              <div class="fc-back-label">Açıklama</div>
+              <div class="fc-back-text" id="fc-card-back"></div>
+              <div class="fc-delil" id="fc-card-delil"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Butonlar -->
+        <div class="fc-buttons" id="fc-buttons" style="display:none">
+          <button class="fc-btn fc-btn-tekrar" onclick="fcAnswer(false)">Tekrar Et</button>
+          <button class="fc-btn fc-btn-bildim" onclick="fcAnswer(true)">Bildim</button>
+        </div>
+
+        <div class="fc-empty" id="fc-empty" style="display:none">
+          <div style="font-size:32px;margin-bottom:12px">☽</div>
+          <div>Tebrikler! Bugünkü tüm kartları tamamladınız.</div>
+        </div>
+
+      </section><!-- /flashcard -->
+
+
+      <!-- ==========================================================
+           SECTION: QUIZ
+           ========================================================== -->
+      <section id="section-quiz" class="section">
+
+        <!-- Quiz Başlangıç -->
+        <div id="quiz-start-screen">
+          <div class="quiz-intro">
+            <div class="quiz-intro-icon">✦</div>
+            <h2>Bilgi Testi</h2>
+            <p>Alanını seç, 10 soruyla bilgini sına.</p>
+          </div>
+          <div class="quiz-area-grid" id="quiz-area-grid">
+            <div class="quiz-area-card" onclick="startQuiz('')">
+              <span class="quiz-area-icon">◎</span>
+              <span>Karışık</span>
+            </div>
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Quiz Oyun Ekranı -->
+        <div id="quiz-game-screen" style="display:none">
+          <div class="quiz-progress-bar">
+            <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
+          </div>
+          <div class="quiz-counter" id="quiz-counter">1 / 10</div>
+          <div class="quiz-question" id="quiz-question"></div>
+          <div class="quiz-options" id="quiz-options"></div>
+          <div class="quiz-explanation" id="quiz-explanation" style="display:none"></div>
+          <button class="quiz-next-btn" id="quiz-next-btn" style="display:none" onclick="nextQuizQuestion()">Sonraki Soru</button>
+        </div>
+
+        <!-- Quiz Sonuç Ekranı -->
+        <div id="quiz-result-screen" style="display:none">
+          <div class="quiz-result-card">
+            <div class="quiz-result-score" id="quiz-result-score">0</div>
+            <div class="quiz-result-label">doğru / 10</div>
+            <div class="quiz-result-msg" id="quiz-result-msg"></div>
+            <button class="ogren-start-btn" onclick="resetQuiz()">Tekrar Dene</button>
+          </div>
+        </div>
+
+      </section><!-- /quiz -->
 
 
       <!-- ==========================================================
@@ -538,6 +710,63 @@
 
 
 <!-- ============================================================
+     DERS AKIŞI MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="ders-modal" onclick="if(event.target===this)closeDersModal()">
+  <div class="modal ders-modal-content">
+    <div class="modal-header">
+      <div>
+        <div class="modal-id" id="ders-modal-id"></div>
+        <div class="modal-title" id="ders-modal-title"></div>
+      </div>
+      <button class="modal-close" onclick="closeDersModal()">✕</button>
+    </div>
+    <div class="ders-steps">
+      <div class="ders-step active" data-step="1">1</div>
+      <div class="ders-step-line"></div>
+      <div class="ders-step" data-step="2">2</div>
+      <div class="ders-step-line"></div>
+      <div class="ders-step" data-step="3">3</div>
+      <div class="ders-step-line"></div>
+      <div class="ders-step" data-step="4">4</div>
+    </div>
+    <div class="ders-step-labels">
+      <span>Delil</span><span>Açıklama</span><span>Anlayış</span><span>Görev</span>
+    </div>
+    <div class="modal-body ders-body">
+      <!-- Step 1: Delil -->
+      <div class="ders-panel active" id="ders-panel-1">
+        <div class="ders-delil-type" id="ders-delil-type"></div>
+        <div class="ders-arapca" id="ders-arapca"></div>
+        <div class="ders-ref" id="ders-ref"></div>
+        <div class="ders-meal" id="ders-meal"></div>
+      </div>
+      <!-- Step 2: Açıklama -->
+      <div class="ders-panel" id="ders-panel-2">
+        <div class="ders-aciklama" id="ders-aciklama"></div>
+      </div>
+      <!-- Step 3: Anlayış -->
+      <div class="ders-panel" id="ders-panel-3">
+        <div class="ders-soru" id="ders-soru"></div>
+        <button class="ders-reveal-btn" id="ders-reveal-btn" onclick="revealAnswer()">Cevabı Göster</button>
+        <div class="ders-cevap" id="ders-cevap" style="display:none"></div>
+      </div>
+      <!-- Step 4: Görev -->
+      <div class="ders-panel" id="ders-panel-4">
+        <div class="ders-gorev-label">Bugünkü Görevin</div>
+        <div class="ders-gorev" id="ders-gorev"></div>
+      </div>
+    </div>
+    <div class="ders-nav">
+      <button class="ders-nav-btn" id="ders-prev-btn" onclick="dersStep(-1)" style="display:none">← Önceki</button>
+      <button class="ders-nav-btn ders-nav-primary" id="ders-next-btn" onclick="dersStep(1)">Sonraki →</button>
+      <button class="ders-nav-btn ders-nav-primary" id="ders-complete-btn" onclick="completeDers()" style="display:none">Tamamlandı ✓</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
      BOTTOM TAB BAR (Mobile)
      ============================================================ -->
 <nav class="bottom-tab-bar">
@@ -546,21 +775,21 @@
       <span class="bottom-tab-icon">⊞</span>
       <span class="bottom-tab-label">Ana Sayfa</span>
     </button>
+    <button class="bottom-tab" data-section="ogren">
+      <span class="bottom-tab-icon">☽</span>
+      <span class="bottom-tab-label">Öğren</span>
+    </button>
+    <button class="bottom-tab" data-section="flashcard">
+      <span class="bottom-tab-icon">⬡</span>
+      <span class="bottom-tab-label">Flashcard</span>
+    </button>
+    <button class="bottom-tab" data-section="quiz">
+      <span class="bottom-tab-icon">✦</span>
+      <span class="bottom-tab-label">Quiz</span>
+    </button>
     <button class="bottom-tab" data-section="kazanim">
       <span class="bottom-tab-icon">◈</span>
       <span class="bottom-tab-label">Kazanım</span>
-    </button>
-    <button class="bottom-tab" data-section="roadmap">
-      <span class="bottom-tab-icon">◉</span>
-      <span class="bottom-tab-label">Yol Haritası</span>
-    </button>
-    <button class="bottom-tab" data-section="amel">
-      <span class="bottom-tab-icon">◐</span>
-      <span class="bottom-tab-label">Amel</span>
-    </button>
-    <button class="bottom-tab" data-section="ezber">
-      <span class="bottom-tab-icon">◌</span>
-      <span class="bottom-tab-label">Ezber</span>
     </button>
   </div>
 </nav>
@@ -568,6 +797,7 @@
 
 <!-- Scripts -->
 <script src="data.js"></script>
+<script src="learn.js"></script>
 <script src="app.js"></script>
 
 </body>

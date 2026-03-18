@@ -22,6 +22,9 @@ const VIRTUES = [
 const LS_AMEL = 'islami-egitim-amel';
 const LS_AHLAK = 'islami-egitim-ahlak';
 const LS_EZBER = 'islami-egitim-ezber';
+const LS_OGREN = 'islami-egitim-ogren';
+const LS_FC = 'islami-egitim-flashcard';
+const LS_QUIZ = 'islami-egitim-quiz-stats';
 
 const PAGE_SIZE = 50;
 
@@ -44,7 +47,11 @@ const state = {
   etkinlik: { format: '', area: '', duration: '' },
   amel: { activeMonth: 0, data: {} },
   ahlak: { activeMonth: 0, data: {} },
-  ezber: { activeType: 'Tümü', data: {} }
+  ezber: { activeType: 'Tümü', data: {} },
+  ogren: { currentIndex: 0, streak: 0, lastDate: null, completed: [] },
+  fc: { reviews: {}, currentCards: [], cardIndex: 0, flipped: false, alan: '' },
+  quiz: { questions: [], current: 0, score: 0, answered: false, alan: '' },
+  ders: { currentStep: 1, kazanim: null }
 };
 
 // =====================================================
@@ -53,6 +60,7 @@ const state = {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadAllStorage();
+  loadLearnStorage();
   initNavigation();
   navigateTo('dashboard');
   startCounters();
@@ -111,6 +119,9 @@ function navigateTo(sectionId) {
 function updateHeader(sectionId) {
   const titles = {
     dashboard: { title: 'Ana Sayfa', sub: 'Program Genel Bakış' },
+    ogren: { title: 'Öğren', sub: 'Günlük ders ve ilerleme' },
+    flashcard: { title: 'Flashcard', sub: 'Tekrar ve pekiştirme' },
+    quiz: { title: 'Quiz', sub: 'Bilgi testi' },
     kazanim: { title: 'Kazanım Havuzu', sub: '1.021 öğrenme hedefi' },
     roadmap: { title: 'Yol Haritaları', sub: '4 yol × 12 aylık plan' },
     etkinlik: { title: 'Etkinlik Bankası', sub: '30 öğretim etkinliği' },
@@ -136,6 +147,9 @@ function initSection(sectionId) {
     case 'ahlak': initAhlak(); break;
     case 'ezber': initEzber(); break;
     case 'sozluk': initSozluk(); break;
+    case 'ogren': initOgren(); break;
+    case 'flashcard': initFlashcard(); break;
+    case 'quiz': initQuiz(); break;
   }
 }
 
@@ -1025,6 +1039,445 @@ function debounce(fn, delay) {
   };
 }
 
+// =====================================================
+// ÖĞREN (Günlük Ders)
+// =====================================================
+
+function getToday() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function initOgren() {
+  const cekirdek = getCekirdekKazanimlar();
+  const today = getToday();
+
+  // Streak hesapla
+  if (state.ogren.lastDate) {
+    const last = new Date(state.ogren.lastDate);
+    const now = new Date(today);
+    const diffDays = Math.round((now - last) / 86400000);
+    if (diffDays > 1) state.ogren.streak = 0;
+  }
+
+  // UI güncelle
+  const streakEl = document.getElementById('streak-number');
+  const compEl = document.getElementById('completed-count');
+  if (streakEl) streakEl.textContent = state.ogren.streak;
+  if (compEl) compEl.textContent = state.ogren.completed.length;
+
+  // Bugünkü ders
+  const idx = state.ogren.currentIndex;
+  const kaz = cekirdek[idx % cekirdek.length];
+  const doneToday = state.ogren.lastDate === today;
+
+  document.getElementById('today-lesson-id').textContent = kaz.ID;
+  document.getElementById('today-lesson-alan').textContent = kaz.Ana_Alan;
+  document.getElementById('today-lesson-title').textContent = kaz.Kazanim;
+  document.getElementById('today-lesson-sure').textContent = kaz.Sure + ' dk';
+  document.getElementById('today-lesson-oncelik').textContent = kaz.Oncelik;
+  document.getElementById('today-lesson-seviye').textContent = kaz.Seviye;
+
+  const btn = document.getElementById('ogren-start-btn');
+  const doneMsg = document.getElementById('today-done-msg');
+  if (doneToday) {
+    btn.style.display = 'none';
+    doneMsg.style.display = 'block';
+  } else {
+    btn.style.display = '';
+    doneMsg.style.display = 'none';
+  }
+
+  // Flashcard due count
+  updateFcDueCount();
+
+  // Son dersler
+  renderRecentLessons();
+}
+
+function renderRecentLessons() {
+  const container = document.getElementById('recent-lessons');
+  if (!container) return;
+  const cekirdek = getCekirdekKazanimlar();
+  const recent = state.ogren.completed.slice(-5).reverse();
+  if (recent.length === 0) {
+    container.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:16px;">Henüz ders tamamlanmadı.</div>';
+    return;
+  }
+  container.innerHTML = recent.map(id => {
+    const k = cekirdek.find(c => c.ID === id) || KAZANIM_DATA.find(c => c.ID === id);
+    if (!k) return '';
+    return `<div class="recent-lesson-item"><span class="k-id">${esc(k.ID)}</span><span class="k-alan">${esc(k.Ana_Alan)}</span><span class="k-text" style="flex:1">${esc(k.Kazanim).substring(0,60)}…</span><span style="color:var(--accent-green-light);font-size:12px">✓</span></div>`;
+  }).join('');
+}
+
+// =====================================================
+// DERS AKIŞI (4 Adımlı Modal)
+// =====================================================
+
+function startDers() {
+  const cekirdek = getCekirdekKazanimlar();
+  const kaz = cekirdek[state.ogren.currentIndex % cekirdek.length];
+  state.ders.kazanim = kaz;
+  state.ders.currentStep = 1;
+
+  // Modal bilgileri doldur
+  document.getElementById('ders-modal-id').textContent = kaz.ID;
+  document.getElementById('ders-modal-title').textContent = kaz.Kazanim;
+
+  // Step 1: Delil
+  const useAyet = Math.random() > 0.4;
+  if (useAyet) {
+    const ayet = getRandomAyet(kaz.Ana_Alan);
+    document.getElementById('ders-delil-type').textContent = 'Ayet-i Kerîme';
+    document.getElementById('ders-arapca').textContent = ayet.arapca;
+    document.getElementById('ders-ref').textContent = ayet.ref + ' — ' + ayet.baslik;
+    document.getElementById('ders-meal').textContent = ayet.meal;
+  } else {
+    const hadis = getRandomHadis(kaz.Ana_Alan);
+    document.getElementById('ders-delil-type').textContent = 'Hadis-i Şerif';
+    document.getElementById('ders-arapca').textContent = '';
+    document.getElementById('ders-ref').textContent = hadis.kaynak;
+    document.getElementById('ders-meal').textContent = '"' + hadis.metin + '"';
+  }
+
+  // Step 2: Açıklama
+  const ders = getDersIcerigi(kaz);
+  document.getElementById('ders-aciklama').textContent = ders.aciklama;
+
+  // Step 3: Soru-Cevap
+  document.getElementById('ders-soru').textContent = ders.soru;
+  document.getElementById('ders-cevap').textContent = ders.cevap;
+  document.getElementById('ders-cevap').style.display = 'none';
+  document.getElementById('ders-reveal-btn').style.display = '';
+
+  // Step 4: Görev
+  document.getElementById('ders-gorev').textContent = kaz.Gunluk_Hayat_Transferi || 'Bugün öğrendiklerini bir yakınınla paylaş.';
+
+  // UI
+  updateDersStepUI(1);
+  document.getElementById('ders-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function dersStep(dir) {
+  state.ders.currentStep += dir;
+  state.ders.currentStep = Math.max(1, Math.min(4, state.ders.currentStep));
+  updateDersStepUI(state.ders.currentStep);
+}
+
+function updateDersStepUI(step) {
+  // Step indicators
+  document.querySelectorAll('.ders-step').forEach(el => {
+    const s = parseInt(el.dataset.step);
+    el.classList.toggle('active', s === step);
+    el.classList.toggle('done', s < step);
+  });
+
+  // Panels
+  document.querySelectorAll('.ders-panel').forEach((p, i) => {
+    p.classList.toggle('active', i + 1 === step);
+  });
+
+  // Nav buttons
+  document.getElementById('ders-prev-btn').style.display = step > 1 ? '' : 'none';
+  document.getElementById('ders-next-btn').style.display = step < 4 ? '' : 'none';
+  document.getElementById('ders-complete-btn').style.display = step === 4 ? '' : 'none';
+}
+
+function revealAnswer() {
+  document.getElementById('ders-cevap').style.display = 'block';
+  document.getElementById('ders-reveal-btn').style.display = 'none';
+}
+
+function completeDers() {
+  const kaz = state.ders.kazanim;
+  const today = getToday();
+
+  if (!state.ogren.completed.includes(kaz.ID)) {
+    state.ogren.completed.push(kaz.ID);
+  }
+
+  if (state.ogren.lastDate === today) {
+    // Bugün zaten bir ders tamamlanmış
+  } else {
+    const last = state.ogren.lastDate ? new Date(state.ogren.lastDate) : null;
+    const now = new Date(today);
+    if (last && Math.round((now - last) / 86400000) === 1) {
+      state.ogren.streak++;
+    } else if (!last || Math.round((now - last) / 86400000) > 1) {
+      state.ogren.streak = 1;
+    }
+  }
+
+  state.ogren.lastDate = today;
+  state.ogren.currentIndex++;
+  saveOgrenState();
+  closeDersModal();
+  initOgren();
+}
+
+function closeDersModal() {
+  document.getElementById('ders-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function saveOgrenState() {
+  localStorage.setItem(LS_OGREN, JSON.stringify({
+    currentIndex: state.ogren.currentIndex,
+    streak: state.ogren.streak,
+    lastDate: state.ogren.lastDate,
+    completed: state.ogren.completed
+  }));
+}
+
+// =====================================================
+// FLASHCARD (Spaced Repetition)
+// =====================================================
+
+const FC_INTERVALS = [1, 2, 4, 8, 16, 30];
+
+function initFlashcard() {
+  loadFlashcardCards();
+  document.getElementById('fc-alan-filter').addEventListener('change', (e) => {
+    state.fc.alan = e.target.value;
+    loadFlashcardCards();
+  });
+}
+
+function loadFlashcardCards() {
+  const today = getToday();
+  const cekirdek = getCekirdekKazanimlar();
+  let cards = state.fc.alan
+    ? cekirdek.filter(k => k.Ana_Alan === state.fc.alan)
+    : cekirdek;
+
+  // Bugün tekrar edilmesi gereken kartları filtrele
+  const due = cards.filter(k => {
+    const rev = state.fc.reviews[k.ID];
+    if (!rev) return true; // Henüz hiç görülmemiş
+    return rev.next <= today;
+  });
+
+  state.fc.currentCards = due;
+  state.fc.cardIndex = 0;
+  state.fc.flipped = false;
+
+  updateFcDueCount();
+  renderFlashcard();
+}
+
+function updateFcDueCount() {
+  const el = document.getElementById('fc-due-count');
+  if (el) {
+    const today = getToday();
+    const cekirdek = getCekirdekKazanimlar();
+    const due = cekirdek.filter(k => {
+      const rev = state.fc.reviews[k.ID];
+      if (!rev) return true;
+      return rev.next <= today;
+    }).length;
+    el.textContent = due + ' kart bekliyor';
+  }
+}
+
+function renderFlashcard() {
+  const cards = state.fc.currentCards;
+  const idx = state.fc.cardIndex;
+  const progressText = document.getElementById('fc-progress-text');
+  const cardEl = document.getElementById('fc-card');
+  const buttonsEl = document.getElementById('fc-buttons');
+  const emptyEl = document.getElementById('fc-empty');
+
+  if (idx >= cards.length || cards.length === 0) {
+    cardEl.parentElement.style.display = 'none';
+    buttonsEl.style.display = 'none';
+    emptyEl.style.display = 'block';
+    progressText.textContent = 'Tamamlandı';
+    return;
+  }
+
+  cardEl.parentElement.style.display = '';
+  emptyEl.style.display = 'none';
+  progressText.textContent = (idx + 1) + ' / ' + cards.length;
+
+  const kaz = cards[idx];
+  state.fc.flipped = false;
+  cardEl.classList.remove('flipped');
+  buttonsEl.style.display = 'none';
+
+  document.getElementById('fc-card-alan').textContent = kaz.Ana_Alan;
+  document.getElementById('fc-card-front').textContent = kaz.Kazanim;
+
+  // Back
+  const ders = getDersIcerigi(kaz);
+  document.getElementById('fc-card-back').textContent = ders.aciklama.substring(0, 300) + (ders.aciklama.length > 300 ? '…' : '');
+
+  const ayet = getRandomAyet(kaz.Ana_Alan);
+  document.getElementById('fc-card-delil').innerHTML = '<strong>' + esc(ayet.ref) + ':</strong> ' + esc(ayet.meal).substring(0, 120) + '…';
+}
+
+function flipCard() {
+  if (state.fc.flipped) return;
+  state.fc.flipped = true;
+  document.getElementById('fc-card').classList.add('flipped');
+  document.getElementById('fc-buttons').style.display = 'flex';
+}
+
+function fcAnswer(knew) {
+  const kaz = state.fc.currentCards[state.fc.cardIndex];
+  if (!kaz) return;
+
+  const today = getToday();
+  let rev = state.fc.reviews[kaz.ID] || { box: 0, next: today };
+
+  if (knew) {
+    rev.box = Math.min(rev.box + 1, FC_INTERVALS.length - 1);
+  } else {
+    rev.box = 0;
+  }
+
+  const nextDate = new Date();
+  nextDate.setDate(nextDate.getDate() + FC_INTERVALS[rev.box]);
+  rev.next = nextDate.toISOString().slice(0, 10);
+
+  state.fc.reviews[kaz.ID] = rev;
+  localStorage.setItem(LS_FC, JSON.stringify(state.fc.reviews));
+
+  state.fc.cardIndex++;
+  renderFlashcard();
+}
+
+// =====================================================
+// QUIZ
+// =====================================================
+
+function initQuiz() {
+  renderQuizAreas();
+}
+
+function renderQuizAreas() {
+  const grid = document.getElementById('quiz-area-grid');
+  if (!grid) return;
+  const areas = Object.keys(QUIZ_BANK);
+  const icons = { 'Akâid':'◇', 'İbadetler':'◐', 'Ahlâk':'◑', 'Helal-Haram':'◆',
+    'Kalp ve Nefis Terbiyesi':'◈', 'Kur\'an ve Tecvid':'◉', 'Siyer, Hadis ve Tarih':'◎',
+    'Taharet ve Günlük Fıkıh':'◌', 'Aile ve Muamelat':'⊕', 'Dijital ve Çağdaş Hayat':'⊞',
+    'Manevî Gelişim':'☽' };
+
+  grid.innerHTML = `<div class="quiz-area-card" onclick="startQuiz('')"><span class="quiz-area-icon">◎</span><span>Karışık</span></div>` +
+    areas.map(a => `<div class="quiz-area-card" onclick="startQuiz('${esc(a)}')"><span class="quiz-area-icon">${icons[a]||'◇'}</span><span>${esc(a)}</span></div>`).join('');
+}
+
+function startQuiz(alan) {
+  state.quiz.alan = alan;
+  state.quiz.questions = getQuizSorulari(alan, 10);
+  state.quiz.current = 0;
+  state.quiz.score = 0;
+  state.quiz.answered = false;
+
+  document.getElementById('quiz-start-screen').style.display = 'none';
+  document.getElementById('quiz-game-screen').style.display = 'block';
+  document.getElementById('quiz-result-screen').style.display = 'none';
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const q = state.quiz.questions[state.quiz.current];
+  if (!q) return;
+
+  state.quiz.answered = false;
+  const total = state.quiz.questions.length;
+  document.getElementById('quiz-counter').textContent = (state.quiz.current + 1) + ' / ' + total;
+  document.getElementById('quiz-progress-fill').style.width = ((state.quiz.current / total) * 100) + '%';
+  document.getElementById('quiz-question').textContent = q.soru;
+  document.getElementById('quiz-explanation').style.display = 'none';
+  document.getElementById('quiz-next-btn').style.display = 'none';
+
+  const optionsEl = document.getElementById('quiz-options');
+  optionsEl.innerHTML = q.secenekler.map((s, i) =>
+    `<button class="quiz-option" onclick="answerQuiz(${i})">${esc(s)}</button>`
+  ).join('');
+}
+
+function answerQuiz(idx) {
+  if (state.quiz.answered) return;
+  state.quiz.answered = true;
+
+  const q = state.quiz.questions[state.quiz.current];
+  const correct = idx === q.dogru;
+  if (correct) state.quiz.score++;
+
+  // Butonları renklendir
+  const btns = document.querySelectorAll('.quiz-option');
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.dogru) btn.classList.add('correct');
+    if (i === idx && !correct) btn.classList.add('wrong');
+  });
+
+  // Açıklama göster
+  const expEl = document.getElementById('quiz-explanation');
+  expEl.textContent = q.aciklama;
+  expEl.style.display = 'block';
+  document.getElementById('quiz-next-btn').style.display = '';
+}
+
+function nextQuizQuestion() {
+  state.quiz.current++;
+  if (state.quiz.current >= state.quiz.questions.length) {
+    showQuizResult();
+  } else {
+    renderQuizQuestion();
+  }
+}
+
+function showQuizResult() {
+  document.getElementById('quiz-game-screen').style.display = 'none';
+  document.getElementById('quiz-result-screen').style.display = 'block';
+
+  const score = state.quiz.score;
+  const total = state.quiz.questions.length;
+  document.getElementById('quiz-result-score').textContent = score;
+
+  const pct = (score / total) * 100;
+  let msg = '';
+  if (pct === 100) msg = 'Mükemmel! Eksiksiz bir sonuç.';
+  else if (pct >= 80) msg = 'Harika! Çok iyi biliyorsun.';
+  else if (pct >= 60) msg = 'İyi! Biraz daha tekrar faydalı olacak.';
+  else if (pct >= 40) msg = 'Gelişme alanı var. Dersleri tekrar et.';
+  else msg = 'Çalışmaya devam et, başarı gelecek!';
+  document.getElementById('quiz-result-msg').textContent = msg;
+}
+
+function resetQuiz() {
+  document.getElementById('quiz-start-screen').style.display = 'block';
+  document.getElementById('quiz-game-screen').style.display = 'none';
+  document.getElementById('quiz-result-screen').style.display = 'none';
+}
+
+
+// =====================================================
+// STORAGE - Öğren + Flashcard
+// =====================================================
+
+function loadLearnStorage() {
+  try {
+    const ogren = localStorage.getItem(LS_OGREN);
+    if (ogren) {
+      const d = JSON.parse(ogren);
+      state.ogren.currentIndex = d.currentIndex || 0;
+      state.ogren.streak = d.streak || 0;
+      state.ogren.lastDate = d.lastDate || null;
+      state.ogren.completed = d.completed || [];
+    }
+  } catch(e) {}
+  try {
+    const fc = localStorage.getItem(LS_FC);
+    if (fc) state.fc.reviews = JSON.parse(fc);
+  } catch(e) {}
+}
+
+
 // Expose to HTML
 window.navigateTo = navigateTo;
 window.switchTrack = switchTrack;
@@ -1044,3 +1497,14 @@ window.filterEzber = filterEzber;
 window.toggleEzber = toggleEzber;
 window.setEzberStatus = setEzberStatus;
 window.applyEtkinlikFilters = applyEtkinlikFilters;
+window.startDers = startDers;
+window.closeDersModal = closeDersModal;
+window.dersStep = dersStep;
+window.revealAnswer = revealAnswer;
+window.completeDers = completeDers;
+window.flipCard = flipCard;
+window.fcAnswer = fcAnswer;
+window.startQuiz = startQuiz;
+window.answerQuiz = answerQuiz;
+window.nextQuizQuestion = nextQuizQuestion;
+window.resetQuiz = resetQuiz;
