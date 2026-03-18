@@ -123,7 +123,7 @@ const OYUNLAR_DATA = [
   "id": "GM13",
   "ad": "Rol Model Tahmini",
   "kitle": "Okumayan + Okuyan",
-  "amac": "3 ipucuyla Ehli Sünnet büyüklerini tanımak",
+  "amac": "3 ipucuyla büyükleri tanımak",
   "tema": "Rol modeller / ilham",
   "mekanik": "İpucu tabanlı tahmin oyunu",
   "sure": "5-15 dk",
