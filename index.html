@@ -331,6 +331,7 @@
     .tag-sunum      { background: rgba(236,72,153,0.12); color: #f472b6; }
     .tag-yazı       { background: rgba(251,191,36,0.12); color: #fcd34d; }
     .tag-ansiklopedi{ background: rgba(168,85,247,0.12); color: #c084fc; }
+    .tag-rehber     { background: rgba(139,92,246,0.12);  color: #a78bfa; }
     .tag-varsayılan { background: var(--accent-soft);     color: var(--accent); }
 
     .card-arrow {
@@ -595,6 +596,7 @@
     { emoji: '🕵️', title: 'Safsata Dedektifi', desc: '13 mantıksal hatayı öğren ve gerçek diyaloglarda tespit et. İnteraktif sunum + dedektif oyunu.', tag: 'Sunum', href: '/sunumlar/safsatalar/' },
     { emoji: '🌙', title: 'Elveda Endülüs', desc: 'Gırnata kuşatma altında. İlim, kılıç ve hizmet yolları arasında seç — 3 dal, 5 farklı son.', tag: 'Oyun', href: '/endulus/' },
     { emoji: '🎮', title: 'İHO 7. Sınıf Arapça Oyunları', desc: '29 interaktif oyun: kelime, cümle, hafıza, arcade. Bireysel ve sınıf yarışması modları.', tag: 'Oyun', href: '/iho-oyunlar/' },
+    { emoji: '🤖', title: 'Yapay Zekâ Araç Atlası', desc: '32 araç, 8 kategori. Resim, video, ses, sunum, kod ve otomasyon araçları — artıları, eksileri, fiyatı ve kayıt linki ile. Gençler için atölye kaynağı.', tag: 'Rehber', href: '/ai-atlasi/' },
   ];
 
   var SINIF_ARACLARI = [];
@@ -674,7 +676,8 @@
       'Oyun': 'tag-oyun', 'Uygulama': 'tag-uygulama',
       'Yarışma': 'tag-yarışma', 'Alıştırma': 'tag-alıştırma',
       'Sunum': 'tag-sunum', 'Yazı': 'tag-yazı',
-      'Ansiklopedi': 'tag-ansiklopedi'
+      'Ansiklopedi': 'tag-ansiklopedi',
+      'Rehber': 'tag-rehber'
     };
     return map[tag] || 'tag-varsayılan';
   }
