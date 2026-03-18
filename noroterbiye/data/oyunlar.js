@@ -110,16 +110,6 @@ const OYUNLAR_DATA = [
   "slug": "Ramazan sonrası planlayıcı"
  },
  {
-  "id": "GM11",
-  "ad": "Kahraman Kartları",
-  "kitle": "Genç + Eğitmen",
-  "amac": "Rol modelleri canlı kılmak",
-  "tema": "İlham verenler",
-  "mekanik": "Kart toplama / bilgi oyunu",
-  "sure": "3-4 dk",
-  "slug": "Rol model kütüphanesine git"
- },
- {
   "id": "GM12",
   "ad": "Nefs Gemisi",
   "kitle": "Okuyan",
