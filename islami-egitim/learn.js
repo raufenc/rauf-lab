@@ -584,12 +584,20 @@ function getRandomHadis(alan) {
   return HADIS_LIBRARY.find(h => h.id === id) || HADIS_LIBRARY[0];
 }
 
+/** Akıllı tırnak → normal tırnak dönüşümü */
+function normalizeQuotes(str) {
+  if (!str) return '';
+  return str.replace(/[\u2018\u2019\u201A\u201B]/g, "'").replace(/[\u201C\u201D\u201E\u201F]/g, '"');
+}
+
 /** Kazanım için ders içeriği bul (Modül veya Alt_Alan üzerinden) */
 function getDersIcerigi(kazanim) {
-  // Önce Modül adıyla dene
-  if (kazanim.Modul && DERS_ICERIGI[kazanim.Modul]) return DERS_ICERIGI[kazanim.Modul];
+  // Önce Modül adıyla dene (smart quote normalize)
+  const modul = normalizeQuotes(kazanim.Modul);
+  const altAlan = normalizeQuotes(kazanim.Alt_Alan);
+  if (modul && DERS_ICERIGI[modul]) return DERS_ICERIGI[modul];
   // Alt alan ile dene
-  if (kazanim.Alt_Alan && DERS_ICERIGI[kazanim.Alt_Alan]) return DERS_ICERIGI[kazanim.Alt_Alan];
+  if (altAlan && DERS_ICERIGI[altAlan]) return DERS_ICERIGI[altAlan];
   // Bulunamazsa genel bir ders oluştur
   return {
     aciklama: kazanim.Kazanim + '. Bu kazanım, ' + kazanim.Ana_Alan + ' alanının ' + (kazanim.Alt_Alan || '') + ' konusunu kapsamaktadır. ' + (kazanim.Gunluk_Hayat_Transferi || ''),
