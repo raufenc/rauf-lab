@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profilim — NöroTerbiye</title>
   <meta name="description" content="Test sonuçların, oyun skorların ve araç verilerin tek sayfada.">
+  <meta property="og:title" content="Profilim">
+  <meta property="og:description" content="Test sonuçların, oyun skorların ve araç verilerin tek sayfada.">
+  <meta property="og:image" content="https://raufenc.com/images/noroterbiye.webp">
+  <meta property="og:type" content="website">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👤</text></svg>">
   <link rel="stylesheet" href="/lib/design-system/tokens.css">
   <link rel="stylesheet" href="/noroterbiye/css/noroterbiye.css">
@@ -20,6 +24,12 @@
     .score-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
     .empty-msg { text-align: center; padding: 32px 16px; color: var(--muted); font-size: 0.9rem; }
     .data-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
+    .streak-banner { display: flex; gap: 24px; justify-content: center; align-items: center; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 20px; flex-wrap: wrap; }
+    .streak-item { text-align: center; }
+    .streak-num { font-size: 1.5rem; font-weight: 800; }
+    .streak-label { font-size: 0.72rem; color: var(--text-secondary); }
+    .history-chart { display: flex; align-items: flex-end; gap: 3px; height: 50px; margin-top: 8px; }
+    .history-bar { flex: 1; min-width: 4px; border-radius: 2px 2px 0 0; transition: height 0.3s; }
   </style>
 </head>
 <body>
@@ -29,6 +39,9 @@
     <div class="nt-wrap">
       <h1 class="nt-title nt-fade-in" style="font-size:2rem;margin-bottom:8px">👤 Profilim</h1>
       <p class="nt-subtitle nt-fade-in">Tüm test sonuçların, oyun skorların ve araç verilerin burada.</p>
+
+      <!-- STREAK -->
+      <div class="streak-banner nt-fade-in" id="streak-banner"></div>
 
       <!-- ÖZET -->
       <div class="stat-grid nt-fade-in" id="stats"></div>
@@ -131,10 +144,31 @@
 
     // ── Render ──
     function renderAll() {
+      renderStreak();
       renderStats();
       renderTests();
       renderGames();
       renderTools();
+    }
+
+    function renderStreak() {
+      const streak = NT.load('streak', { dates: [], current: 0, max: 0 });
+      const banner = document.getElementById('streak-banner');
+      const totalDays = streak.dates.length;
+      banner.innerHTML = `
+        <div class="streak-item">
+          <div class="streak-num" style="color:var(--nt-amber)">🔥 ${streak.current}</div>
+          <div class="streak-label">Günlük Seri</div>
+        </div>
+        <div class="streak-item">
+          <div class="streak-num" style="color:var(--nt-purple)">${streak.max}</div>
+          <div class="streak-label">En Uzun Seri</div>
+        </div>
+        <div class="streak-item">
+          <div class="streak-num" style="color:var(--nt-green)">${totalDays}</div>
+          <div class="streak-label">Toplam Aktif Gün</div>
+        </div>
+      `;
     }
 
     function renderStats() {
@@ -176,6 +210,10 @@
       grid.innerHTML = results.map(t => {
         const pct = t.data.pct || 0;
         const color = scoreColor(pct);
+        const history = NT.load(t.key + '_history', []);
+        const chartHTML = history.length > 1
+          ? `<div class="history-chart">${history.map(h => `<div class="history-bar" style="height:${Math.max(h.pct, 5)}%;background:var(--nt-${scoreColor(h.pct)})" title="%${h.pct} · ${fmtDate(h.date)}"></div>`).join('')}</div>`
+          : '';
         return `
           <div class="profile-card">
             <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
@@ -185,9 +223,10 @@
             <div style="font-weight:700;font-size:0.9rem;margin-bottom:4px">${t.name}</div>
             <div style="display:flex;justify-content:space-between;align-items:center">
               <span class="nt-tag nt-tag-${color}" style="font-size:0.7rem">${t.data.label || '—'}</span>
-              <span style="font-size:0.7rem;color:var(--muted)">${fmtDate(t.data.date)}</span>
+              <span style="font-size:0.7rem;color:var(--muted)">${fmtDate(t.data.date)}${history.length > 1 ? ' · ' + history.length + 'x' : ''}</span>
             </div>
             <div class="score-bar"><div class="score-fill" style="width:${pct}%;background:var(--nt-${color})"></div></div>
+            ${chartHTML}
             <a href="/noroterbiye/testler/${t.slug}/" style="display:block;text-align:center;margin-top:10px;font-size:0.75rem;color:var(--nt-primary);text-decoration:none">Tekrar Çöz →</a>
           </div>
         `;

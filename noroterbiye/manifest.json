@@ -1,0 +1,23 @@
+{
+  "name": "NöroTerbiye",
+  "short_name": "NöroTerbiye",
+  "description": "İçindeki düşmanı dosta çevirmek. Test, oyun ve araçlarla nefs terbiyesi.",
+  "start_url": "/noroterbiye/",
+  "display": "standalone",
+  "background_color": "#0a0a1a",
+  "theme_color": "#6c5ce7",
+  "orientation": "portrait-primary",
+  "lang": "tr",
+  "icons": [
+    {
+      "src": "/images/noroterbiye.webp",
+      "sizes": "192x192",
+      "type": "image/webp"
+    },
+    {
+      "src": "/images/noroterbiye.webp",
+      "sizes": "512x512",
+      "type": "image/webp"
+    }
+  ]
+}

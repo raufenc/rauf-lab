@@ -200,3 +200,34 @@ const NT = {
     return { pct, label, text };
   }
 };
+
+// PWA: Service Worker + Manifest
+(function() {
+  if (!document.querySelector('link[rel="manifest"]')) {
+    const m = document.createElement('link');
+    m.rel = 'manifest';
+    m.href = '/noroterbiye/manifest.json';
+    document.head.appendChild(m);
+  }
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/noroterbiye/sw.js').catch(() => {});
+  }
+  // Streak takibi
+  const today = new Date().toISOString().slice(0, 10);
+  const streak = NT.load('streak', { dates: [], current: 0, max: 0 });
+  if (!streak.dates.includes(today)) {
+    streak.dates.push(today);
+    streak.dates = streak.dates.slice(-90); // son 90 gün tut
+    // Ardışık gün hesapla
+    let curr = 1;
+    for (let i = streak.dates.length - 1; i > 0; i--) {
+      const d1 = new Date(streak.dates[i]);
+      const d2 = new Date(streak.dates[i - 1]);
+      if ((d1 - d2) === 86400000) curr++;
+      else break;
+    }
+    streak.current = curr;
+    if (curr > streak.max) streak.max = curr;
+    NT.save('streak', streak);
+  }
+})();

@@ -100,9 +100,14 @@ const TestEngine = {
       if (pct >= r.min && pct <= r.max) { result = r; break; }
     }
 
-    // Sonucu kaydet
+    // Sonucu kaydet (son sonuç + geçmiş)
     const key = this.config.slug || 'test';
-    NT.save(`test_${key}`, { pct, label: result.label, date: new Date().toISOString() });
+    const entry = { pct, label: result.label, date: new Date().toISOString() };
+    NT.save(`test_${key}`, entry);
+    const history = NT.load(`test_${key}_history`, []);
+    history.push(entry);
+    if (history.length > 20) history.shift();
+    NT.save(`test_${key}_history`, history);
 
     container.innerHTML = `
       <div class="nt-result">
@@ -114,6 +119,9 @@ const TestEngine = {
         <div class="nt-result-actions">
           <button class="nt-btn nt-btn-primary" onclick="NT.share('${this.config.title} Sonucum', 'Sonuç: ${result.label} (%${pct})', window.location.href)">
             Sonucumu Paylaş
+          </button>
+          <button class="nt-btn nt-btn-secondary" onclick="TestEngine.downloadResultCard()">
+            📸 Sonuç Kartı İndir
           </button>
           <button class="nt-btn nt-btn-secondary" onclick="TestEngine.init(TestEngine.config)">
             Tekrar Dene
@@ -129,6 +137,61 @@ const TestEngine = {
     `;
 
     if (this.config.onComplete) this.config.onComplete({ pct, label: result.label, answers });
+  },
+
+  downloadResultCard() {
+    const data = NT.load(`test_${this.config.slug || 'test'}`);
+    if (!data) return;
+    const c = document.createElement('canvas');
+    c.width = 600; c.height = 400;
+    const ctx = c.getContext('2d');
+    // Arka plan
+    const grad = ctx.createLinearGradient(0, 0, 600, 400);
+    grad.addColorStop(0, '#0a0a1a');
+    grad.addColorStop(1, '#1a1a3e');
+    ctx.fillStyle = grad;
+    ctx.roundRect(0, 0, 600, 400, 16);
+    ctx.fill();
+    // Üst dekoratif çizgi
+    ctx.fillStyle = '#6c5ce7';
+    ctx.fillRect(0, 0, 600, 4);
+    // Başlık
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 20px system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(this.config.title || 'NöroTerbiye Test', 300, 50);
+    // Skor
+    const pct = data.pct || 0;
+    const color = pct >= 70 ? '#22c55e' : pct >= 40 ? '#f59e0b' : '#ef4444';
+    ctx.fillStyle = color;
+    ctx.font = 'bold 72px system-ui, -apple-system, sans-serif';
+    ctx.fillText(pct + '%', 300, 160);
+    // Etiket
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 24px system-ui, -apple-system, sans-serif';
+    ctx.fillText(data.label || '', 300, 210);
+    // Tarih
+    ctx.fillStyle = '#888888';
+    ctx.font = '14px system-ui, -apple-system, sans-serif';
+    const dateStr = data.date ? new Date(data.date).toLocaleDateString('tr-TR') : '';
+    ctx.fillText(dateStr, 300, 250);
+    // Alt bar
+    ctx.fillStyle = '#1e1e3a';
+    ctx.fillRect(50, 290, 500, 8);
+    ctx.fillStyle = color;
+    ctx.roundRect(50, 290, pct * 5, 8, 4);
+    ctx.fill();
+    // Footer
+    ctx.fillStyle = '#555555';
+    ctx.font = '12px system-ui, -apple-system, sans-serif';
+    ctx.fillText('NöroTerbiye · raufenc.com/noroterbiye', 300, 350);
+    ctx.fillText('Bu test teşhis koymaz; farkındalık oluşturur.', 300, 370);
+    // İndir
+    const link = document.createElement('a');
+    link.download = (this.config.title || 'NöroTerbiye') + '-Sonuç.png';
+    link.href = c.toDataURL('image/png');
+    link.click();
+    NT.toast('Sonuç kartı indirildi!');
   }
 };
 
