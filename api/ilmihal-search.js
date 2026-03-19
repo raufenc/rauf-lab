@@ -261,7 +261,7 @@ ${MADDE_LISTESI}`;
 export default async function handler(req) {
   // CORS
   const origin = req.headers.get('origin') || '';
-  const allowedOrigins = ['https://ilmihal.org', 'https://www.ilmihal.org', 'http://localhost'];
+  const allowedOrigins = ['https://ilmihal.org', 'https://www.ilmihal.org', 'http://localhost:8086', 'http://localhost:8084', 'http://localhost'];
   const corsOrigin = allowedOrigins.find(o => origin.startsWith(o)) ? origin : allowedOrigins[0];
 
   const corsHeaders = {
