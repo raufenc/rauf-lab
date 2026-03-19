@@ -160,15 +160,15 @@ body{font-family:var(--f);color:var(--t);background:var(--bg);line-height:1.65;o
 .tl-btn{padding:7px 14px;border-radius:10px;border:1px solid var(--bd);background:var(--sf);color:var(--t2);font-size:.74rem;font-weight:600;cursor:pointer;transition:all .25s;font-family:var(--f)}
 .tl-btn:hover,.tl-btn.on{background:var(--ac);color:#fff;border-color:var(--ac)}
 
-.timeline{position:relative;padding:20px 0}
-.timeline::before{content:'';position:absolute;left:24px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--br),var(--ac),var(--ai));border-radius:2px}
+.timeline{position:relative;padding:20px 0;min-height:200px}
+.timeline::before{content:'';position:absolute;left:24px;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--br),var(--ac),var(--ai));border-radius:2px}
 @media(min-width:769px){.timeline::before{left:50%;transform:translateX(-50%)}}
-.tl-item{position:relative;margin-bottom:12px;display:flex;align-items:flex-start}
-.tl-dot{position:absolute;left:17px;top:16px;width:16px;height:16px;border-radius:50%;border:3px solid var(--bg);z-index:2;flex-shrink:0}
+.tl-item{position:relative;margin-bottom:10px;padding-left:52px;min-height:40px}
+.tl-dot{position:absolute;left:16px;top:14px;width:18px;height:18px;border-radius:50%;border:3px solid var(--bg);z-index:2;box-shadow:0 0 0 2px rgba(255,255,255,.1)}
 .tl-dot.bio-dot{background:var(--br)}.tl-dot.ai-dot{background:var(--ai)}
-.tl-content{margin-left:48px;background:var(--bg1);border:1px solid var(--bd);border-radius:12px;padding:14px 18px;flex:1;transition:border-color .3s}
+.tl-content{background:var(--bg1);border:1px solid var(--bd);border-radius:12px;padding:14px 18px;transition:border-color .3s}
 .tl-content:hover{border-color:var(--bd2)}
-.tl-year{font-size:.7rem;font-weight:700;font-family:var(--m);margin-bottom:3px}
+.tl-year{font-size:.72rem;font-weight:700;font-family:var(--m);margin-bottom:3px}
 .tl-year.bio-yr{color:var(--br)}.tl-year.ai-yr{color:var(--ai)}
 .tl-name{font-size:.88rem;font-weight:700;margin-bottom:2px}
 .tl-desc{font-size:.76rem;color:var(--t2)}
@@ -176,12 +176,12 @@ body{font-family:var(--f);color:var(--t);background:var(--bg);line-height:1.65;o
 .tl-tag.bio-tag{background:var(--br3);color:var(--br)}.tl-tag.ai-tag{background:var(--ai3);color:var(--ai)}
 
 @media(min-width:769px){
-  .tl-item{justify-content:flex-end}
-  .tl-item:nth-child(odd){justify-content:flex-start}
-  .tl-item:nth-child(odd) .tl-content{margin-left:0;margin-right:48px;text-align:right}
-  .tl-item:nth-child(even) .tl-content{margin-left:48px}
+  .timeline::before{left:50%;transform:translateX(-50%)}
+  .tl-item{padding-left:0;display:flex}
+  .tl-item:nth-child(odd){justify-content:flex-start;padding-right:calc(50% + 28px)}
+  .tl-item:nth-child(odd) .tl-content{text-align:right}
+  .tl-item:nth-child(even){justify-content:flex-end;padding-left:calc(50% + 28px)}
   .tl-dot{left:50%;transform:translateX(-50%)}
-  .tl-item .tl-content{max-width:45%}
 }
 
 /* ═══ AİLE GRUPLARI (Kategoriler) ═══ */
@@ -697,7 +697,7 @@ body{font-family:var(--f);color:var(--t);background:var(--bg);line-height:1.65;o
     <button class="tl-btn" data-tf="bio" onclick="filterTimeline('bio',this)">🧠 Beyin</button>
     <button class="tl-btn" data-tf="ai" onclick="filterTimeline('ai',this)">🤖 Yapay Zekâ</button>
   </div>
-  <div id="timelineContainer" class="timeline fade-up"></div>
+  <div id="timelineContainer" class="timeline"></div>
 </section>
 
 <!-- OYUN BÖLÜMÜ -->
@@ -964,17 +964,25 @@ function toggleAllFamilies(){
 renderFamilies();
 
 // ═══ KRONOLOJİ ═══
-function renderTimeline(filter){
+function buildTimelineEvents(){
   const events=[];
   DATA.forEach(d=>{
     events.push({year:d.yil,name:d.tr,en:d.en,desc:d.ara,type:'bio',no:d.no});
     events.push({year:d.yzy,name:d.yzk,en:'',desc:d.gel,type:'ai',no:d.no});
   });
-  events.sort((a,b)=>a.year-b.year||a.type.localeCompare(b.type));
-  const filtered=filter==='all'?events:events.filter(e=>e.type===filter);
+  events.sort((a,b)=>a.year-b.year||(a.type==='bio'?-1:1));
+  return events;
+}
+const ALL_TL_EVENTS=buildTimelineEvents();
+
+function renderTimeline(filter){
+  const filtered=filter==='all'?ALL_TL_EVENTS:ALL_TL_EVENTS.filter(e=>e.type===filter);
   const tc=document.getElementById('timelineContainer');
-  tc.innerHTML=filtered.map(e=>`
-    <div class="tl-item" data-type="${e.type}">
+  if(!tc){console.error('timelineContainer not found');return;}
+  let html='';
+  for(let i=0;i<filtered.length;i++){
+    const e=filtered[i];
+    html+=`<div class="tl-item" data-type="${e.type}">
       <div class="tl-dot ${e.type}-dot"></div>
       <div class="tl-content">
         <div class="tl-year ${e.type}-yr">${e.year}</div>
@@ -982,8 +990,10 @@ function renderTimeline(filter){
         <div class="tl-desc">${e.desc}</div>
         <span class="tl-tag ${e.type}-tag">${e.type==='bio'?'🧠 Beyin #'+e.no:'🤖 YZ #'+e.no}</span>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }
+  tc.innerHTML=html;
+  console.log('Timeline rendered:',filtered.length,'items');
 }
 function filterTimeline(f,btn){
   document.querySelectorAll('.tl-btn').forEach(b=>b.classList.remove('on'));
@@ -1209,7 +1219,7 @@ function startMatch(){
   matchSelected=null;matchCorrectCount=0;matchSeconds=0;
   document.getElementById('matchCorrect').textContent='0';
   document.getElementById('matchTimer').textContent='⏱ 00:00';
-  const shuffled=DATA.sort(()=>Math.random()-.5).slice(0,8);
+  const shuffled=[...DATA].sort(()=>Math.random()-.5).slice(0,8);
   matchPairs=shuffled.map(d=>({bio:d.tr,ai:d.yzk,no:d.no}));
   const bioItems=matchPairs.map(p=>({text:p.bio,no:p.no,type:'bio'})).sort(()=>Math.random()-.5);
   const aiItems=matchPairs.map(p=>({text:p.ai,no:p.no,type:'ai'})).sort(()=>Math.random()-.5);
@@ -1271,7 +1281,7 @@ startMatch();
 
 // ═══ FLIP KARTLAR ═══
 function renderFlipCards(){
-  const selected=DATA.sort(()=>Math.random()-.5).slice(0,12);
+  const selected=[...DATA].sort(()=>Math.random()-.5).slice(0,12);
   const flipped=new Set();
   const grid=document.getElementById('flipGrid');
   grid.innerHTML=selected.map(d=>{
