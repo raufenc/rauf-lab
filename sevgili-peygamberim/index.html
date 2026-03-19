@@ -80,7 +80,8 @@ nav.scrolled{background:rgba(10,46,34,.96);backdrop-filter:blur(12px);border-bot
 .se-summary{font-size:.85rem;color:var(--tx2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .se-page{font-size:.68rem;color:var(--gd);font-weight:500;margin-top:.3rem}
 .se-body{max-height:0;overflow:hidden;transition:max-height .4s ease;padding:0 1.2rem}
-.sub-entry.open .se-body{max-height:5000px;padding:0 1.2rem 1.2rem}
+.sub-entry.open .se-body{max-height:none;padding:0 1.2rem 1.2rem}
+.sub-entry.open .se-summary{display:none}
 .se-full{font-size:.9rem;color:var(--tx2);line-height:1.8;white-space:pre-line;border-top:1px solid var(--sand);padding-top:1rem;margin-top:.5rem}
 
 /* MAIN CHAPTER INTRO */
@@ -226,7 +227,7 @@ footer .fsal{font-family:'Amiri',serif;color:var(--gold);font-size:1rem;margin-t
   <p class="sub rv">Kitabın 705 sayfasını interaktif bir keşif yolculuğuna dönüştürdük. Her başlık, her olay, her isim tıklanabilir ve kitaptaki yerine bağlıdır.</p>
   <div class="stats rv">
     <div class="stat"><b>72</b><span>Ana Bölüm</span></div>
-    <div class="stat"><b>369</b><span>Alt Başlık</span></div>
+    <div class="stat"><b>336</b><span>Alt Başlık</span></div>
     <div class="stat"><b>705</b><span>Sayfa</span></div>
     <div class="stat"><b>20</b><span>Quiz Sorusu</span></div>
   </div>
@@ -340,7 +341,7 @@ function escHtml(t){
 }
 
 function openToc(){document.getElementById('tocPanel').classList.add('open');document.getElementById('tocOv').classList.add('open')}
-function closeToc(){closeToc();document.getElementById('tocOv').classList.remove('open')}
+function closeToc(){document.getElementById('tocPanel').classList.remove('open');document.getElementById('tocOv').classList.remove('open')}
 
 function toggleSub(header){
   const entry=header.parentElement;
