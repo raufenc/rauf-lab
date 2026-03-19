@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sevgili Peygamberim ﷺ — Kitabı Keşfet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{--g1:#0A2E22;--g2:#0D3B2E;--g3:#1A5C48;--g4:#2A7A62;--gold:#C9A84C;--gl:#E8D48B;--gd:#A08030;--iv:#FAF6EE;--sand:#E8DFD0;--sd:#C8B89A;--tx:#1A1A18;--tx2:#4A4A42;--tx3:#8A8A7A;--w:#FFF;--red:#C0522B;--blue:#2B5F8E;--r:12px;--rl:20px}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--iv);color:var(--tx);line-height:1.8;overflow-x:hidden}
+
+.progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--g4));z-index:9999;width:0%;transition:width .15s}
+nav{position:fixed;top:3px;left:0;right:0;z-index:1000;padding:0 1rem;transition:all .3s}
+nav.scrolled{background:rgba(10,46,34,.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,168,76,.2)}
+.nav-in{max-width:1300px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:52px}
+.logo{font-family:'Amiri',serif;color:var(--gold);font-size:1.1rem;font-weight:700;text-decoration:none}
+.nav-ch{font-family:'Amiri',serif;color:var(--gl);font-size:.82rem;font-style:italic;opacity:0;transition:opacity .3s;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 1rem}
+.nav-ch.show{opacity:1}
+.nav-r{display:flex;gap:.3rem}
+.nav-r a{color:var(--sd);text-decoration:none;font-size:.72rem;font-weight:500;padding:.3rem .5rem;border-radius:6px;transition:all .2s;white-space:nowrap}
+.nav-r a:hover,.nav-r a.active{color:var(--gold);background:rgba(201,168,76,.1)}
+.hamburger{display:none;background:none;border:none;color:var(--gold);font-size:1.3rem;cursor:pointer}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(160deg,var(--g1),#071E17);color:var(--iv);padding:5rem 2rem;position:relative}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(201,168,76,.06) 0%,transparent 70%)}
+.hero>*{position:relative;z-index:1}
+.hero .bis{font-family:'Amiri',serif;font-size:clamp(1.1rem,2.2vw,1.5rem);color:var(--gl);opacity:.7;margin-bottom:1.5rem;letter-spacing:2px}
+.hero h1{font-family:'Amiri',serif;font-size:clamp(2.2rem,5.5vw,4rem);color:var(--gold);margin-bottom:.3rem;line-height:1.2}
+.hero .sal{font-family:'Amiri',serif;font-size:clamp(.9rem,1.8vw,1.2rem);color:var(--gl);font-style:italic;margin-bottom:1.5rem}
+.hero .sub{font-size:.92rem;color:var(--sand);max-width:580px;margin:0 auto 1.5rem;line-height:1.9}
+.hero .stats{display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;margin:1.5rem 0}
+.hero .stat{text-align:center}
+.hero .stat b{display:block;font-family:'Amiri',serif;font-size:1.8rem;color:var(--gold)}
+.hero .stat span{font-size:.72rem;color:var(--sd)}
+.hero .auth{font-size:.78rem;color:var(--sd);margin:1rem 0}
+.scroll-h{animation:bounce 2s infinite;color:var(--gold);font-size:1.5rem;margin-top:1.5rem;opacity:.5}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+/* QUICK NAV */
+.qnav{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;max-width:900px;margin:2rem auto 0;padding:0 1rem}
+.qnav a{display:flex;flex-direction:column;align-items:center;gap:.3rem;background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.15);border-radius:var(--r);padding:.8rem .6rem;font-size:.7rem;color:var(--sand);text-decoration:none;transition:all .2s;min-width:80px;text-align:center}
+.qnav a:hover{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
+.qnav a .qi{font-size:1.4rem;display:block}
+
+/* SECTION */
+.sec{padding:0;position:relative}
+.ch-head{padding:3rem 2rem;text-align:center;cursor:pointer;transition:all .3s;position:relative}
+.ch-head.dark{background:var(--g1);color:var(--iv)}
+.ch-head.gold{background:linear-gradient(135deg,#2A1F0A,#1A150A);color:var(--gold)}
+.ch-head.muted{background:#1A1A18;color:var(--sand)}
+.ch-head.dawn{background:linear-gradient(135deg,#1A2A1F,var(--g2));color:var(--iv)}
+.ch-head.blue{background:linear-gradient(135deg,#0A1E2E,#0D2B3B);color:var(--iv)}
+.ch-head .ch-n{font-size:.72rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:.3rem;opacity:.7}
+.ch-head h2{font-family:'Amiri',serif;font-size:clamp(1.5rem,3.5vw,2.5rem);margin-bottom:.3rem;line-height:1.3}
+.ch-head .ch-s{font-size:.88rem;opacity:.7;max-width:500px;margin:0 auto}
+.ch-head .ch-p{font-size:.72rem;color:var(--gd);margin-top:.4rem}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(25px);transition:opacity .6s,transform .6s}.rv.vis{opacity:1;transform:none}
+
+/* CHAPTER CONTENT AREA */
+.ch-body{max-width:850px;margin:0 auto;padding:2rem 2rem 3rem}
+
+/* SUB ENTRY (expandable) */
+.sub-entry{border:1px solid var(--sand);border-radius:var(--r);margin-bottom:.8rem;background:var(--w);overflow:hidden;transition:all .3s}
+.sub-entry:hover{border-color:var(--gold);box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.sub-entry.open{border-color:var(--gold);box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.se-header{display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.2rem;cursor:pointer;transition:background .2s}
+.se-header:hover{background:rgba(201,168,76,.03)}
+.se-arrow{width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--gold);transition:transform .3s;flex-shrink:0;margin-top:.15rem}
+.sub-entry.open .se-arrow{transform:rotate(90deg)}
+.se-info{flex:1;min-width:0}
+.se-title{font-family:'Crimson Text',serif;font-size:1.05rem;font-weight:700;color:var(--g2);margin-bottom:.15rem}
+.se-summary{font-size:.85rem;color:var(--tx2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.se-page{font-size:.68rem;color:var(--gd);font-weight:500;margin-top:.3rem}
+.se-body{max-height:0;overflow:hidden;transition:max-height .4s ease;padding:0 1.2rem}
+.sub-entry.open .se-body{max-height:5000px;padding:0 1.2rem 1.2rem}
+.se-full{font-size:.9rem;color:var(--tx2);line-height:1.8;white-space:pre-line;border-top:1px solid var(--sand);padding-top:1rem;margin-top:.5rem}
+
+/* MAIN CHAPTER INTRO */
+.ch-intro{font-size:.95rem;color:var(--tx2);line-height:1.8;margin-bottom:1.5rem;text-align:justify}
+.ch-intro::first-letter{font-family:'Amiri',serif;font-size:3rem;float:left;line-height:.85;margin-right:.4rem;color:var(--g2);font-weight:700}
+
+/* QUOTE */
+.qb{max-width:750px;margin:1.5rem auto;padding:1.2rem 1.5rem;border-left:4px solid var(--gold);background:var(--w);border-radius:0 var(--r) var(--r) 0;position:relative}
+.qb::before{content:'\\201C';font-family:'Amiri',serif;font-size:4rem;color:var(--gold);opacity:.15;position:absolute;top:-.5rem;left:.3rem;line-height:1}
+.qb .qt{font-family:'Crimson Text',serif;font-size:1.05rem;color:var(--g2);font-style:italic;line-height:1.7}
+.qb .qs{font-size:.8rem;color:var(--tx2);font-weight:600;margin-top:.4rem}
+.qb .qr{font-size:.68rem;color:var(--gd);margin-top:.2rem}
+
+/* HADITH */
+.hd{max-width:750px;margin:1.5rem auto;padding:1.2rem 1.5rem;background:linear-gradient(135deg,var(--g1),var(--g2));border-radius:var(--r);color:var(--iv);text-align:center;border:1px solid rgba(201,168,76,.15)}
+.hd .ht{font-family:'Amiri',serif;font-size:1.05rem;color:var(--gl);line-height:1.7;font-style:italic}
+.hd .hs{font-size:.78rem;color:var(--sd);margin-top:.3rem}
+.hd .hr{font-size:.68rem;color:var(--gd);margin-top:.2rem}
+
+/* STICKY TOC SIDEBAR */
+.toc-toggle{position:fixed;left:1rem;bottom:5rem;width:44px;height:44px;border-radius:50%;background:var(--g1);color:var(--gold);border:2px solid var(--gold);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;transition:all .3s;box-shadow:0 2px 10px rgba(0,0,0,.2)}
+.toc-toggle.show{opacity:1}
+.toc-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1999}
+.toc-overlay.open{display:block}
+.toc-panel{position:fixed;left:0;top:0;bottom:0;width:320px;background:var(--w);z-index:2000;transform:translateX(-100%);transition:transform .3s;box-shadow:4px 0 20px rgba(0,0,0,.15);overflow-y:auto;padding:1rem}
+.toc-panel.open{transform:translateX(0)}
+.toc-panel h3{font-family:'Amiri',serif;font-size:1.2rem;color:var(--g2);margin-bottom:1rem;padding:.5rem 0;border-bottom:2px solid var(--gold)}
+.toc-panel .tp-close{position:absolute;top:.8rem;right:.8rem;width:28px;height:28px;border-radius:50%;border:none;background:var(--sand);color:var(--tx);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.toc-list a{display:block;padding:.3rem .5rem;font-size:.78rem;color:var(--tx2);text-decoration:none;border-radius:6px;transition:all .15s;line-height:1.4;margin-bottom:.1rem}
+.toc-list a:hover,.toc-list a.active{background:rgba(201,168,76,.1);color:var(--g2)}
+.toc-list a.main{font-weight:700;color:var(--g2);font-size:.82rem;margin-top:.5rem;padding:.4rem .5rem}
+.toc-list a.sub{padding-left:1.5rem;font-size:.75rem}
+
+/* MAP */
+#map-c{height:450px;border-radius:var(--r);overflow:hidden;border:2px solid var(--sand);margin:1rem auto;max-width:900px}
+
+/* PERSON GRID */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;max-width:1100px;margin:1.5rem auto;padding:0 2rem}
+.pc{background:var(--w);border:1px solid var(--sand);border-radius:var(--r);padding:1.2rem;transition:all .3s;cursor:pointer;text-align:center}
+.pc:hover{border-color:var(--gold);box-shadow:0 6px 25px rgba(0,0,0,.07);transform:translateY(-2px)}
+.pc .pa{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--g1),var(--g3));display:flex;align-items:center;justify-content:center;margin:0 auto .6rem;font-size:1.2rem;color:var(--gold);border:2px solid var(--gold)}
+.pc .pn{font-family:'Crimson Text',serif;font-size:1rem;font-weight:700;color:var(--g2)}
+.pc .pr{font-size:.72rem;color:var(--gd);font-weight:600;margin:.15rem 0 .4rem}
+.pc .pd{font-size:.82rem;color:var(--tx2);line-height:1.5}
+.pc .pp{font-size:.68rem;color:var(--tx3);margin-top:.4rem}
+
+/* GLOSSARY */
+.ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.8rem;max-width:1100px;margin:0 auto;padding:0 2rem}
+.gc{background:var(--w);border:1px solid var(--sand);border-radius:var(--r);padding:1rem;transition:all .2s}
+.gc:hover{border-color:var(--gold)}
+.gc .gt{font-family:'Amiri',serif;font-size:1.05rem;font-weight:700;color:var(--g2)}
+.gc .gd{font-size:.82rem;color:var(--tx2);line-height:1.5;margin-top:.15rem}
+.gc .gp{font-size:.68rem;color:var(--gd);margin-top:.2rem}
+
+/* SEARCH */
+.sbox{max-width:400px;margin:0 auto 1.5rem;position:relative}
+.sbox input{width:100%;padding:.6rem .8rem .6rem 2.2rem;border:2px solid var(--sand);border-radius:25px;font-size:.9rem;background:var(--w);transition:all .3s;font-family:'Inter',sans-serif}
+.sbox input:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.sbox::before{content:'\\1F50D';position:absolute;left:.7rem;top:50%;transform:translateY(-50%);font-size:.9rem}
+
+/* QUIZ */
+.quiz-sec{background:linear-gradient(135deg,var(--g1),#071E17);border-radius:var(--rl);padding:2.5rem 2rem;margin:2rem auto;max-width:900px;color:var(--iv)}
+.qa{max-width:620px;margin:0 auto}
+.qprog{display:flex;gap:.2rem;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap}
+.qd{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.12);transition:all .3s}
+.qd.done{background:var(--gold)}.qd.cur{background:var(--gold);box-shadow:0 0 6px var(--gold);transform:scale(1.3)}
+.qq{font-family:'Crimson Text',serif;font-size:1.3rem;text-align:center;margin-bottom:1.2rem;color:var(--gl);line-height:1.5}
+.qos{display:grid;gap:.5rem}
+.qo{background:rgba(255,255,255,.05);border:2px solid rgba(201,168,76,.18);border-radius:var(--r);padding:.8rem 1rem;font-size:.9rem;color:var(--sand);cursor:pointer;transition:all .25s;text-align:left}
+.qo:hover{background:rgba(201,168,76,.08);border-color:var(--gold);color:var(--w)}
+.qo.correct{background:rgba(42,122,98,.35);border-color:var(--g4);color:var(--w)}
+.qo.wrong{background:rgba(192,82,43,.25);border-color:var(--red)}
+.qo.dis{pointer-events:none}
+.qf{text-align:center;margin-top:1rem;min-height:2.5rem;font-size:.85rem}
+.qnv{display:flex;justify-content:center;gap:.6rem;margin-top:1.2rem}
+.qnv button{padding:.4rem 1rem;border-radius:20px;border:2px solid var(--gold);background:none;color:var(--gold);font-weight:600;cursor:pointer;transition:all .2s;font-size:.8rem}
+.qnv button:hover{background:var(--gold);color:var(--g1)}
+.qsc{text-align:center;font-family:'Amiri',serif;font-size:1.6rem;color:var(--gold);display:none}
+
+/* SEC HEADER */
+.sh{text-align:center;padding:2.5rem 2rem 1.5rem}
+.sh h2{font-family:'Amiri',serif;font-size:clamp(1.5rem,3vw,2rem);color:var(--g2)}
+.sh p{color:var(--tx2);font-size:.85rem;max-width:500px;margin:.4rem auto 0}
+.gl{width:45px;height:3px;background:var(--gold);margin:.6rem auto;border-radius:2px}
+
+/* MODAL */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;align-items:center;justify-content:center;padding:1.5rem}
+.mbg.show{display:flex}
+.mdl{background:var(--w);border-radius:var(--rl);max-width:620px;width:100%;max-height:80vh;overflow-y:auto;padding:2rem;position:relative;animation:mIn .25s}
+@keyframes mIn{from{opacity:0;transform:scale(.96) translateY(15px)}to{opacity:1;transform:none}}
+.mx{position:absolute;top:.8rem;right:.8rem;width:30px;height:30px;border-radius:50%;border:none;background:var(--sand);color:var(--tx);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mx:hover{background:var(--red);color:var(--w)}
+.mdl h3{font-family:'Amiri',serif;font-size:1.4rem;color:var(--g2);margin-bottom:.4rem}
+.mdl p{font-size:.88rem;color:var(--tx2);line-height:1.7;margin-bottom:.5rem}
+
+/* FOOTER */
+footer{background:var(--g1);color:var(--sand);text-align:center;padding:2.5rem 2rem}
+footer .ft{font-family:'Amiri',serif;color:var(--gold);font-size:1.1rem;margin-bottom:.4rem}
+footer .fs{font-size:.78rem}
+footer .fn{font-size:.72rem;color:var(--sd);max-width:550px;margin:.4rem auto 0}
+footer .fsal{font-family:'Amiri',serif;color:var(--gold);font-size:1rem;margin-top:1.2rem}
+
+.to-top{position:fixed;bottom:1.5rem;right:1.5rem;width:42px;height:42px;border-radius:50%;background:var(--g1);color:var(--gold);border:2px solid var(--gold);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:all .3s;z-index:500}
+.to-top.show{opacity:1}
+
+@media(max-width:768px){
+  .nav-r{display:none}.nav-r.open{display:flex;flex-direction:column;position:absolute;top:52px;left:0;right:0;background:var(--g1);padding:.8rem;border-bottom:1px solid var(--gold);z-index:1001}
+  .hamburger{display:block}
+  .pgrid,.ggrid{grid-template-columns:1fr}
+  .qnav{gap:.4rem}.qnav a{min-width:70px;padding:.6rem .4rem}
+  .toc-panel{width:85vw}
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="prog"></div>
+
+<nav id="mainNav">
+<div class="nav-in">
+  <a href="#" class="logo">Sevgili Peygamberim ﷺ</a>
+  <span class="nav-ch" id="navCh"></span>
+  <div class="nav-r" id="navR">
+    <a href="#kitap">Kitap</a><a href="#harita">Harita</a><a href="#kisiler">Kişiler</a><a href="#sozluk">Sözlük</a><a href="#quiz-s">Quiz</a>
+  </div>
+  <button class="hamburger" onclick="document.getElementById('navR').classList.toggle('open')">☰</button>
+</div>
+</nav>
+
+<!-- TOC SIDEBAR -->
+<button class="toc-toggle" id="tocBtn" aria-label="İçindekiler" onclick="openToc()">☰</button>
+<div class="toc-overlay" id="tocOv" onclick="closeToc()"></div>
+<div class="toc-panel" id="tocPanel" role="navigation" aria-label="İçindekiler">
+  <button class="tp-close" aria-label="Kapat" onclick="closeToc()">✕</button>
+  <h3>İçindekiler</h3>
+  <div class="toc-list" id="tocList"></div>
+</div>
+
+<section class="hero" id="hero">
+  <div class="bis rv">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيمِ</div>
+  <h1 class="rv">Sevgili Peygamberim</h1>
+  <div class="sal rv">sallallahü aleyhi ve sellem</div>
+  <p class="sub rv">Kitabın 705 sayfasını interaktif bir keşif yolculuğuna dönüştürdük. Her başlık, her olay, her isim tıklanabilir ve kitaptaki yerine bağlıdır.</p>
+  <div class="stats rv">
+    <div class="stat"><b>72</b><span>Ana Bölüm</span></div>
+    <div class="stat"><b>369</b><span>Alt Başlık</span></div>
+    <div class="stat"><b>705</b><span>Sayfa</span></div>
+    <div class="stat"><b>20</b><span>Quiz Sorusu</span></div>
+  </div>
+  <p class="auth rv">Kaynak: Prof. Dr. Ramazan Ayvallı — <em>Sevgili Peygamberim</em>, 3. Baskı (2021)</p>
+  <div class="qnav rv">
+    <a href="#kitap"><span class="qi">📖</span>Kitabı Keşfet</a>
+    <a href="#harita"><span class="qi">🗺️</span>Harita</a>
+    <a href="#kisiler"><span class="qi">👤</span>Kişiler</a>
+    <a href="#sozluk"><span class="qi">📜</span>Sözlük</a>
+    <a href="#quiz-s"><span class="qi">❓</span>Quiz</a>
+  </div>
+  <div class="scroll-h">▼</div>
+</section>
+
+<!-- BOOK CONTENT - rendered by JS -->
+<div id="kitap"></div>
+
+<!-- MAP -->
+<div class="sh" id="harita"><h2>Etkileşimli Harita</h2><div class="gl"></div><p>Peygamber Efendimiz sallallahü aleyhi ve sellemin hayatındaki önemli mekânlar ve güzergâhlar</p></div>
+<div id="map-c" style="margin:0 2rem"></div>
+
+<!-- PEOPLE -->
+<div class="sh" id="kisiler"><h2>Kim Kimdir?</h2><div class="gl"></div><p>Kitapta geçen önemli şahıslar ve rolleri</p></div>
+<div class="pgrid" id="pGrid"></div>
+
+<!-- GLOSSARY -->
+<div class="sh" id="sozluk"><h2>Kavram Sözlüğü</h2><div class="gl"></div><p>Kitapta geçen kavramlar ve açıklamaları</p></div>
+<div class="sbox"><input id="gSrch" placeholder="Kavram ara..." oninput="filterG()"></div>
+<div class="ggrid" id="gGrid"></div>
+
+<!-- QUIZ -->
+<div class="quiz-sec" id="quiz-s">
+  <div class="sh"><h2 style="color:var(--gold)">Kendini Dene</h2><div class="gl"></div><p style="color:var(--sand)">20 soru — her cevap kaynak sayfasına bağlı</p></div>
+  <div class="qa">
+    <div class="qprog" id="qP"></div>
+    <div class="qq" id="qQ"></div>
+    <div class="qos" id="qO"></div>
+    <div class="qf" id="qF"></div>
+    <div class="qnv"><button onclick="pQ()">◂ Önceki</button><button onclick="nQ()">Sonraki ▸</button><button onclick="rQ()">↻ Yeniden</button></div>
+    <div class="qsc" id="qS"></div>
+  </div>
+</div>
+
+<div class="mbg" id="mBg" onclick="if(event.target===this)cM()"><div class="mdl"><button class="mx" onclick="cM()">✕</button><div id="mC"></div></div></div>
+
+<button class="to-top" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</button>
+
+<footer>
+  <div class="ft">Sevgili Peygamberim ﷺ — Kitabı Keşfet</div>
+  <div class="fs">Kaynak: Prof. Dr. Ramazan Ayvallı — <em>Sevgili Peygamberim "sallallahü aleyhi ve sellem"</em>, 3. Baskı, 2021</div>
+  <div class="fn">Tüm içerik kitaba sadık kalınarak hazırlanmıştır. Kitap dışı bilgi eklenmemiştir.</div>
+  <div class="fsal">Essalâtü vesselâmü aleyke yâ Resûlallah!</div>
+</footer>
+
+<script src="book-data.js"></script>
+<script>
+// ===== RENDER BOOK =====
+const themes=['dark','gold','dawn','dark','muted','gold','dark','muted','blue','dawn','dark','gold','muted','dawn','dark','gold','blue','dark','muted','dawn','gold','dark','muted','blue','dawn','dark','gold','dark','muted','dawn','dark','gold','blue','dark','muted','dawn','gold','dark','muted','blue','dawn','dark','gold','dark','muted','dawn','gold','dark','muted','blue','dawn','dark','gold','dark','muted','dawn','gold','dark','muted','blue','dawn','dark','gold','dark','muted','dawn','gold','dark','muted','blue'];
+const kitapEl=document.getElementById('kitap');
+let tocHtml='';
+
+BOOK.forEach((ch,ci)=>{
+  const theme=themes[ci%themes.length];
+  const chId='ch-'+ci;
+
+  // Chapter header
+  let html=`<div class="ch-head ${theme}" id="${chId}">
+    <div class="ch-n rv">Sayfa ${ch.page}</div>
+    <h2 class="rv">${ch.title}</h2>
+    <div class="ch-p rv">${ch.subs.length?ch.subs.length+' alt başlık':''} — 📖 Sayfa ${ch.page}</div>
+  </div>`;
+
+  // Chapter body with sub entries only (no duplicate main text)
+  html+=`<div class="ch-body">`;
+
+  ch.subs.forEach((s,si)=>{
+    const hasText = s.full_text && s.full_text.length > 50;
+    html+=`<div class="sub-entry rv" data-idx="${ci}-${si}">
+      <div class="se-header" role="button" aria-expanded="false" tabindex="0" onclick="toggleSub(this)" onkeydown="if(event.key==='Enter')toggleSub(this)">
+        <div class="se-arrow">▸</div>
+        <div class="se-info">
+          <div class="se-title">${escHtml(s.title)}</div>
+          <div class="se-summary">${escHtml(s.summary||'')}</div>
+          <div class="se-page">📖 Sayfa ${s.page}</div>
+        </div>
+      </div>
+      ${hasText?'<div class="se-body"><div class="se-full"></div></div>':''}
+    </div>`;
+  });
+
+  // If no subs but chapter has text, show it directly
+  if(!ch.subs.length && ch.intro){
+    html+=`<div class="ch-intro rv">${escHtml(ch.intro)}</div>`;
+  }
+
+  html+=`</div>`;
+  kitapEl.insertAdjacentHTML('beforeend',html);
+
+  // TOC
+  tocHtml+=`<a href="#${chId}" class="main" onclick="closeToc()">${ch.title} <span style="color:var(--gd);font-size:.65rem">s.${ch.page}</span></a>`;
+  ch.subs.forEach(s=>{
+    tocHtml+=`<a href="#${chId}" class="sub" onclick="closeToc()">${s.title}</a>`;
+  });
+});
+
+document.getElementById('tocList').innerHTML=tocHtml;
+
+function escHtml(t){
+  if(!t)return '';
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function openToc(){document.getElementById('tocPanel').classList.add('open');document.getElementById('tocOv').classList.add('open')}
+function closeToc(){closeToc();document.getElementById('tocOv').classList.remove('open')}
+
+function toggleSub(header){
+  const entry=header.parentElement;
+  const isOpen=entry.classList.toggle('open');
+  header.setAttribute('aria-expanded',isOpen);
+  // Lazy load: if first open, populate body from data
+  if(isOpen && entry.dataset.loaded!=='1'){
+    const idx=entry.dataset.idx;
+    if(idx){
+      const [ci,si]=idx.split('-').map(Number);
+      const ch=BOOK[ci];
+      const sub=ch&&ch.subs&&ch.subs[si];
+      if(sub&&sub.full_text){
+        const body=entry.querySelector('.se-body');
+        if(body&&!body.querySelector('.se-full').innerHTML){
+          body.querySelector('.se-full').innerHTML=escHtml(sub.full_text);
+        }
+      }
+      entry.dataset.loaded='1';
+    }
+  }
+}
+
+// ===== REVEAL =====
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');obs.unobserve(e.target)}})},{threshold:.08,rootMargin:'0px 0px -20px 0px'});
+document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+setTimeout(()=>{document.querySelectorAll('.hero .rv').forEach(el=>el.classList.add('vis'))},100);
+
+// ===== SCROLL =====
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('prog').style.width=(window.scrollY/h*100)+'%';
+  document.getElementById('toTop').classList.toggle('show',window.scrollY>400);
+  document.getElementById('tocBtn').classList.toggle('show',window.scrollY>400);
+  document.getElementById('mainNav').classList.toggle('scrolled',window.scrollY>60);
+  // Chapter name
+  let cur='';
+  document.querySelectorAll('.ch-head').forEach(el=>{if(el.offsetTop<=window.scrollY+150)cur=el.querySelector('h2').textContent});
+  const nc=document.getElementById('navCh');
+  if(cur){nc.textContent=cur;nc.classList.add('show')}else{nc.classList.remove('show')}
+});
+
+// ===== MAP =====
+const map=L.map('map-c',{scrollWheelZoom:false}).setView([23.5,42],5);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'©OpenStreetMap',maxZoom:12}).addTo(map);
+const gi=c=>L.divIcon({className:'',html:`<div style="width:13px;height:13px;border-radius:50%;background:${c};border:2px solid #fff;box-shadow:0 0 5px ${c}60"></div>`,iconSize:[13,13],iconAnchor:[6,6]});
+[
+  {n:"Mekke-i Mükerreme",d:"Doğum yeri, erken dönem (s.9)",lat:21.4225,lng:39.8262,c:"#C9A84C"},
+  {n:"Medîne-i Münevvere",d:"Hicret sonrası (s.169)",lat:24.4672,lng:39.6112,c:"#C9A84C"},
+  {n:"Hirâ Mağarası",d:"İlk vahiy (s.62)",lat:21.4573,lng:39.8583,c:"#2A7A62"},
+  {n:"Sevr Mağarası",d:"Hicret sığınağı (s.160)",lat:21.3762,lng:39.831,c:"#2A7A62"},
+  {n:"Busrâ",d:"Râhip Bahîra (s.49)",lat:32.5178,lng:36.4815,c:"#2B5F8E"},
+  {n:"Tâif",d:"Taşlanma hâdisesi (s.128)",lat:21.2703,lng:40.4159,c:"#C0522B"},
+  {n:"Bedr",d:"İlk büyük zafer (s.205)",lat:23.7333,lng:38.7833,c:"#C0522B"},
+  {n:"Uhud",d:"Şehîdler gazâsı (s.241)",lat:24.5067,lng:39.6128,c:"#C0522B"},
+  {n:"Hudeybiye",d:"Sulh antlaşması (s.312)",lat:21.4419,lng:39.6049,c:"#2B5F8E"},
+  {n:"Habeşistan",d:"İlk hicret (s.99)",lat:14.13,lng:38.72,c:"#C0522B"},
+  {n:"Kudüs",d:"Mîrâc başlangıcı (s.135)",lat:31.7761,lng:35.2358,c:"#C9A84C"},
+  {n:"Hayber",d:"Fetih (s.341)",lat:25.6967,lng:39.2975,c:"#C0522B"},
+  {n:"Tebük",d:"Son büyük sefer (s.391)",lat:28.3838,lng:36.5550,c:"#C0522B"},
+  {n:"Ebvâ",d:"Annenin vefâtı (s.44)",lat:23.2,lng:39.2,c:"#C0522B"},
+  {n:"Mûte",d:"Mûte Harbi (s.360)",lat:31.08,lng:35.70,c:"#C0522B"},
+  {n:"Huneyn",d:"Huneyn Gazâsı (s.383)",lat:21.35,lng:40.25,c:"#C0522B"},
+].forEach(p=>L.marker([p.lat,p.lng],{icon:gi(p.c)}).addTo(map).bindPopup(`<b style="color:#0D3B2E">${p.n}</b><br><span style="font-size:.85em;color:#4A4A42">${p.d}</span>`));
+L.polyline([[21.42,39.82],[21.38,39.83],[24.47,39.61]],{color:'#C9A84C',weight:2,dashArray:'8,6',opacity:.6}).addTo(map).bindPopup('Hicret Güzergâhı');
+L.polyline([[21.42,39.82],[14.13,38.72]],{color:'#C0522B',weight:2,dashArray:'8,6',opacity:.5}).addTo(map).bindPopup('Habeşistan Hicreti');
+L.polyline([[21.42,39.82],[32.52,36.48]],{color:'#2B5F8E',weight:2,dashArray:'8,6',opacity:.5}).addTo(map).bindPopup('Ticaret Yolu');
+
+// ===== PEOPLE =====
+const PPL=[
+  {n:"Muhammed aleyhisselâm",r:"Son Peygamber ﷺ",d:"Allahü teâlânın habîbi, yaratılmışların en üstünü. Rebîu'l-evvel 12, Mekke-i Mükerreme'de doğdu, 63 yaşında Medîne-i Münevvere'de vefât etti.",s:"9, 29",ic:"ﷺ"},
+  {n:"Hazret-i Hadîce",r:"İlk müslüman / Zevce",d:"İlk îmân eden. Tüm malını İslâm'a verdi. Rüyâsında ayın koynuna girdiğini görmüştü.",s:"53-57",ic:"🌙"},
+  {n:"Hazret-i Ebû Bekr",r:"Sıddîk / İlk Halîfe",d:"Mîrâc'ı tereddütsüz tasdik etti. Hicret yoldaşı. Bilâl'i âzâd etti.",s:"64-67",ic:"⭐"},
+  {n:"Hazret-i Ali",r:"İlk genç müslüman",d:"Hicret gecesi yatağa yattı. Kâbe hakemliğinde bulundu.",s:"67-70",ic:"⚔"},
+  {n:"Hazret-i Bilâl",r:"Müezzin",d:"Kızgın kumda 'Ehad!' haykırdı. Kâbe üstünden ezan okudu.",s:"79-80",ic:"🌟"},
+  {n:"Hazret-i Hamza",r:"Şehîdlerin efendisi",d:"Bi'setin 6. yılında İslâm'ı kabul etti. Uhud'da şehîd oldu.",s:"101-102",ic:"⚔"},
+  {n:"Hazret-i Ömer",r:"İkinci Halîfe",d:"İslâm'ı yok etmek isterken îmân etti. Ömer'le İslâm güçlendi.",s:"103-107",ic:"⚔"},
+  {n:"Abdülmuttalib",r:"Dede",d:"Zemzem'i kazdı. Ebrehe'ye 'Kâbe'nin sahibi vardır' dedi.",s:"13-17",ic:"👤"},
+  {n:"Halîme Hâtun",r:"Sütanne",d:"O'nu alınca kuraklıkta bereket başladı.",s:"39-44",ic:"👤"},
+  {n:"Hazret-i Sümeyye",r:"İlk şehîd",d:"İslâm'ın ilk kadın şehîdi.",s:"84",ic:"🌹"},
+  {n:"Hazret-i Ca'fer",r:"Muhâcir lideri",d:"Necâşî huzûrunda İslâm'ı anlattı.",s:"109-112",ic:"🕊"},
+  {n:"Necâşî",r:"Habeş hükümdârı",d:"Muhâcirlere himâye eden âdil hükümdâr.",s:"109-113",ic:"👑"},
+  {n:"Zeyd bin Hârise",r:"Azâdlı",d:"Babasını değil Peygamber Efendimizi tercih etti.",s:"58-60",ic:"⚔"},
+  {n:"Hazret-i Osman",r:"Üçüncü Halîfe",d:"Sâbıkûn-i İslâm'dan. Habeşistan'a hicret eden ilk aile.",s:"67-68",ic:"⭐"},
+  {n:"Hâlid bin Velîd",r:"Seyfullah",d:"Mekke'nin fethinden önce müslüman oldu.",s:"358",ic:"⚔"},
+];
+document.getElementById('pGrid').innerHTML=PPL.map((p,i)=>`<div class="pc rv" onclick="sP(${i})"><div class="pa">${p.ic}</div><div class="pn">${p.n}</div><div class="pr">${p.r}</div><div class="pd">${p.d}</div><div class="pp">📖 s.${p.s}</div></div>`).join('');
+document.querySelectorAll('.pgrid .rv').forEach(el=>obs.observe(el));
+function sP(i){const p=PPL[i];document.getElementById('mC').innerHTML=`<div style="text-align:center;font-size:2.5rem;margin-bottom:.5rem">${p.ic}</div><h3>${p.n}</h3><div style="display:inline-block;background:var(--g2);color:var(--gold);font-size:.72rem;padding:.12rem .7rem;border-radius:8px;margin-bottom:.8rem">${p.r}</div><p>${p.d}</p><p style="font-size:.8rem;color:var(--gd);font-weight:600">📖 Sayfa ${p.s}</p>`;document.getElementById('mBg').classList.add('show')}
+function cM(){document.getElementById('mBg').classList.remove('show')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){cM();closeToc()}});
+
+// ===== GLOSSARY =====
+const TRM=[
+  {k:"Nûr-ı Muhammedî",d:"Her şeyden evvel yaratılan mübârek nûr.",s:"10"},
+  {k:"Bi'set",d:"Peygamberliğin bildirilmesi.",s:"61"},
+  {k:"Hicret",d:"Mekke'den Medîne'ye göç. İslâm takvimi başlangıcı.",s:"157"},
+  {k:"Şakk-ı sadr",d:"Göğsün yarılması mucizesi.",s:"43"},
+  {k:"Mevlid Gecesi",d:"Peygamber Efendimizin doğduğu gece.",s:"37"},
+  {k:"Mühr-i nübüvvet",d:"İki kürek kemiği arasındaki peygamberlik mührü.",s:"50"},
+  {k:"Sâbıkûn-i İslâm",d:"İlk müslümanlar.",s:"64"},
+  {k:"Dâr-ül-Erkâm",d:"İlk toplanma ve öğretim evi.",s:"83"},
+  {k:"Hılf-ül Füdûl",d:"Adalet cemiyeti.",s:"53"},
+  {k:"El-Emîn",d:"Güvenilir — Mekkelilerin verdiği lakap.",s:"51"},
+  {k:"Mîrâc",d:"Göğe yükseliş. Beş vakit namaz burada emredildi.",s:"135"},
+  {k:"Câhiliyye",d:"İslâm öncesi karanlık dönem.",s:"24"},
+  {k:"Rahmeten li'l-âlemîn",d:"Âlemlere rahmet.",s:"5"},
+  {k:"Dürr-i Yetîm",d:"Kâinât sedefindeki en kıymetli inci.",s:"9"},
+  {k:"Tevhîd",d:"Allah'ın birliğine îmân.",s:"61"},
+  {k:"Tebliğ",d:"İlâhî emirleri bildirme vazifesi.",s:"63"},
+  {k:"Necâşî",d:"Habeş hükümdârı unvanı.",s:"99"},
+  {k:"Muhâcir",d:"Hicret eden müslüman.",s:"99"},
+  {k:"Ensâr",d:"Medîne'de muhâcirlere yardım edenler.",s:"171"},
+  {k:"Gazâ",d:"Peygamber Efendimizin katıldığı savaş.",s:"197"},
+  {k:"Seriyye",d:"Peygamber Efendimizin katılmadığı askerî birlik.",s:"197"},
+  {k:"Bî'at",d:"Bağlılık yemini.",s:"151"},
+  {k:"Ehl-i Beyt",d:"Peygamber Efendimizin ailesi.",s:"515"},
+  {k:"Eshâb-ı kirâm",d:"Peygamber Efendimizi gören müslümanlar.",s:"529"},
+  {k:"Hilye-i Saâdet",d:"Peygamber Efendimizin fizikî tasviri.",s:"469"},
+];
+function renderG(f){
+  const it=f?TRM.filter(t=>t.k.toLowerCase().includes(f)||t.d.toLowerCase().includes(f)):TRM;
+  document.getElementById('gGrid').innerHTML=it.map(t=>`<div class="gc"><div class="gt">${t.k}</div><div class="gd">${t.d}</div><div class="gp">📖 s.${t.s}</div></div>`).join('');
+}
+function filterG(){renderG(document.getElementById('gSrch').value.toLowerCase())}
+renderG();
+
+// ===== QUIZ =====
+const QZ=[
+  {q:"Peygamber Efendimiz sallallahü aleyhi ve sellem hangi şehirde doğdu?",o:["Medîne","Mekke-i Mükerreme","Tâif","Kudüs"],a:1,s:"29",x:"Rebîu'l-evvel 12, Pazartesi gecesi doğdu."},
+  {q:"Sütannesi kimdir?",o:["Süveybe","Halîme Hâtun","Âmine","Şifâ Hâtun"],a:1,s:"39",x:"Benî Sa'd kabîlesinden. O'nu alınca bereket başladı."},
+  {q:"İlk vahiy hangi mağarada geldi?",o:["Sevr","Hirâ","Uhud","Tâif"],a:1,s:"62",x:"Cebrâil aleyhisselâm 'İkra!' dedi."},
+  {q:"İslâm'ın ilk şehîdi kimdir?",o:["Hz. Hamza","Hz. Bilâl","Hz. Sümeyye","Hz. Habbâb"],a:2,s:"84",x:"Ebû Cehil'in zulmüyle şehîd oldu."},
+  {q:"Fil vak'asında Kâbe'yi yıkmak isteyen kim?",o:["Ebû Cehil","Ebû Leheb","Ebrehe","Necâşî"],a:2,s:"21",x:"Allahü teâlâ Ebâbil kuşlarını gönderdi."},
+  {q:"El-Emîn ne demektir?",o:["Güçlü","Güvenilir","Bilgili","Cesur"],a:1,s:"51",x:"Doğruluğu sebebiyle verilen lakap."},
+  {q:"Şakk-ı sadr ne demektir?",o:["İlk vahiy","Göğsün yarılması","Hicret","Gazâ"],a:1,s:"43",x:"Melekler kalbini Zamzam ile yıkadı."},
+  {q:"Hz. Hadîce ilk vahiy sonrası kime danıştı?",o:["Ebû Tâlib","Varaka bin Nevfel","Bahîra","Ebû Bekr"],a:1,s:"63",x:"'Mûsâ'ya gelen Nâmûs-ı Ekber'dir!' dedi."},
+  {q:"Hz. Bilâl işkence altında ne dedi?",o:["Yâ Muhammed!","Ehad! Ehad!","Lâ ilâhe illallah!","Allahü Ekber!"],a:1,s:"79",x:"'Allah birdir!' diye haykırdı."},
+  {q:"Hicret sırasında hangi mağaraya sığındılar?",o:["Hirâ","Sevr","Uhud","Tâif"],a:1,s:"160",x:"'Üzülme, Allah bizimle beraberdir' buyuruldu."},
+  {q:"Bedr'de kaç müslüman vardı?",o:["100","200","313","500"],a:2,s:"205",x:"1000+ müşriğe karşı. Melekler yardıma geldi."},
+  {q:"Hz. Ömer İslâm'dan önce ne yapmak istedi?",o:["Ticaret","Peygamberi öldürmek","Hicret","Barış"],a:1,s:"103",x:"Tâhâ sûresini duyup îmân etti."},
+  {q:"Habeşistan'daki muhâcirleri kim korudu?",o:["Ebû Tâlib","Abdülmuttalib","Necâşî","Bahîra"],a:2,s:"99",x:"Âdil Habeş hükümdârı."},
+  {q:"Mîrâc'da kaç vakit namaz emredildi?",o:["3","5","7","10"],a:1,s:"135",x:"Başta 50, Mûsâ aleyhisselâmın tavsiyesiyle 5'e indi."},
+  {q:"Dâr-ül-Erkâm nedir?",o:["Dağ","Mağara","İlk toplanma evi","Savaş alanı"],a:2,s:"83",x:"Gizli toplanma ve öğretim mekânı."},
+  {q:"Doğum gecesi neler oldu?",o:["Hiçbir şey","360 put yıkıldı","Zelzele","Güneş tutulması"],a:1,s:"35",x:"Putlar düştü, Kisrâ sarayı çöktü, ateşgede söndü."},
+  {q:"Tâif'te dağ meleği ne teklif etti?",o:["Savaş","İki dağı kapatmak","Sel","Deprem"],a:1,s:"128",x:"Peygamber Efendimiz reddetti: 'Belki îmân edenler çıkar.'"},
+  {q:"Mekke fethinde Kâbe'den ezan okuyan kim?",o:["Hz. Ali","Hz. Ömer","Hz. Bilâl","Hz. Hamza"],a:2,s:"371",x:"Yıllar önce 'Ehad!' diyen ses Kâbe'den yankılandı."},
+  {q:"Abdülmuttalib Ebrehe'ye ne dedi?",o:["Geri dön!","Kâbe'nin sahibi vardır","Savaşacağız!","Yaklaşma!"],a:1,s:"21",x:"'Ben develerin sahibiyim. Kâbe'yi O korur.'"},
+  {q:"Kaç yaşında evlendi?",o:["20","25","30","35"],a:1,s:"56",x:"Hazret-i Hadîce vâlidemiz ile."},
+];
+// Quiz state with localStorage persistence
+let qi=0,qs=0,qa=new Array(QZ.length).fill(false);
+try{const saved=JSON.parse(localStorage.getItem('spQuiz'));if(saved){qi=saved.qi||0;qs=saved.qs||0;qa=saved.qa||qa}}catch(e){}
+function saveQuiz(){try{localStorage.setItem('spQuiz',JSON.stringify({qi,qs,qa}))}catch(e){}}
+function rQz(){const q=QZ[qi];document.getElementById('qP').innerHTML=QZ.map((_,i)=>`<div class="qd ${qa[i]?'done':''} ${i===qi?'cur':''}"></div>`).join('');document.getElementById('qQ').textContent=q.q;document.getElementById('qO').innerHTML=q.o.map((o,i)=>`<div class="qo" role="button" tabindex="0" onclick="aQ(${i})" onkeydown="if(event.key==='Enter')aQ(${i})">${escHtml(o)}</div>`).join('');document.getElementById('qF').innerHTML='';document.getElementById('qS').style.display='none'}
+function aQ(idx){if(qa[qi])return;qa[qi]=true;saveQuiz();const q=QZ[qi];document.querySelectorAll('.qo').forEach((o,i)=>{o.classList.add('dis');if(i===q.a)o.classList.add('correct');if(i===idx&&idx!==q.a)o.classList.add('wrong')});if(idx===q.a){qs++;document.getElementById('qF').innerHTML=`<span style="color:var(--gold)">✓ Doğru!</span><br><span style="font-size:.8rem;color:var(--sand)">${q.x}</span><br><span style="font-size:.68rem;color:var(--gd)">📖 s.${q.s}</span>`}else{document.getElementById('qF').innerHTML=`<span style="color:var(--red)">✗</span> Doğru: <b>${q.o[q.a]}</b><br><span style="font-size:.8rem;color:var(--sand)">${q.x}</span><br><span style="font-size:.68rem;color:var(--gd)">📖 s.${q.s}</span>`}if(qi<QZ.length-1)setTimeout(nQ,2200);else setTimeout(()=>{document.getElementById('qS').style.display='block';document.getElementById('qS').innerHTML=`✦ ${qs}/${QZ.length}<div style="font-size:.9rem;color:var(--sand);margin-top:.2rem">${qs===QZ.length?'Mükemmel!':qs>12?'Çok güzel!':'Kitabı tekrar keşfedin!'}</div>`},1200)}
+function nQ(){if(qi<QZ.length-1){qi++;rQz()}}
+function pQ(){if(qi>0){qi--;rQz()}}
+function rQ(){qi=0;qs=0;qa=new Array(QZ.length).fill(false);saveQuiz();rQz()}
+rQz();
+</script>
+</body>
+</html>
