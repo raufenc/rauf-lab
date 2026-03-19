@@ -206,6 +206,101 @@ body{font-family:var(--f);color:var(--t);background:var(--bg);line-height:1.65;o
 /* ═══ ANIM ═══ */
 .fade-up{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
 .fade-up.vis{opacity:1;transform:translateY(0)}
+
+/* ═══ FLOATING PROGRESS ═══ */
+.progress-float{position:fixed;bottom:20px;right:20px;z-index:99;display:flex;align-items:center;gap:10px;background:rgba(6,6,18,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--bd2);border-radius:16px;padding:10px 16px;box-shadow:0 8px 32px rgba(0,0,0,.4);transition:all .3s;cursor:pointer}
+.progress-float:hover{border-color:var(--ac);transform:translateY(-2px)}
+.pf-ring{position:relative;width:40px;height:40px;flex-shrink:0}
+.pf-ring svg{width:40px;height:40px;transform:rotate(-90deg)}
+.pf-circle{transition:stroke-dashoffset .6s ease}
+.pf-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:var(--t)}
+.pf-label{font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
+.pf-score{font-size:.82rem;font-weight:700;color:var(--t)}
+.pf-streak{padding:3px 8px;border-radius:8px;background:rgba(251,191,36,.15);font-size:.75rem;font-weight:700;color:var(--gd);animation:streakPop .4s ease}
+@keyframes streakPop{0%{transform:scale(0.5)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+@media(max-width:600px){.progress-float{bottom:10px;right:10px;padding:8px 12px}.pf-info{display:none}}
+
+/* ═══ OYUN BÖLÜMÜ ═══ */
+.game-tabs{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap}
+.game-tab{padding:10px 20px;border-radius:12px;border:1px solid var(--bd);background:var(--sf);color:var(--t2);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .25s;font-family:var(--f)}
+.game-tab:hover,.game-tab.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.game-panel{display:none}
+.game-panel.on{display:block}
+
+/* Quiz */
+.quiz-card{background:var(--bg1);border:1px solid var(--bd);border-radius:18px;padding:32px;margin-bottom:20px;position:relative;overflow:hidden}
+.quiz-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--br),var(--ac),var(--ai))}
+.quiz-progress{display:flex;gap:4px;margin-bottom:20px}
+.quiz-dot{width:100%;height:4px;border-radius:2px;background:var(--sf2);transition:background .3s}
+.quiz-dot.done{background:var(--gn)}.quiz-dot.wrong{background:var(--rd)}.quiz-dot.cur{background:var(--ac)}
+.quiz-q{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.quiz-hint{font-size:.78rem;color:var(--t3);margin-bottom:20px}
+.quiz-opts{display:grid;gap:10px}
+.quiz-opt{padding:14px 18px;border-radius:12px;border:1px solid var(--bd);background:var(--sf);color:var(--t);font-size:.88rem;cursor:pointer;transition:all .2s;text-align:left;font-family:var(--f);display:flex;align-items:center;gap:12px}
+.quiz-opt:hover{border-color:var(--ac);background:var(--ac3)}
+.quiz-opt.correct{border-color:var(--gn);background:rgba(52,211,153,.15);color:var(--gn)}
+.quiz-opt.wrong{border-color:var(--rd);background:rgba(248,113,113,.1);color:var(--rd)}
+.quiz-opt .okey{width:28px;height:28px;border-radius:8px;background:var(--sf2);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0}
+.quiz-explain{margin-top:16px;padding:14px;border-radius:10px;background:var(--sf);font-size:.82rem;color:var(--t2);display:none}
+.quiz-explain.show{display:block}
+.quiz-next{margin-top:16px;padding:10px 24px;border-radius:10px;background:var(--ac);color:#fff;border:none;font-size:.85rem;font-weight:600;cursor:pointer;font-family:var(--f);display:none}
+.quiz-next.show{display:inline-block}
+.quiz-result{text-align:center;padding:40px}
+.quiz-result h3{font-size:1.6rem;font-weight:800;margin-bottom:8px}
+.quiz-result .big-score{font-size:4rem;font-weight:900;line-height:1;margin:16px 0}
+.quiz-result p{color:var(--t2);font-size:.9rem;margin-bottom:20px}
+.quiz-restart{padding:12px 28px;border-radius:12px;background:var(--ac);color:#fff;border:none;font-size:.9rem;font-weight:700;cursor:pointer;font-family:var(--f)}
+
+/* Eşleştirme */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+@media(max-width:600px){.match-grid{grid-template-columns:1fr}}
+.match-col h4{font-size:.85rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.match-items{display:flex;flex-direction:column;gap:8px}
+.match-item{padding:12px 16px;border-radius:12px;border:2px solid var(--bd);background:var(--bg1);font-size:.82rem;cursor:pointer;transition:all .25s;user-select:none}
+.match-item:hover{border-color:var(--bd2);transform:translateX(4px)}
+.match-item.selected{border-color:var(--ac);background:var(--ac3);box-shadow:0 0 12px rgba(124,92,252,.2)}
+.match-item.matched{border-color:var(--gn);background:rgba(52,211,153,.1);opacity:.7;pointer-events:none}
+.match-item.wrong-match{border-color:var(--rd);background:rgba(248,113,113,.1);animation:shake .4s}
+.match-item.bio-item{border-left:3px solid var(--br)}
+.match-item.ai-item{border-left:3px solid var(--ai)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.match-score{text-align:center;padding:16px;background:var(--bg1);border-radius:14px;border:1px solid var(--bd)}
+.match-score .ms-v{font-size:2rem;font-weight:900}
+.match-timer{font-size:.8rem;color:var(--t2);font-family:var(--m)}
+.match-controls{display:flex;gap:10px;justify-content:center;margin-top:16px}
+.match-btn{padding:10px 20px;border-radius:10px;border:1px solid var(--bd);background:var(--sf);color:var(--t);font-size:.82rem;font-weight:600;cursor:pointer;font-family:var(--f);transition:all .2s}
+.match-btn:hover{background:var(--ac);color:#fff;border-color:var(--ac)}
+.match-btn.primary{background:var(--ac);color:#fff;border-color:var(--ac)}
+
+/* Flip kartlar */
+.flip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.flip-card{perspective:600px;height:200px;cursor:pointer}
+.flip-inner{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.flip-card.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-front,.flip-back{position:absolute;inset:0;border-radius:16px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.flip-front{background:var(--bg1);border:1px solid var(--bd)}
+.flip-front .flip-icon{font-size:2.5rem;margin-bottom:10px}
+.flip-front h4{font-size:.9rem;font-weight:700}
+.flip-front p{font-size:.72rem;color:var(--t3);margin-top:4px}
+.flip-back{background:linear-gradient(135deg,rgba(255,107,157,.1),rgba(78,205,196,.1));border:1px solid var(--bd2);transform:rotateY(180deg)}
+.flip-back .fb-label{font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.flip-back .fb-val{font-size:.85rem;font-weight:600;margin-bottom:4px}
+.flip-back .fb-sub{font-size:.72rem;color:var(--t2)}
+
+/* Skor popup */
+.score-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:200;background:rgba(6,6,18,.96);backdrop-filter:blur(20px);border:1px solid var(--bd2);border-radius:24px;padding:40px;text-align:center;transition:transform .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.score-popup.show{transform:translate(-50%,-50%) scale(1);pointer-events:auto}
+.score-popup h3{font-size:1.4rem;font-weight:800;margin-bottom:8px}
+.score-popup .sp-pts{font-size:3rem;font-weight:900;background:linear-gradient(135deg,var(--br),var(--ai));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.score-popup .sp-msg{color:var(--t2);font-size:.85rem;margin-top:6px}
+.score-popup .sp-close{margin-top:16px;padding:8px 24px;border-radius:10px;background:var(--ac);color:#fff;border:none;font-size:.82rem;font-weight:600;cursor:pointer;font-family:var(--f)}
+
+/* Achievement toasts */
+.achievement-toast{position:fixed;top:70px;right:20px;z-index:150;background:rgba(6,6,18,.95);backdrop-filter:blur(16px);border:1px solid var(--gd);border-radius:14px;padding:14px 20px;display:flex;align-items:center;gap:12px;transform:translateX(120%);transition:transform .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 32px rgba(251,191,36,.2)}
+.achievement-toast.show{transform:translateX(0)}
+.ach-icon{font-size:1.8rem}
+.ach-info h4{font-size:.82rem;font-weight:700;color:var(--gd)}
+.ach-info p{font-size:.7rem;color:var(--t2)}
 </style>
 </head>
 <body>
@@ -220,8 +315,19 @@ body{font-family:var(--f);color:var(--t);background:var(--bg);line-height:1.65;o
     <a href="#aileler">Aileler</a>
     <a href="#farklar">Temel Farklar</a>
     <a href="#kronoloji">Kronoloji</a>
+    <a href="#oyun">🎮 Oyun</a>
   </div>
 </nav>
+
+<!-- FLOATING PROGRESS -->
+<div class="progress-float" id="progressFloat">
+  <div class="pf-ring"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" stroke="rgba(255,255,255,.1)" stroke-width="3" fill="none"/><circle class="pf-circle" cx="20" cy="20" r="17" stroke="url(#pgGrad)" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="106.8" stroke-dashoffset="106.8"/><defs><linearGradient id="pgGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff6b9d"/><stop offset="100%" stop-color="#4ecdc4"/></linearGradient></defs></svg><span class="pf-pct" id="pfPct">0</span></div>
+  <div class="pf-info">
+    <div class="pf-label">Keşif Puanı</div>
+    <div class="pf-score" id="pfScore">0 / 200</div>
+  </div>
+  <div class="pf-streak" id="pfStreak" style="display:none">🔥 <span id="streakCount">0</span></div>
+</div>
 
 <!-- HERO -->
 <section class="hero" id="hero">
@@ -594,6 +700,54 @@ body{font-family:var(--f);color:var(--t);background:var(--bg);line-height:1.65;o
   <div id="timelineContainer" class="timeline fade-up"></div>
 </section>
 
+<!-- OYUN BÖLÜMÜ -->
+<section class="sec" id="oyun">
+  <div class="sh fade-up"><div class="ln" style="background:linear-gradient(90deg,var(--br),var(--ai))"></div><h2>🎮 Bilgini Test Et</h2><p>Quiz, eşleştirme oyunu ve bilgi kartları ile öğrendiklerini pekiştir</p></div>
+
+  <div class="game-tabs fade-up">
+    <button class="game-tab on" onclick="switchGame('quiz',this)">🧠 Quiz (10 Soru)</button>
+    <button class="game-tab" onclick="switchGame('match',this)">🔗 Eşleştirme</button>
+    <button class="game-tab" onclick="switchGame('flip',this)">🃏 Bilgi Kartları</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="game-panel on" id="game-quiz">
+    <div class="quiz-card" id="quizCard"></div>
+  </div>
+
+  <!-- EŞLEŞTIRME -->
+  <div class="game-panel" id="game-match">
+    <div class="match-score">
+      <span class="ms-v" style="color:var(--gn)" id="matchCorrect">0</span><span style="color:var(--t3)"> / </span><span class="ms-v" id="matchTotal">8</span>
+      <div class="match-timer" id="matchTimer">⏱ 00:00</div>
+    </div>
+    <div class="match-grid" id="matchGrid"></div>
+    <div class="match-controls">
+      <button class="match-btn primary" onclick="startMatch()">🔄 Yeni Oyun</button>
+    </div>
+  </div>
+
+  <!-- FLIP KARTLAR -->
+  <div class="game-panel" id="game-flip">
+    <p style="color:var(--t2);font-size:.85rem;margin-bottom:16px">Kartlara tıklayarak arkasındaki bilgiyi öğren! Her kart +2 puan.</p>
+    <div class="flip-grid" id="flipGrid"></div>
+  </div>
+</section>
+
+<!-- Score Popup -->
+<div class="score-popup" id="scorePopup">
+  <h3 id="spTitle">Tebrikler!</h3>
+  <div class="sp-pts" id="spPts">+10</div>
+  <div class="sp-msg" id="spMsg">Doğru cevap!</div>
+  <button class="sp-close" onclick="hideScorePopup()">Tamam</button>
+</div>
+
+<!-- Achievement Toast -->
+<div class="achievement-toast" id="achToast">
+  <span class="ach-icon" id="achIcon">🏆</span>
+  <div class="ach-info"><h4 id="achTitle">Başarım</h4><p id="achDesc">Açıklama</p></div>
+</div>
+
 <footer class="footer">
   <p>Beyin ↔ Yapay Zekâ · 50 Paralel Keşif · <a href="/">raufenc.com</a></p>
   <p style="margin-top:6px;font-size:.72rem">Kaynak: Beyin_YZ_Karsilastirma_v3.xlsx · 2024-2026</p>
@@ -858,6 +1012,305 @@ const obs=new IntersectionObserver((entries)=>{
   entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')});
 },{threshold:0.1});
 document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+
+// ═══════════════════════════════════════════════
+// OYUNLAŞTIRMA SİSTEMİ
+// ═══════════════════════════════════════════════
+
+// Skor sistemi
+let totalScore=0;
+let streak=0;
+let exploredCards=new Set();
+let achievements=new Set();
+
+function addScore(pts,reason){
+  totalScore+=pts;
+  updateProgressFloat();
+  // Achievements check
+  if(totalScore>=50&&!achievements.has('starter')){unlockAchievement('starter','🌟','İlk Adım','50 puan kazandın!');}
+  if(totalScore>=100&&!achievements.has('explorer')){unlockAchievement('explorer','🔬','Araştırmacı','100 puan kazandın!');}
+  if(totalScore>=150&&!achievements.has('expert')){unlockAchievement('expert','🧪','Uzman','150 puan kazandın!');}
+  if(totalScore>=200&&!achievements.has('master')){unlockAchievement('master','🏆','Bilim İnsanı','200 puan kazandın!');}
+  if(streak>=3&&!achievements.has('streak3')){unlockAchievement('streak3','🔥','Seri Katil','3 doğru üst üste!');}
+  if(streak>=5&&!achievements.has('streak5')){unlockAchievement('streak5','💥','Durdurulamaz','5 doğru üst üste!');}
+}
+
+function updateProgressFloat(){
+  const maxScore=200;
+  const pct=Math.min(100,Math.round(totalScore/maxScore*100));
+  document.getElementById('pfPct').textContent=pct+'%';
+  document.getElementById('pfScore').textContent=totalScore+' / '+maxScore;
+  const circle=document.querySelector('.pf-circle');
+  const circumference=106.8;
+  circle.style.strokeDashoffset=circumference-(pct/100*circumference);
+  const streakEl=document.getElementById('pfStreak');
+  if(streak>=2){streakEl.style.display='block';document.getElementById('streakCount').textContent=streak;}
+  else{streakEl.style.display='none';}
+}
+
+function showScorePopup(title,pts,msg){
+  document.getElementById('spTitle').textContent=title;
+  document.getElementById('spPts').textContent='+'+pts;
+  document.getElementById('spMsg').textContent=msg;
+  document.getElementById('scorePopup').classList.add('show');
+}
+function hideScorePopup(){document.getElementById('scorePopup').classList.remove('show');}
+
+function unlockAchievement(id,icon,title,desc){
+  achievements.add(id);
+  const t=document.getElementById('achToast');
+  document.getElementById('achIcon').textContent=icon;
+  document.getElementById('achTitle').textContent=title;
+  document.getElementById('achDesc').textContent=desc;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// Kart keşfi puanı - toggleCard'ı güncelle
+const origToggleCard=toggleCard;
+toggleCard=function(el){
+  origToggleCard(el);
+  const item=el.closest('.card-item');
+  const no=item.dataset.no;
+  if(item.classList.contains('open')&&!exploredCards.has(no)){
+    exploredCards.add(no);
+    addScore(2,'Keşif #'+no+' incelendi');
+    if(exploredCards.size>=10&&!achievements.has('curious')){unlockAchievement('curious','🔍','Meraklı','10 keşif incelendi!');}
+    if(exploredCards.size>=25&&!achievements.has('halfexplorer')){unlockAchievement('halfexplorer','📚','Yarı Yolda','25 keşif incelendi!');}
+    if(exploredCards.size>=50&&!achievements.has('allexplorer')){unlockAchievement('allexplorer','🎓','Tüm Keşifler','50 keşfin hepsini inceledin!');}
+  }
+};
+
+// Game tab switch
+function switchGame(id,btn){
+  document.querySelectorAll('.game-tab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.game-panel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('game-'+id).classList.add('on');
+}
+
+// ═══ QUIZ ═══
+const QUIZ_POOL=[];
+DATA.forEach(d=>{
+  // Tip 1: Beyin keşfinin YZ karşılığı
+  const wrongsYZ=DATA.filter(x=>x.no!==d.no).sort(()=>Math.random()-.5).slice(0,3).map(x=>x.yzk);
+  QUIZ_POOL.push({
+    q:`"${d.tr}" (${d.en}) keşfinin yapay zekâdaki karşılığı nedir?`,
+    hint:`${d.ara}, ${d.yil}`,
+    opts:[d.yzk,...wrongsYZ].sort(()=>Math.random()-.5),
+    answer:d.yzk,
+    explain:`${d.tr} → ${d.yzk}. Ortak ilke: ${d.oi}`
+  });
+  // Tip 2: Araştırmacı eşleştirme
+  const wrongsAra=DATA.filter(x=>x.no!==d.no).sort(()=>Math.random()-.5).slice(0,3).map(x=>x.ara);
+  QUIZ_POOL.push({
+    q:`"${d.tr}" keşfini hangi araştırmacı(lar) yaptı?`,
+    hint:`${d.yil} · ${d.alan}`,
+    opts:[d.ara,...wrongsAra].sort(()=>Math.random()-.5),
+    answer:d.ara,
+    explain:`${d.tr} (${d.yil}) araştırmacısı: ${d.ara}. ${d.bm}`
+  });
+  // Tip 3: Yıl tahmini
+  if(d.gec>10){
+    QUIZ_POOL.push({
+      q:`"${d.tr}" beyin keşfi (${d.yil}) ile YZ karşılığı "${d.yzk}" arasında kaç yıl gecikme var?`,
+      hint:`Beyin: ${d.yil} → YZ: ${d.yzy}`,
+      opts:[d.gec.toString(),(d.gec+15).toString(),(d.gec-10>0?d.gec-10:d.gec+5).toString(),(d.gec+30).toString()].sort(()=>Math.random()-.5),
+      answer:d.gec.toString(),
+      explain:`${d.yil} → ${d.yzy} = ${d.gec} yıl gecikme. ${d.iy}`
+    });
+  }
+});
+
+let quizQuestions=[];
+let quizIdx=0;
+let quizScore=0;
+let quizAnswered=false;
+
+function startQuiz(){
+  quizQuestions=QUIZ_POOL.sort(()=>Math.random()-.5).slice(0,10);
+  quizIdx=0;quizScore=0;quizAnswered=false;
+  renderQuiz();
+}
+function renderQuiz(){
+  if(quizIdx>=quizQuestions.length){
+    renderQuizResult();return;
+  }
+  const q=quizQuestions[quizIdx];
+  quizAnswered=false;
+  const c=document.getElementById('quizCard');
+  c.innerHTML=`
+    <div class="quiz-progress">${quizQuestions.map((_,i)=>`<div class="quiz-dot ${i<quizIdx?(quizQuestions[i]._correct?'done':'wrong'):i===quizIdx?'cur':''}"></div>`).join('')}</div>
+    <div style="font-size:.72rem;color:var(--t3);margin-bottom:6px">Soru ${quizIdx+1} / ${quizQuestions.length}</div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-hint">💡 İpucu: ${q.hint}</div>
+    <div class="quiz-opts">${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(${i})" data-val="${o.replace(/"/g,'&quot;')}"><span class="okey">${String.fromCharCode(65+i)}</span>${o}</button>`).join('')}</div>
+    <div class="quiz-explain" id="quizExplain">${q.explain}</div>
+    <button class="quiz-next" id="quizNext" onclick="nextQuiz()">Sonraki →</button>
+  `;
+}
+function answerQuiz(idx){
+  if(quizAnswered)return;
+  quizAnswered=true;
+  const q=quizQuestions[quizIdx];
+  const opts=document.querySelectorAll('.quiz-opt');
+  const selected=opts[idx];
+  const val=selected.dataset.val;
+  const correct=val===q.answer;
+  q._correct=correct;
+  opts.forEach(o=>{
+    if(o.dataset.val===q.answer)o.classList.add('correct');
+    else o.style.opacity='.5';
+  });
+  if(correct){
+    selected.classList.add('correct');
+    quizScore++;
+    streak++;
+    addScore(10,'Quiz doğru cevap');
+  }else{
+    selected.classList.add('wrong');
+    streak=0;
+    updateProgressFloat();
+  }
+  document.getElementById('quizExplain').classList.add('show');
+  document.getElementById('quizNext').classList.add('show');
+}
+function nextQuiz(){
+  quizIdx++;
+  renderQuiz();
+}
+function renderQuizResult(){
+  const c=document.getElementById('quizCard');
+  const pct=Math.round(quizScore/quizQuestions.length*100);
+  let emoji='😅',msg='Biraz daha çalışmalısın!';
+  if(pct>=80){emoji='🏆';msg='Muhteşem! Gerçek bir uzman!';}
+  else if(pct>=60){emoji='👏';msg='Çok iyi! Neredeyse mükemmel!';}
+  else if(pct>=40){emoji='🤔';msg='Fena değil, tekrar dene!';}
+  if(pct===100&&!achievements.has('perfect')){unlockAchievement('perfect','💎','Mükemmeliyetçi','Quiz\'de %100 yaptın!');}
+  c.innerHTML=`<div class="quiz-result">
+    <div style="font-size:4rem">${emoji}</div>
+    <h3>Quiz Tamamlandı!</h3>
+    <div class="big-score" style="color:${pct>=60?'var(--gn)':'var(--rd)'}">${quizScore}/${quizQuestions.length}</div>
+    <p>${msg}<br><span style="font-size:.78rem;color:var(--t3)">Toplam kazanılan: +${quizScore*10} puan</span></p>
+    <button class="quiz-restart" onclick="startQuiz()">🔄 Tekrar Dene</button>
+  </div>`;
+}
+startQuiz();
+
+// ═══ EŞLEŞTIRME OYUNU ═══
+let matchSelected=null;
+let matchCorrectCount=0;
+let matchPairs=[];
+let matchTimerInterval=null;
+let matchSeconds=0;
+
+function startMatch(){
+  clearInterval(matchTimerInterval);
+  matchSelected=null;matchCorrectCount=0;matchSeconds=0;
+  document.getElementById('matchCorrect').textContent='0';
+  document.getElementById('matchTimer').textContent='⏱ 00:00';
+  const shuffled=DATA.sort(()=>Math.random()-.5).slice(0,8);
+  matchPairs=shuffled.map(d=>({bio:d.tr,ai:d.yzk,no:d.no}));
+  const bioItems=matchPairs.map(p=>({text:p.bio,no:p.no,type:'bio'})).sort(()=>Math.random()-.5);
+  const aiItems=matchPairs.map(p=>({text:p.ai,no:p.no,type:'ai'})).sort(()=>Math.random()-.5);
+  document.getElementById('matchTotal').textContent=matchPairs.length;
+  const grid=document.getElementById('matchGrid');
+  grid.innerHTML=`
+    <div><h4 style="color:var(--br)">🧠 Beyin Keşifleri</h4>
+      <div class="match-items">${bioItems.map(i=>`<div class="match-item bio-item" data-no="${i.no}" data-type="bio" onclick="selectMatch(this)">${i.text}</div>`).join('')}</div>
+    </div>
+    <div><h4 style="color:var(--ai)">🤖 YZ Karşılıkları</h4>
+      <div class="match-items">${aiItems.map(i=>`<div class="match-item ai-item" data-no="${i.no}" data-type="ai" onclick="selectMatch(this)">${i.text}</div>`).join('')}</div>
+    </div>
+  `;
+  matchTimerInterval=setInterval(()=>{
+    matchSeconds++;
+    const m=Math.floor(matchSeconds/60).toString().padStart(2,'0');
+    const s=(matchSeconds%60).toString().padStart(2,'0');
+    document.getElementById('matchTimer').textContent='⏱ '+m+':'+s;
+  },1000);
+}
+
+function selectMatch(el){
+  if(el.classList.contains('matched'))return;
+  if(matchSelected&&matchSelected.dataset.type===el.dataset.type){
+    matchSelected.classList.remove('selected');
+    matchSelected=el;el.classList.add('selected');
+    return;
+  }
+  if(!matchSelected){
+    matchSelected=el;el.classList.add('selected');return;
+  }
+  // Check match
+  if(matchSelected.dataset.no===el.dataset.no){
+    matchSelected.classList.remove('selected');
+    matchSelected.classList.add('matched');
+    el.classList.add('matched');
+    matchCorrectCount++;
+    streak++;
+    addScore(5,'Eşleştirme doğru');
+    document.getElementById('matchCorrect').textContent=matchCorrectCount;
+    matchSelected=null;
+    if(matchCorrectCount>=matchPairs.length){
+      clearInterval(matchTimerInterval);
+      const bonus=matchSeconds<60?20:matchSeconds<120?10:5;
+      addScore(bonus,'Eşleştirme tamamlandı');
+      showScorePopup('Eşleştirme Tamam!',matchCorrectCount*5+bonus,`${matchSeconds} saniyede tamamladın! Hız bonusu: +${bonus}`);
+      if(matchSeconds<60&&!achievements.has('speedster')){unlockAchievement('speedster','⚡','Hız Şeytanı','Eşleştirmeyi 1 dakikada tamamladın!');}
+    }
+  }else{
+    el.classList.add('wrong-match');
+    matchSelected.classList.add('wrong-match');
+    streak=0;updateProgressFloat();
+    const ms=matchSelected;
+    setTimeout(()=>{ms.classList.remove('selected','wrong-match');el.classList.remove('wrong-match');},600);
+    matchSelected=null;
+  }
+}
+startMatch();
+
+// ═══ FLIP KARTLAR ═══
+function renderFlipCards(){
+  const selected=DATA.sort(()=>Math.random()-.5).slice(0,12);
+  const flipped=new Set();
+  const grid=document.getElementById('flipGrid');
+  grid.innerHTML=selected.map(d=>{
+    const km=KAT_META[d.kat]||{icon:"📌"};
+    return `<div class="flip-card" onclick="flipCard(this,${d.no})">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <div class="flip-icon">${km.icon}</div>
+          <h4>${d.tr}</h4>
+          <p>(${d.en})</p>
+          <p style="margin-top:8px;color:var(--t3);font-size:.65rem">Tıkla ve öğren →</p>
+        </div>
+        <div class="flip-back">
+          <div class="fb-label">🧠 Beyin (${d.yil})</div>
+          <div class="fb-val">${d.bm.substring(0,80)}${d.bm.length>80?'...':''}</div>
+          <div style="margin:8px 0;color:var(--t3)">↕</div>
+          <div class="fb-label">🤖 YZ (${d.yzy})</div>
+          <div class="fb-val">${d.yzk}</div>
+          <div class="fb-sub" style="margin-top:8px;color:var(--gd)">🔗 ${d.oi.substring(0,60)}${d.oi.length>60?'...':''}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+const flippedCards=new Set();
+function flipCard(el,no){
+  el.classList.toggle('flipped');
+  if(!flippedCards.has(no)){
+    flippedCards.add(no);
+    addScore(2,'Bilgi kartı çevirildi');
+    if(flippedCards.size>=12&&!achievements.has('flipmaster')){unlockAchievement('flipmaster','🃏','Kart Ustası','Tüm bilgi kartlarını çevirdin!');}
+  }
+}
+renderFlipCards();
+
+// ═══ FADE-UP ═══ (re-observe for new elements)
+document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+updateProgressFloat();
 </script>
 </body>
 </html>
