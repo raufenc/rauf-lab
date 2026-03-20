@@ -1,13 +1,109 @@
 /* ===== Firebase Setup ===== */
-let auth, db, googleProvider;
+let auth, googleProvider;
 let currentUser = null;
 let userRole = null;
+
+const FIRESTORE_DB_ID = 'ai-studio-ac5d1b43-b908-42e1-8974-579e8d9328bb';
+const FIRESTORE_BASE = `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/${FIRESTORE_DB_ID}/documents`;
 
 function initFirebase() {
   firebase.initializeApp(FIREBASE_CONFIG);
   auth = firebase.auth();
-  db = firebase.firestore();
   googleProvider = new firebase.auth.GoogleAuthProvider();
+}
+
+/* ===== Firestore REST API helpers ===== */
+async function getToken() {
+  if (!currentUser) return null;
+  return await currentUser.getIdToken();
+}
+
+function toFirestoreValue(v) {
+  if (v === null || v === undefined) return { nullValue: null };
+  if (typeof v === 'string') return { stringValue: v };
+  if (typeof v === 'number') return Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
+  if (typeof v === 'boolean') return { booleanValue: v };
+  if (v instanceof Date) return { timestampValue: v.toISOString() };
+  if (v === '__SERVER_TIMESTAMP__') return { timestampValue: new Date().toISOString() };
+  return { stringValue: String(v) };
+}
+
+function fromFirestoreValue(v) {
+  if (!v) return null;
+  if ('stringValue' in v) return v.stringValue;
+  if ('integerValue' in v) return parseInt(v.integerValue);
+  if ('doubleValue' in v) return v.doubleValue;
+  if ('booleanValue' in v) return v.booleanValue;
+  if ('timestampValue' in v) return new Date(v.timestampValue);
+  if ('nullValue' in v) return null;
+  if ('mapValue' in v) return fromFirestoreDoc(v.mapValue);
+  if ('arrayValue' in v) return (v.arrayValue.values || []).map(fromFirestoreValue);
+  return null;
+}
+
+function fromFirestoreDoc(doc) {
+  if (!doc || !doc.fields) return {};
+  const obj = {};
+  for (const [k, v] of Object.entries(doc.fields)) {
+    obj[k] = fromFirestoreValue(v);
+  }
+  return obj;
+}
+
+async function fsSet(collection, docId, data) {
+  const token = await getToken();
+  const fields = {};
+  for (const [k, v] of Object.entries(data)) {
+    fields[k] = toFirestoreValue(v);
+  }
+  const url = `${FIRESTORE_BASE}/${collection}/${docId}`;
+  const res = await fetch(url, {
+    method: 'PATCH',
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fields })
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Firestore set error (${res.status}): ${errText}`);
+  }
+  return await res.json();
+}
+
+async function fsAdd(collection, data) {
+  const token = await getToken();
+  const fields = {};
+  for (const [k, v] of Object.entries(data)) {
+    fields[k] = toFirestoreValue(v);
+  }
+  const url = `${FIRESTORE_BASE}/${collection}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fields })
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Firestore add error (${res.status}): ${errText}`);
+  }
+  return await res.json();
+}
+
+async function fsGetAll(collection) {
+  const token = await getToken();
+  const url = `${FIRESTORE_BASE}/${collection}`;
+  const res = await fetch(url, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Firestore getAll error (${res.status}): ${errText}`);
+  }
+  const data = await res.json();
+  if (!data.documents) return [];
+  return data.documents.map(doc => {
+    const id = doc.name.split('/').pop();
+    return { id, ...fromFirestoreDoc(doc) };
+  });
 }
 
 /* ===== State ===== */
@@ -72,7 +168,6 @@ async function loginWithGoogle() {
   } catch (e) {
     console.error('Login error:', e);
     if (e.code === 'auth/popup-blocked') {
-      // Fallback to redirect
       auth.signInWithRedirect(googleProvider);
     } else if (e.code !== 'auth/popup-closed-by-user') {
       alert('Giriş hatası: ' + (e.message || e.code));
@@ -301,6 +396,14 @@ function calcScore(answers, questions) {
   return Math.round((correct / questions.length) * 100);
 }
 
+function showToast(msg, isError) {
+  const errDiv = document.createElement('div');
+  errDiv.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:${isError ? '#c0392b' : '#27ae60'};color:#fff;padding:12px 24px;border-radius:8px;z-index:9999;font-size:14px;max-width:90vw;text-align:center`;
+  errDiv.textContent = msg;
+  document.body.appendChild(errDiv);
+  setTimeout(() => errDiv.remove(), 6000);
+}
+
 async function finishLesson() {
   lessonStep = 'completed';
   render();
@@ -308,25 +411,19 @@ async function finishLesson() {
   const preScore = calcScore(preTestAnswers, currentLesson.preTest);
   const postScore = calcScore(postTestAnswers, currentLesson.postTest);
 
-  // Save to Firestore
   if (currentUser) {
     try {
-      await db.collection('progress').add({
+      await fsAdd('progress', {
         userId: currentUser.uid,
         lessonId: currentLesson.id,
         preTestScore: preScore,
         postTestScore: postScore,
-        completedAt: firebase.firestore.FieldValue.serverTimestamp()
+        completedAt: '__SERVER_TIMESTAMP__'
       });
-      console.log('Progress saved successfully');
+      showToast('Sonuç kaydedildi!', false);
     } catch (e) {
       console.error('Save error:', e);
-      // Show error to user
-      const errDiv = document.createElement('div');
-      errDiv.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#c0392b;color:#fff;padding:12px 24px;border-radius:8px;z-index:9999;font-size:14px';
-      errDiv.textContent = 'Sonuç kaydedilemedi: ' + (e.message || e.code);
-      document.body.appendChild(errDiv);
-      setTimeout(() => errDiv.remove(), 8000);
+      showToast('Sonuç kaydedilemedi: ' + e.message, true);
     }
   }
 }
@@ -367,13 +464,17 @@ async function renderAdmin(app) {
     </div>`;
 
   try {
-    const [usersSnap, progressSnap] = await Promise.all([
-      db.collection('users').get(),
-      db.collection('progress').orderBy('completedAt', 'desc').get()
+    const [users, progress] = await Promise.all([
+      fsGetAll('users'),
+      fsGetAll('progress')
     ]);
 
-    const users = usersSnap.docs.map(d => d.data());
-    const progress = progressSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // Sort progress by completedAt descending
+    progress.sort((a, b) => {
+      const da = a.completedAt instanceof Date ? a.completedAt : new Date(0);
+      const db2 = b.completedAt instanceof Date ? b.completedAt : new Date(0);
+      return db2 - da;
+    });
 
     const students = users.filter(u => u.role === 'student');
     const avgPost = progress.length > 0
@@ -385,7 +486,7 @@ async function renderAdmin(app) {
       : progress.map(r => {
           const userName = users.find(u => u.uid === r.userId)?.displayName || r.userId;
           const lessonName = LESSONS.find(l => l.id === r.lessonId)?.title || r.lessonId;
-          const date = r.completedAt?.toDate ? new Date(r.completedAt.toDate()).toLocaleDateString('tr-TR') : '—';
+          const date = r.completedAt instanceof Date ? r.completedAt.toLocaleDateString('tr-TR') : '—';
           return `<tr>
             <td style="font-weight:600">${esc(userName)}</td>
             <td>${esc(lessonName)}</td>
@@ -424,7 +525,7 @@ async function renderAdmin(app) {
       </div>`;
   } catch (e) {
     console.error('Admin fetch error:', e);
-    $('#admin-content').innerHTML = `<div class="empty-state">Veri yüklenirken hata oluştu.<br><small>${e.message || ''}</small></div>`;
+    $('#admin-content').innerHTML = `<div class="empty-state">Veri yüklenirken hata oluştu.<br><small>${esc(e.message || '')}</small></div>`;
   }
 }
 
@@ -446,7 +547,6 @@ function esc(str) {
 function init() {
   initFirebase();
 
-  // Handle redirect result (fallback for popup-blocked)
   auth.getRedirectResult().catch(e => {
     if (e.code !== 'auth/popup-closed-by-user') {
       console.error('Redirect error:', e);
@@ -456,28 +556,22 @@ function init() {
   auth.onAuthStateChanged(async (user) => {
     currentUser = user;
     if (user) {
-      // Set role based on email (instant, no Firestore wait)
       userRole = user.email === 'raufenc@gmail.com' ? 'admin' : 'student';
       currentPage = 'dashboard';
       render();
 
-      // Save user doc in background
-      const userRef = db.collection('users').doc(user.uid);
-      userRef.set({
+      // Save user doc via REST API (non-blocking)
+      fsSet('users', user.uid, {
         uid: user.uid,
         email: user.email,
-        displayName: user.displayName,
+        displayName: user.displayName || '',
         role: userRole,
-        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge: true }).then(() => {
+        lastLogin: '__SERVER_TIMESTAMP__'
+      }).then(() => {
         console.log('User doc saved OK');
       }).catch(e => {
         console.error('User doc error:', e);
-        const errDiv = document.createElement('div');
-        errDiv.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#c0392b;color:#fff;padding:12px 24px;border-radius:8px;z-index:9999;font-size:14px';
-        errDiv.textContent = 'Firestore hatası: ' + (e.message || e.code);
-        document.body.appendChild(errDiv);
-        setTimeout(() => errDiv.remove(), 8000);
+        showToast('Firestore hatası: ' + e.message, true);
       });
     } else {
       userRole = null;
