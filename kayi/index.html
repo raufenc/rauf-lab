@@ -7,6 +7,8 @@
 <meta name="description" content="Ahmet Şimşirgil'in Kayı I: Ertuğrul'un Ocağı eserinin interaktif keşif sitesi. Osmanlı kuruluş dönemi, padişahlar, olaylar, kişiler ve kavramlar.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 /* ============================================
    KAYII — DESIGN SYSTEM
@@ -33,6 +35,107 @@
   --radius: 8px;
   --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
+
+/* LIGHT MODE */
+[data-theme="light"] {
+  --gold: #8b6914;
+  --gold-light: #a07d1c;
+  --gold-dark: #6b5010;
+  --cream: #1a1a1a;
+  --cream-dark: #2a2a2a;
+  --burgundy: #8b2d3a;
+  --burgundy-light: #a03d4a;
+  --deep-green: #2a5a3a;
+  --deep-green-light: #3a7a4a;
+  --charcoal: #f0ebe3;
+  --charcoal-light: #e8e0d4;
+  --ink: #f8f5f0;
+  --text-light: #1a1a1a;
+  --text-dark: #f5f0e8;
+  --text-muted: #6a6050;
+  --shadow: rgba(0,0,0,0.12);
+}
+
+[data-theme="light"] .nav {
+  background: rgba(248,245,240,0.9);
+  border-bottom-color: rgba(139,105,20,0.2);
+}
+[data-theme="light"] .nav.scrolled {
+  background: rgba(248,245,240,0.97);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+[data-theme="light"] .nav-logo { color: var(--gold); }
+[data-theme="light"] .nav-links a { color: #4a4030; }
+[data-theme="light"] .nav-links a:hover,
+[data-theme="light"] .nav-links a.active { color: var(--gold); background: rgba(139,105,20,0.08); }
+[data-theme="light"] .hamburger span { background: var(--gold); }
+
+[data-theme="light"] .hero-bg {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(139,105,20,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 50%, rgba(42,90,58,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 100%, rgba(139,105,20,0.05) 0%, transparent 50%),
+    linear-gradient(180deg, #f8f5f0 0%, #f0ebe3 50%, #f8f5f0 100%);
+}
+[data-theme="light"] .hero-pattern { opacity: 0.03; }
+[data-theme="light"] .particle { background: var(--gold); }
+[data-theme="light"] .hero h1 { color: #1a1a1a; }
+
+[data-theme="light"] .ruler-card { background: linear-gradient(145deg, #fff, #f5f0e8); border-color: rgba(139,105,20,0.15); }
+[data-theme="light"] .ruler-card:hover { box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
+[data-theme="light"] .person-card { background: #fff; border-color: rgba(0,0,0,0.08); }
+[data-theme="light"] .person-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.1); border-color: rgba(139,105,20,0.3); }
+[data-theme="light"] .place-card { background: #fff; border-color: rgba(0,0,0,0.08); }
+[data-theme="light"] .concept-card { background: linear-gradient(145deg, #fff, rgba(42,90,58,0.04)); border-color: rgba(139,105,20,0.12); }
+[data-theme="light"] .toc-chapter { background: #fff; border-color: rgba(139,105,20,0.12); }
+[data-theme="light"] .toc-chapter-header:hover { background: rgba(139,105,20,0.05); }
+[data-theme="light"] .modal { background: #fff; border-color: rgba(139,105,20,0.2); }
+[data-theme="light"] .modal-close { background: rgba(139,105,20,0.08); border-color: rgba(139,105,20,0.2); }
+[data-theme="light"] .rel-item { background: rgba(0,0,0,0.02); }
+[data-theme="light"] .rel-item:hover { background: rgba(139,105,20,0.06); }
+[data-theme="light"] .rel-type { background: rgba(0,0,0,0.05); }
+[data-theme="light"] .timeline::before { background: linear-gradient(180deg, var(--gold), rgba(139,105,20,0.15)); }
+[data-theme="light"] .timeline-item::before { border-color: #f8f5f0; }
+[data-theme="light"] .timeline-filter { border-color: rgba(139,105,20,0.2); color: #4a4030; }
+[data-theme="light"] .timeline-filter:hover,
+[data-theme="light"] .timeline-filter.active { background: rgba(139,105,20,0.1); border-color: var(--gold); color: var(--gold); }
+[data-theme="light"] .persons-search input { background: #fff; border-color: rgba(139,105,20,0.2); color: #1a1a1a; }
+[data-theme="light"] .index-search-input { background: #fff; border-color: rgba(139,105,20,0.2); color: #1a1a1a; }
+[data-theme="light"] .divider { background: linear-gradient(90deg, transparent, rgba(139,105,20,0.2), transparent); }
+[data-theme="light"] .footer { background: #f0ebe3; border-top-color: rgba(139,105,20,0.15); }
+[data-theme="light"] .scroll-indicator span { border-color: rgba(139,105,20,0.3); }
+[data-theme="light"] .scroll-indicator span::after { background: var(--gold); }
+[data-theme="light"] .hero-cta { background: linear-gradient(135deg, #8b6914, #a07d1c); color: #fff; }
+[data-theme="light"] .back-to-top { background: var(--gold); color: #fff; }
+[data-theme="light"] .dynasty-node { background: linear-gradient(135deg, rgba(139,105,20,0.1), rgba(139,45,58,0.08)); border-color: rgba(139,105,20,0.3); }
+[data-theme="light"] .dynasty-node.sultan { background: linear-gradient(135deg, rgba(139,105,20,0.15), rgba(139,45,58,0.1)); }
+[data-theme="light"] .network-container { background: #fff; border-color: rgba(139,105,20,0.12); }
+[data-theme="light"] .nav-links { background: rgba(248,245,240,0.97); }
+[data-theme="light"] .person-avatar { background: linear-gradient(135deg, #8b6914, #8b2d3a); }
+[data-theme="light"] .bib-item { border-bottom-color: rgba(0,0,0,0.06); }
+[data-theme="light"] .modal-section-list li { border-bottom-color: rgba(0,0,0,0.06); }
+[data-theme="light"] .toc-section-item { border-bottom-color: rgba(0,0,0,0.04); }
+[data-theme="light"] .index-result-item { border-bottom-color: rgba(0,0,0,0.05); }
+
+/* Theme toggle */
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--gold);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.8rem;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+.theme-toggle:hover { background: rgba(201,168,76,0.15); }
+[data-theme="light"] .theme-toggle { border-color: rgba(139,105,20,0.3); color: var(--gold); }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -1288,6 +1391,61 @@ body {
 .back-to-top:hover { background: var(--gold); color: var(--ink); transform: translateY(-3px); }
 
 /* ============================================
+   MAP STYLES
+   ============================================ */
+
+.map-container {
+  width: 100%;
+  height: 500px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(201,168,76,0.2);
+  margin-bottom: 2rem;
+  overflow: hidden;
+  position: relative;
+}
+
+[data-theme="light"] .map-container { border-color: rgba(139,105,20,0.2); }
+
+.map-popup-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #8b6914;
+  margin-bottom: 0.3rem;
+}
+
+.map-popup-type {
+  display: inline-block;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #2a5a3a;
+  background: rgba(42,90,58,0.1);
+  padding: 0.1rem 0.5rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.map-popup-desc {
+  font-family: 'Noto Serif', serif;
+  font-size: 0.82rem;
+  color: #333;
+  line-height: 1.5;
+  margin-bottom: 0.4rem;
+}
+
+.map-popup-pages {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.7rem;
+  color: #888;
+}
+
+.leaflet-popup-content { max-width: 280px; }
+.leaflet-popup-content-wrapper { border-radius: 10px !important; box-shadow: 0 8px 30px rgba(0,0,0,0.2) !important; }
+
+/* ============================================
    RESPONSIVE ADJUSTMENTS
    ============================================ */
 
@@ -1310,6 +1468,7 @@ body {
      ============================================ -->
 <nav class="nav" id="navbar">
   <a href="#hero" class="nav-logo">KAYI</a>
+  <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Gündüz / Gece modu">&#9788;</button>
   <div class="hamburger" onclick="toggleMenu()">
     <span></span><span></span><span></span>
   </div>
@@ -1444,6 +1603,7 @@ body {
     <h2 class="section-title">Fetih Mekânları</h2>
     <p class="section-desc">Söğüt'ten Edirne'ye, Niğbolu'dan Semerkand'a — 40 önemli mekân</p>
   </div>
+  <div class="map-container" id="mapContainer"></div>
   <div class="places-grid" id="placesGrid"></div>
 </section>
 
@@ -1638,31 +1798,40 @@ const PERSONS = [
 ];
 
 const PLACES = [
-  {id:"L001",name:"Söğüt",type:"yerleşim",desc:"Kuruluş menkıbesinin ana merkezidir; Kayıların kışlağı ve Osmanlı başlangıç mekânı olarak anlatılır.",pages:"16-20, 26, 45, 50"},
-  {id:"L002",name:"Domaniç",type:"yaylak / bölge",desc:"Söğüt ile birlikte Ertuğrul'a verilen yaylak bölgesidir.",pages:"17-18, 29"},
-  {id:"L005",name:"Bilecik",type:"şehir / kale",desc:"Edebali zaviyesi, düğün tuzağı ve erken Osmanlı merkezleşmesi bakımından önemlidir.",pages:"20-21, 27, 31-33, 36"},
-  {id:"L006",name:"İnegöl",type:"kale / şehir",desc:"Osman Gazi'nin ilk askerî hedeflerinden biri olarak anlatılır.",pages:"28-29, 33"},
-  {id:"L007",name:"Karacahisar",type:"kale / şehir",desc:"Fetih, hutbe ve kadı tayiniyle aşiretten devlete geçişte sembolik merkezdir.",pages:"29, 33-36"},
-  {id:"L009",name:"Bursa",type:"şehir",desc:"Osmanlıların ana merkezi, uzun kuşatmaların hedefi ve sonraki payitaht olarak öne çıkar.",pages:"33, 43-45, 49, 54, 76-79, 132-133, 177-178, 197-199"},
-  {id:"L010",name:"İznik",type:"şehir",desc:"Pelekanon sonrası teslim olan, medrese ve imaretle yeniden düzenlenen büyük Bizans merkezidir.",pages:"38, 41, 59-60"},
-  {id:"L011",name:"İzmit",type:"şehir",desc:"İznik'ten sonra fethedilen ve Marmara hâkimiyetini tamamlayan önemli merkezdir.",pages:"39, 58-61"},
-  {id:"L015",name:"Çimpe",type:"kale",desc:"Rumeli'ye ilk kalıcı geçişin sembolik ve stratejik noktasıdır.",pages:"66, 78"},
-  {id:"L016",name:"Gelibolu",type:"şehir / yarımada",desc:"Rumeli fetih zincirinin ana kapısı ve stratejik geçit noktasıdır.",pages:"67-69, 177"},
-  {id:"L017",name:"Edirne",type:"şehir",desc:"Murad devrinde fethedilen ve Osmanlı Rumeli siyasetinin merkezine dönüşen şehirdir.",pages:"74-76, 83-84, 111, 177, 197-199"},
-  {id:"L020",name:"Kosova",type:"ova / savaş alanı",desc:"Murad'ın duası, harp meclisi ve şehadetiyle birleşen büyük savaş mekânıdır.",pages:"101-110"},
-  {id:"L021",name:"Konya",type:"şehir",desc:"Karaman seferlerinin ve Mehmed dönemindeki siyasî hesaplaşmaların ana merkezidir.",pages:"96-100, 116-117, 183-185"},
-  {id:"L023",name:"Niğbolu",type:"kale / şehir",desc:"Haçlı seferinin odaklandığı, 1396 büyük zaferine adını veren merkezdir.",pages:"91, 125-132"},
-  {id:"L024",name:"İstanbul",type:"şehir",desc:"Fetih ideali, kuşatmalar, Türk mahallesi ve Bizans diplomasisiyle anlatının ana hedeflerinden biridir.",pages:"45-46, 118-120, 176, 198"},
-  {id:"L025",name:"Ankara",type:"şehir / ova",desc:"Bayezid-Timur savaşının adıyla özdeşleşen merkez ve sonrasında Mehmed çevresinde süren mücadelelerin düğüm noktasıdır.",pages:"82, 120, 143-148, 176, 180-182"},
-  {id:"L027",name:"Semerkand",type:"şehir",desc:"Timur hanedanının merkezidir; Bayezid için ileri sürülen sevk hedefi olarak da anılır.",pages:"134, 151, 154-155"},
-  {id:"L028",name:"Amasya",type:"şehir",desc:"Çelebi Mehmed'in Ankara sonrası toparlanma merkezi ve siyasi karargâhıdır.",pages:"164-175, 197"},
-  {id:"L030",name:"Sivas",type:"şehir",desc:"Orta Anadolu mücadelesi, Mutahharten meselesi ve Mehmed'in hâkimiyet alanı içinde önemlidir.",pages:"138-143, 165-170"},
-  {id:"L031",name:"Samsun",type:"şehir / kale",desc:"Çelebi Mehmed'in son fetihleri ve Candaroğlu dengeleri içinde belirleyici yer tutar.",pages:"188-191"},
-  {id:"L034",name:"Eflak",type:"voyvodalık / bölge",desc:"Hem Bayezid hem Mehmed devrinde Osmanlı-Macar rekabetinin kuzey cephesidir.",pages:"120, 188-189"},
-  {id:"L035",name:"Rumeli",type:"coğrafi bölge",desc:"Osmanlıların Avrupa kıtasındaki ilk kalıcı ilerleyiş sahasıdır.",pages:"64-76, 82-113, 176-177"},
-  {id:"L040",name:"Bolayır",type:"yerleşim",desc:"Süleyman Paşa'nın konağı, mezarı ve Rumeli'ye geçiş döneminin simgesel merkezidir.",pages:"66, 71-72"},
-  {id:"L032",name:"Kastamonu",type:"şehir / bölge",desc:"Candaroğlu-Osmanlı ilişkileri ve Kasım Bey meselesi bağlamında öne çıkar.",pages:"189-190"},
-  {id:"L022",name:"Kütahya",type:"şehir",desc:"Germiyan bağlantısı, Anadolu eyaleti ve Bayezid'in gençlik valiliği açısından önemlidir.",pages:"93-95, 116, 136"}
+  {id:"L001",name:"Söğüt",type:"yerleşim",desc:"Kuruluş menkıbesinin ana merkezidir; Kayıların kışlağı ve Osmanlı başlangıç mekânı olarak anlatılır.",pages:"16-20, 26, 45, 50",lat:40.03,lng:30.18},
+  {id:"L002",name:"Domaniç",type:"yaylak / bölge",desc:"Söğüt ile birlikte Ertuğrul'a verilen yaylak bölgesidir.",pages:"17-18, 29",lat:39.80,lng:29.61},
+  {id:"L005",name:"Bilecik",type:"şehir / kale",desc:"Edebali zaviyesi, düğün tuzağı ve erken Osmanlı merkezleşmesi bakımından önemlidir.",pages:"20-21, 27, 31-33, 36",lat:40.05,lng:30.02},
+  {id:"L006",name:"İnegöl",type:"kale / şehir",desc:"Osman Gazi'nin ilk askerî hedeflerinden biri olarak anlatılır.",pages:"28-29, 33",lat:40.08,lng:29.51},
+  {id:"L007",name:"Karacahisar",type:"kale / şehir",desc:"Fetih, hutbe ve kadı tayiniyle aşiretten devlete geçişte sembolik merkezdir.",pages:"29, 33-36",lat:39.78,lng:30.52},
+  {id:"L009",name:"Bursa",type:"şehir",desc:"Osmanlıların ana merkezi, uzun kuşatmaların hedefi ve sonraki payitaht olarak öne çıkar.",pages:"33, 43-45, 49, 54, 76-79, 132-133, 177-178, 197-199",lat:40.19,lng:29.06},
+  {id:"L010",name:"İznik",type:"şehir",desc:"Pelekanon sonrası teslim olan, medrese ve imaretle yeniden düzenlenen büyük Bizans merkezidir.",pages:"38, 41, 59-60",lat:40.43,lng:29.72},
+  {id:"L011",name:"İzmit",type:"şehir",desc:"İznik'ten sonra fethedilen ve Marmara hâkimiyetini tamamlayan önemli merkezdir.",pages:"39, 58-61",lat:40.77,lng:29.94},
+  {id:"L015",name:"Çimpe",type:"kale",desc:"Rumeli'ye ilk kalıcı geçişin sembolik ve stratejik noktasıdır.",pages:"66, 78",lat:40.38,lng:26.67},
+  {id:"L016",name:"Gelibolu",type:"şehir / yarımada",desc:"Rumeli fetih zincirinin ana kapısı ve stratejik geçit noktasıdır.",pages:"67-69, 177",lat:40.41,lng:26.67},
+  {id:"L017",name:"Edirne",type:"şehir",desc:"Murad devrinde fethedilen ve Osmanlı Rumeli siyasetinin merkezine dönüşen şehirdir.",pages:"74-76, 83-84, 111, 177, 197-199",lat:41.68,lng:26.56},
+  {id:"L020",name:"Kosova",type:"ova / savaş alanı",desc:"Murad'ın duası, harp meclisi ve şehadetiyle birleşen büyük savaş mekânıdır.",pages:"101-110",lat:42.57,lng:21.00},
+  {id:"L021",name:"Konya",type:"şehir",desc:"Karaman seferlerinin ve Mehmed dönemindeki siyasî hesaplaşmaların ana merkezidir.",pages:"96-100, 116-117, 183-185",lat:37.87,lng:32.49},
+  {id:"L023",name:"Niğbolu",type:"kale / şehir",desc:"Haçlı seferinin odaklandığı, 1396 büyük zaferine adını veren merkezdir.",pages:"91, 125-132",lat:43.69,lng:24.89},
+  {id:"L024",name:"İstanbul",type:"şehir",desc:"Fetih ideali, kuşatmalar, Türk mahallesi ve Bizans diplomasisiyle anlatının ana hedeflerinden biridir.",pages:"45-46, 118-120, 176, 198",lat:41.01,lng:28.98},
+  {id:"L025",name:"Ankara",type:"şehir / ova",desc:"Bayezid-Timur savaşının adıyla özdeşleşen merkez ve sonrasında Mehmed çevresinde süren mücadelelerin düğüm noktasıdır.",pages:"82, 120, 143-148, 176, 180-182",lat:39.93,lng:32.86},
+  {id:"L027",name:"Semerkand",type:"şehir",desc:"Timur hanedanının merkezidir; Bayezid için ileri sürülen sevk hedefi olarak da anılır.",pages:"134, 151, 154-155",lat:39.65,lng:66.96},
+  {id:"L028",name:"Amasya",type:"şehir",desc:"Çelebi Mehmed'in Ankara sonrası toparlanma merkezi ve siyasi karargâhıdır.",pages:"164-175, 197",lat:40.65,lng:35.83},
+  {id:"L030",name:"Sivas",type:"şehir",desc:"Orta Anadolu mücadelesi, Mutahharten meselesi ve Mehmed'in hâkimiyet alanı içinde önemlidir.",pages:"138-143, 165-170",lat:39.75,lng:37.02},
+  {id:"L031",name:"Samsun",type:"şehir / kale",desc:"Çelebi Mehmed'in son fetihleri ve Candaroğlu dengeleri içinde belirleyici yer tutar.",pages:"188-191",lat:41.29,lng:36.33},
+  {id:"L034",name:"Eflak",type:"voyvodalık / bölge",desc:"Hem Bayezid hem Mehmed devrinde Osmanlı-Macar rekabetinin kuzey cephesidir.",pages:"120, 188-189",lat:44.43,lng:26.10},
+  {id:"L035",name:"Filibe",type:"şehir",desc:"Rumelideki kalıcı genişlemenin önemli şehirlerinden biri olarak anlatılır.",pages:"82-83",lat:42.15,lng:24.75},
+  {id:"L040",name:"Bolayır",type:"yerleşim",desc:"Süleyman Paşa'nın konağı, mezarı ve Rumeli'ye geçiş döneminin simgesel merkezidir.",pages:"66, 71-72",lat:40.49,lng:26.73},
+  {id:"L032",name:"Kastamonu",type:"şehir / bölge",desc:"Candaroğlu-Osmanlı ilişkileri ve Kasım Bey meselesi bağlamında öne çıkar.",pages:"189-190",lat:41.39,lng:33.78},
+  {id:"L022",name:"Kütahya",type:"şehir",desc:"Germiyan bağlantısı, Anadolu eyaleti ve Bayezid'in gençlik valiliği açısından önemlidir.",pages:"93-95, 116, 136",lat:39.42,lng:29.98},
+  {id:"L036",name:"Halep",type:"şehir",desc:"Timur'un yükseliş anlatısında Memlükler karşısındaki seferleri içinde geçer.",pages:"139",lat:36.20,lng:37.16},
+  {id:"L037",name:"Şam",type:"şehir",desc:"Timur'un Ortadoğu seferleri ve surre anlatısında geçen merkezlerden biridir.",pages:"139, 188",lat:33.51,lng:36.29},
+  {id:"L038",name:"Bağdat",type:"şehir",desc:"Ahmed Celayir ve Timur anlatısında belirir.",pages:"138-139",lat:33.31,lng:44.37},
+  {id:"L039",name:"Çamurlu Derbend",type:"geçit / savaş alanı",desc:"Mehmed'in Musa karşısındaki son zaferinin geçtiği yerdir.",pages:"177",lat:41.30,lng:27.50},
+  {id:"L018",name:"Zağra",type:"şehir",desc:"Lala Şahin'in fetihleri içinde geçen ilk Rumeli merkezlerinden biridir.",pages:"82-83",lat:42.43,lng:25.63},
+  {id:"L019",name:"Ploşnik",type:"geçit / savaş alanı",desc:"Timurtaş Paşa kuvvetlerinin pusuya düştüğü yer.",pages:"100",lat:43.22,lng:21.95},
+  {id:"L012",name:"Sakarya Vadisi",type:"bölge",desc:"Osman Gazi'nin 1292 hareketleri ve uç faaliyetleriyle bağlantılıdır.",pages:"30, 50",lat:40.39,lng:30.40},
+  {id:"L013",name:"Aydos",type:"kale",desc:"Rüya ve teslim anlatısıyla öne çıkan Orhan devri fethidir.",pages:"56-57",lat:40.94,lng:29.28},
+  {id:"L021b",name:"Akşehir",type:"şehir",desc:"Bayezid'in vefat ettiği yer olarak anılır.",pages:"151, 152, 154",lat:38.36,lng:31.42}
 ];
 
 const CONCEPTS = [
@@ -2080,13 +2249,127 @@ function renderRelItems(filterType) {
 
 function renderPlaces() {
   document.getElementById('placesGrid').innerHTML = PLACES.map(p => `
-    <div class="place-card reveal">
+    <div class="place-card reveal" onclick="flyToPlace('${p.id}')">
       <div class="place-name">${p.name}</div>
       <div class="place-type">${p.type}</div>
       <div class="place-desc">${p.desc}</div>
       <div class="place-pages">s. ${p.pages}</div>
     </div>
   `).join('');
+}
+
+let map = null;
+let mapMarkers = {};
+
+function renderMap() {
+  if (map) return;
+
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const tileUrl = isDark
+    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+    : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+
+  map = L.map('mapContainer', {
+    center: [40.0, 32.0],
+    zoom: 5,
+    scrollWheelZoom: false,
+    zoomControl: true
+  });
+
+  map.tileLayer = L.tileLayer(tileUrl, {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+    maxZoom: 15
+  }).addTo(map);
+
+  // Custom gold marker icon
+  const goldIcon = L.divIcon({
+    className: 'custom-marker',
+    html: '<div style="width:14px;height:14px;background:linear-gradient(135deg,#c9a84c,#8b6914);border:2px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>',
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+    popupAnchor: [0, -10]
+  });
+
+  const battleIcon = L.divIcon({
+    className: 'custom-marker',
+    html: '<div style="width:14px;height:14px;background:linear-gradient(135deg,#c0392b,#8b1a1a);border:2px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>',
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+    popupAnchor: [0, -10]
+  });
+
+  PLACES.forEach(p => {
+    if (!p.lat || !p.lng) return;
+
+    const isBattle = p.type.includes('savaş') || p.type.includes('geçit');
+    const icon = isBattle ? battleIcon : goldIcon;
+
+    const marker = L.marker([p.lat, p.lng], { icon: icon }).addTo(map);
+
+    const popupContent = `
+      <div class="map-popup-title">${p.name}</div>
+      <div class="map-popup-type">${p.type}</div>
+      <div class="map-popup-desc">${p.desc}</div>
+      <div class="map-popup-pages">Sayfa: ${p.pages}</div>
+    `;
+
+    marker.bindPopup(popupContent, { maxWidth: 280 });
+    mapMarkers[p.id] = marker;
+  });
+}
+
+function flyToPlace(id) {
+  const p = PLACES.find(x => x.id === id);
+  if (!p || !p.lat || !p.lng || !map) return;
+
+  // Scroll to map first
+  document.getElementById('mapContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  setTimeout(() => {
+    map.flyTo([p.lat, p.lng], 8, { duration: 1.2 });
+    setTimeout(() => {
+      if (mapMarkers[id]) mapMarkers[id].openPopup();
+    }, 1300);
+  }, 500);
+}
+
+function updateMapTiles() {
+  if (!map) return;
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const tileUrl = isDark
+    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+    : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+
+  map.eachLayer(layer => {
+    if (layer instanceof L.TileLayer) map.removeLayer(layer);
+  });
+
+  L.tileLayer(tileUrl, {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+    maxZoom: 15
+  }).addTo(map);
+}
+
+// Theme toggle
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('kayi-theme', next);
+
+  const btn = document.getElementById('themeToggle');
+  btn.innerHTML = next === 'light' ? '&#9789;' : '&#9788;';
+
+  updateMapTiles();
+}
+
+function loadTheme() {
+  const saved = localStorage.getItem('kayi-theme');
+  if (saved === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.getElementById('themeToggle').innerHTML = '&#9789;';
+  }
 }
 
 function renderConcepts() {
@@ -2333,6 +2616,7 @@ function animateCounters() {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
+  loadTheme();
   createParticles();
   renderRulers();
   renderTimeline();
@@ -2345,11 +2629,12 @@ document.addEventListener('DOMContentLoaded', () => {
   renderBibliography();
   renderIndexSearch();
 
-  // Delay reveal init to allow DOM to settle
+  // Delay map & reveal init to allow DOM to settle
   setTimeout(() => {
     initReveal();
     animateCounters();
-  }, 100);
+    renderMap();
+  }, 300);
 });
 
 // Active nav link highlighting
