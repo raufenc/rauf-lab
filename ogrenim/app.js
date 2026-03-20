@@ -1,40 +1,34 @@
-/* ===== Firebase Setup (compat SDK) ===== */
-let firebaseApp, auth, db, googleProvider;
+/* ===== Firebase Setup ===== */
+let auth, db, googleProvider;
 let currentUser = null;
 let userRole = null;
 
 function initFirebase() {
-  firebaseApp = firebase.initializeApp(FIREBASE_CONFIG);
+  firebase.initializeApp(FIREBASE_CONFIG);
   auth = firebase.auth();
   db = firebase.firestore();
-  // Use named database
-  // Note: compat SDK uses default database. For named DB we use REST or default.
   googleProvider = new firebase.auth.GoogleAuthProvider();
 }
 
 /* ===== State ===== */
-let currentPage = 'loading'; // loading, login, dashboard, lesson, admin
+let currentPage = 'loading';
 let currentLesson = null;
-let lessonStep = 'intro'; // intro, pre-test, content, post-test, completed
+let lessonStep = 'intro';
 let contentIndex = 0;
 let quizIndex = 0;
 let preTestAnswers = [];
 let postTestAnswers = [];
 let swiperIndex = 0;
 
-/* ===== DOM Helpers ===== */
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
-
-function show(el) { el && el.classList.remove('hidden'); }
-function hide(el) { el && el.classList.add('hidden'); }
 
 /* ===== Router ===== */
 function render() {
   const app = $('#app');
   switch (currentPage) {
     case 'loading':
-      app.innerHTML = '<div class="loading-page"><div class="spinner"></div></div>';
+      app.innerHTML = '<div class="loading-page"><div class="spinner"></div><div class="loading-text">Yükleniyor...</div></div>';
       break;
     case 'login':
       renderLogin(app);
@@ -55,11 +49,18 @@ function render() {
 function renderLogin(app) {
   app.innerHTML = `
     <div class="login-page">
+      <div class="login-pattern"></div>
       <div class="login-card">
+        <div class="login-bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ</div>
         <div class="login-icon">📖</div>
         <h1 class="login-title">İslami Öğrenim Platformu</h1>
-        <p class="login-subtitle">Öğrenmeye başlamak için giriş yapın</p>
-        <button class="login-btn" onclick="loginWithGoogle()">Google ile Giriş Yap</button>
+        <p class="login-subtitle">Etkileşimli dersler, testler ve içeriklerle öğrenin</p>
+        <div class="login-divider"></div>
+        <button class="login-btn" onclick="loginWithGoogle()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/></svg>
+          Google ile Giriş Yap
+        </button>
+        <p class="login-footer">raufenc.com/ogrenim</p>
       </div>
     </div>
   `;
@@ -67,17 +68,41 @@ function renderLogin(app) {
 
 async function loginWithGoogle() {
   try {
-    // Use redirect instead of popup (more reliable, no popup blocker issues)
-    await auth.signInWithRedirect(googleProvider);
+    await auth.signInWithPopup(googleProvider);
   } catch (e) {
-    console.error('Login failed:', e);
-    alert('Giriş başarısız oldu: ' + (e.message || e.code || 'Bilinmeyen hata'));
+    console.error('Login error:', e);
+    if (e.code === 'auth/popup-blocked') {
+      // Fallback to redirect
+      auth.signInWithRedirect(googleProvider);
+    } else if (e.code !== 'auth/popup-closed-by-user') {
+      alert('Giriş hatası: ' + (e.message || e.code));
+    }
   }
+}
+
+/* ===== NAV ===== */
+function buildNav() {
+  const adminBtn = userRole === 'admin'
+    ? `<button class="nav-btn nav-btn-admin" onclick="goAdmin()">Yönetici Paneli</button>`
+    : '';
+  const name = currentUser?.displayName || currentUser?.email || '';
+  return `
+    <nav class="top-nav">
+      <div class="nav-brand">
+        <div class="nav-brand-icon">📖</div>
+        <span>İslami Öğrenim</span>
+      </div>
+      <div class="nav-right">
+        <span class="nav-user">${esc(name)}</span>
+        ${adminBtn}
+        <button class="nav-btn nav-btn-logout" onclick="doLogout()">Çıkış</button>
+      </div>
+    </nav>
+  `;
 }
 
 /* ===== DASHBOARD ===== */
 function renderDashboard(app) {
-  const nav = buildNav();
   const cards = LESSONS.map(l => `
     <div class="lesson-card" onclick="openLesson('${l.id}')">
       <div class="lesson-thumb">
@@ -96,32 +121,14 @@ function renderDashboard(app) {
   `).join('');
 
   app.innerHTML = `
-    ${nav}
+    ${buildNav()}
     <div class="dashboard">
-      <h1 class="dash-title">Modüller ve Dersler</h1>
-      <p class="dash-subtitle">Öğrenmeye başlamak için bir ders seçin.</p>
+      <div class="dash-header">
+        <h1 class="dash-title">Modüller ve Dersler</h1>
+        <p class="dash-subtitle">Öğrenmeye başlamak için bir ders seçin.</p>
+      </div>
       <div class="lesson-grid">${cards}</div>
     </div>
-  `;
-}
-
-function buildNav() {
-  const adminBtn = userRole === 'admin'
-    ? `<button class="nav-btn nav-btn-admin" onclick="goAdmin()">Yönetici Paneli</button>`
-    : '';
-  const name = currentUser?.displayName || currentUser?.email || '';
-  return `
-    <nav class="top-nav">
-      <div class="nav-brand">
-        <span class="nav-brand-icon">🏆</span>
-        <span>Öğrenim Platformu</span>
-      </div>
-      <div class="nav-right">
-        <span class="nav-user">Hoş geldin, ${esc(name)}</span>
-        ${adminBtn}
-        <button class="nav-btn nav-btn-logout" onclick="doLogout()">↩ Çıkış</button>
-      </div>
-    </nav>
   `;
 }
 
@@ -139,41 +146,29 @@ function openLesson(id) {
 
 /* ===== LESSON PLAYER ===== */
 function renderLesson(app) {
-  const nav = buildNav();
   let body = '';
-
   switch (lessonStep) {
-    case 'intro':
-      body = renderIntro();
-      break;
-    case 'pre-test':
-      body = renderQuiz(currentLesson.preTest, 'Ön Test', 'Mevcut bilginizi ölçelim');
-      break;
-    case 'content':
-      body = renderContent();
-      break;
-    case 'post-test':
-      body = renderQuiz(currentLesson.postTest, 'Son Test', 'Neler öğrendiğimizi değerlendirelim');
-      break;
-    case 'completed':
-      body = renderCompleted();
-      break;
+    case 'intro': body = renderIntro(); break;
+    case 'pre-test': body = renderQuiz(currentLesson.preTest, 'Ön Test', 'Mevcut bilginizi ölçelim'); break;
+    case 'content': body = renderContent(); break;
+    case 'post-test': body = renderQuiz(currentLesson.postTest, 'Son Test', 'Neler öğrendiğimizi değerlendirelim'); break;
+    case 'completed': body = renderCompleted(); break;
   }
-
-  app.innerHTML = `${nav}<div class="player-page">${body}</div>`;
+  app.innerHTML = `${buildNav()}<div class="player-page">${body}</div>`;
 }
 
 function renderIntro() {
   return `
-    <div class="intro-section" style="animation: fadeIn 0.4s ease">
+    <div class="intro-section">
+      <div class="intro-bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ</div>
       <h1 class="intro-title">${esc(currentLesson.title)}</h1>
       <p class="intro-desc">${esc(currentLesson.description)}</p>
       <div class="intro-flow">
         <h3>Ders Akışı</h3>
         <ul>
-          <li>Ön Test (Bilgi Ölçümü)</li>
-          <li>Etkileşimli İçerik (Video, Ses, Görsel)</li>
-          <li>Son Test (Değerlendirme)</li>
+          <li><span class="step-num">1</span> Ön Test (Bilgi Ölçümü)</li>
+          <li><span class="step-num">2</span> Etkileşimli İçerik</li>
+          <li><span class="step-num">3</span> Son Test (Değerlendirme)</li>
         </ul>
         <button class="start-btn" onclick="startPreTest()">▶ Derse Başla</button>
       </div>
@@ -195,7 +190,7 @@ function renderQuiz(questions, title, subtitle) {
   `).join('');
 
   return `
-    <div class="quiz-section" style="padding-top: 32px;">
+    <div class="quiz-section">
       <div class="quiz-header">
         <h2>${title}</h2>
         <p>${subtitle}</p>
@@ -235,18 +230,13 @@ function renderContent() {
   let media = '';
 
   if (c.type === 'video' && c.contentUrl) {
-    media = `
-      <div class="content-video">
-        <video controls src="${c.contentUrl}"></video>
-      </div>
-    `;
+    media = `<div class="content-video"><video controls src="${c.contentUrl}"></video></div>`;
   } else if (c.type === 'audio' && c.contentUrl) {
     media = `
       <div class="content-audio">
         <div class="audio-icon">🔊</div>
         <audio controls style="flex:1"><source src="${c.contentUrl}" type="audio/mpeg"></audio>
-      </div>
-    `;
+      </div>`;
   } else if (c.type === 'image-swipe' && c.images) {
     swiperIndex = 0;
     const dots = c.images.map((_, i) =>
@@ -258,33 +248,25 @@ function renderContent() {
         <button class="swiper-btn swiper-btn-prev" onclick="swipe(-1)">‹</button>
         <button class="swiper-btn swiper-btn-next" onclick="swipe(1)">›</button>
         <div class="swiper-dots" id="swiper-dots">${dots}</div>
-      </div>
-    `;
+      </div>`;
   }
 
   const textHtml = c.text ? `<p class="content-text">${esc(c.text)}</p>` : '';
-
   const dots = currentLesson.content.map((_, i) =>
     `<div class="content-dot ${i === contentIndex ? 'active' : ''}"></div>`
   ).join('');
-
   const isLast = contentIndex === currentLesson.content.length - 1;
-  const isFirst = contentIndex === 0;
 
   return `
     <div class="content-card">
       <div class="content-header"><h2>${esc(c.title)}</h2></div>
-      <div class="content-body">
-        ${media}
-        ${textHtml}
-      </div>
+      <div class="content-body">${media}${textHtml}</div>
       <div class="content-nav">
-        <button class="nav-arrow nav-arrow-prev" onclick="prevContent()" ${isFirst ? 'disabled' : ''}>← Önceki</button>
+        <button class="nav-arrow nav-arrow-prev" onclick="prevContent()" ${contentIndex === 0 ? 'disabled' : ''}>← Önceki</button>
         <div class="content-dots">${dots}</div>
         <button class="nav-arrow nav-arrow-next" onclick="nextContent()">${isLast ? 'Son Teste Geç →' : 'Sonraki →'}</button>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
 function swipe(dir) {
@@ -293,8 +275,7 @@ function swipe(dir) {
   swiperIndex = (swiperIndex + dir + c.images.length) % c.images.length;
   const img = $('#swiper-img');
   if (img) img.src = c.images[swiperIndex];
-  const dots = $$('#swiper-dots .swiper-dot');
-  dots.forEach((d, i) => d.classList.toggle('active', i === swiperIndex));
+  $$('#swiper-dots .swiper-dot').forEach((d, i) => d.classList.toggle('active', i === swiperIndex));
 }
 
 function nextContent() {
@@ -309,10 +290,7 @@ function nextContent() {
 }
 
 function prevContent() {
-  if (contentIndex > 0) {
-    contentIndex--;
-    render();
-  }
+  if (contentIndex > 0) { contentIndex--; render(); }
 }
 
 function calcScore(answers, questions) {
@@ -328,18 +306,15 @@ async function finishLesson() {
   const preScore = calcScore(preTestAnswers, currentLesson.preTest);
   const postScore = calcScore(postTestAnswers, currentLesson.postTest);
 
-  try {
-    if (currentUser) {
-      await db.collection('progress').add({
-        userId: currentUser.uid,
-        lessonId: currentLesson.id,
-        preTestScore: preScore,
-        postTestScore: postScore,
-        completedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    }
-  } catch (e) {
-    console.error('Error saving progress:', e);
+  // Save to Firestore (non-blocking)
+  if (currentUser) {
+    db.collection('progress').add({
+      userId: currentUser.uid,
+      lessonId: currentLesson.id,
+      preTestScore: preScore,
+      postTestScore: postScore,
+      completedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(e => console.error('Save error:', e));
   }
 }
 
@@ -363,31 +338,28 @@ function renderCompleted() {
         </div>
       </div>
       <button class="back-btn" onclick="goHome()">Ana Sayfaya Dön</button>
-    </div>
-  `;
+    </div>`;
 }
 
 /* ===== ADMIN ===== */
 async function renderAdmin(app) {
-  const nav = buildNav();
   app.innerHTML = `
-    ${nav}
+    ${buildNav()}
     <div class="admin-page">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-        <div>
-          <h1 class="dash-title" style="font-size:22px">Yönetici Paneli</h1>
-        </div>
-        <button class="nav-btn nav-btn-admin" onclick="goHome()">← Öğrenci Paneline Dön</button>
+      <div class="admin-header">
+        <h1 class="dash-title" style="font-size:22px">Yönetici Paneli</h1>
+        <button class="nav-btn nav-btn-admin" onclick="goHome()">← Derslere Dön</button>
       </div>
       <div id="admin-content"><div class="loading-page" style="min-height:200px"><div class="spinner"></div></div></div>
-    </div>
-  `;
+    </div>`;
 
   try {
-    const usersSnap = await db.collection('users').get();
-    const users = usersSnap.docs.map(d => d.data());
+    const [usersSnap, progressSnap] = await Promise.all([
+      db.collection('users').get(),
+      db.collection('progress').orderBy('completedAt', 'desc').get()
+    ]);
 
-    const progressSnap = await db.collection('progress').orderBy('completedAt', 'desc').get();
+    const users = usersSnap.docs.map(d => d.data());
     const progress = progressSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
     const students = users.filter(u => u.role === 'student');
@@ -399,13 +371,15 @@ async function renderAdmin(app) {
       ? `<tr><td colspan="5" class="empty-state">Henüz tamamlanan bir ders bulunmuyor.</td></tr>`
       : progress.map(r => {
           const userName = users.find(u => u.uid === r.userId)?.displayName || r.userId;
-          const lessonName = r.lessonId === 'peygamber-efendimizin-cocuklugu'
-            ? "Peygamber Efendimiz (s.a.v.)'in Çocukluğu"
-            : r.lessonId;
+          const lessonName = LESSONS.find(l => l.id === r.lessonId)?.title || r.lessonId;
           const date = r.completedAt?.toDate ? new Date(r.completedAt.toDate()).toLocaleDateString('tr-TR') : '—';
-          const preBadge = `<span class="score-badge score-badge-low">%${r.preTestScore}</span>`;
-          const postBadge = `<span class="score-badge ${r.postTestScore >= 70 ? 'score-badge-high' : 'score-badge-low'}">%${r.postTestScore}</span>`;
-          return `<tr><td>${esc(userName)}</td><td>${esc(lessonName)}</td><td>${preBadge}</td><td>${postBadge}</td><td style="text-align:right">${date}</td></tr>`;
+          return `<tr>
+            <td style="font-weight:600">${esc(userName)}</td>
+            <td>${esc(lessonName)}</td>
+            <td style="text-align:center"><span class="score-badge score-badge-low">%${r.preTestScore}</span></td>
+            <td style="text-align:center"><span class="score-badge ${r.postTestScore >= 70 ? 'score-badge-high' : 'score-badge-low'}">%${r.postTestScore}</span></td>
+            <td style="text-align:right">${date}</td>
+          </tr>`;
         }).join('');
 
     $('#admin-content').innerHTML = `
@@ -426,7 +400,7 @@ async function renderAdmin(app) {
       <div class="progress-table-wrap">
         <div class="progress-table-header">
           <h3>Son Tamamlanan Dersler</h3>
-          <p>Öğrencilerin dersleri tamamlama durumları ve test skorları.</p>
+          <p>Öğrencilerin test skorları ve ilerleme durumları</p>
         </div>
         <table class="progress-table">
           <thead><tr>
@@ -434,34 +408,20 @@ async function renderAdmin(app) {
           </tr></thead>
           <tbody>${rows}</tbody>
         </table>
-      </div>
-    `;
+      </div>`;
   } catch (e) {
-    console.error('Admin data fetch error:', e);
-    $('#admin-content').innerHTML = `<div class="empty-state">Veri yüklenirken hata oluştu. Firebase yapılandırmasını kontrol edin.</div>`;
+    console.error('Admin fetch error:', e);
+    $('#admin-content').innerHTML = `<div class="empty-state">Veri yüklenirken hata oluştu.<br><small>${e.message || ''}</small></div>`;
   }
 }
 
-function goAdmin() {
-  currentPage = 'admin';
-  render();
-}
-
-function goHome() {
-  currentPage = 'dashboard';
-  currentLesson = null;
-  render();
-}
+function goAdmin() { currentPage = 'admin'; render(); }
+function goHome() { currentPage = 'dashboard'; currentLesson = null; render(); }
 
 async function doLogout() {
-  try {
-    await auth.signOut();
-  } catch (e) {
-    console.error('Logout failed:', e);
-  }
+  try { await auth.signOut(); } catch (e) { console.error('Logout:', e); }
 }
 
-/* ===== Utility ===== */
 function esc(str) {
   if (!str) return '';
   const div = document.createElement('div');
@@ -473,50 +433,35 @@ function esc(str) {
 function init() {
   initFirebase();
 
-  // Catch redirect result errors
-  auth.getRedirectResult().then(result => {
-    if (result.user) console.log('Redirect login successful');
-  }).catch(e => {
-    console.error('Redirect error:', e);
-    alert('Giriş hatası: ' + (e.message || e.code));
+  // Handle redirect result (fallback for popup-blocked)
+  auth.getRedirectResult().catch(e => {
+    if (e.code !== 'auth/popup-closed-by-user') {
+      console.error('Redirect error:', e);
+    }
   });
 
   auth.onAuthStateChanged(async (user) => {
     currentUser = user;
     if (user) {
-      // Check/create user doc
-      const userRef = db.collection('users').doc(user.uid);
-      try {
-        const doc = await userRef.get();
-        if (doc.exists) {
-          let role = doc.data().role;
-          if (user.email === 'raufenc@gmail.com' && role !== 'admin') {
-            await userRef.set({ role: 'admin' }, { merge: true });
-            role = 'admin';
-          }
-          userRole = role;
-        } else {
-          const initialRole = user.email === 'raufenc@gmail.com' ? 'admin' : 'student';
-          await userRef.set({
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            role: initialRole,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          userRole = initialRole;
-        }
-      } catch (e) {
-        console.error('User doc error:', e);
-        // Firestore may fail (named DB, permissions) - continue anyway
-        userRole = user.email === 'raufenc@gmail.com' ? 'admin' : 'student';
-      }
+      // Set role based on email (instant, no Firestore wait)
+      userRole = user.email === 'raufenc@gmail.com' ? 'admin' : 'student';
       currentPage = 'dashboard';
+      render();
+
+      // Save user doc in background (non-blocking)
+      const userRef = db.collection('users').doc(user.uid);
+      userRef.set({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        role: userRole,
+        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true }).catch(e => console.error('User doc error:', e));
     } else {
       userRole = null;
       currentPage = 'login';
+      render();
     }
-    render();
   });
 }
 
