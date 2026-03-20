@@ -1,0 +1,2372 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kayı I — Ertuğrul'un Ocağı | Ahmet Şimşirgil</title>
+<meta name="description" content="Ahmet Şimşirgil'in Kayı I: Ertuğrul'un Ocağı eserinin interaktif keşif sitesi. Osmanlı kuruluş dönemi, padişahlar, olaylar, kişiler ve kavramlar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   KAYII — DESIGN SYSTEM
+   Ottoman-inspired dark academia aesthetic
+   ============================================ */
+
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8d48b;
+  --gold-dark: #8b6914;
+  --cream: #f5f0e8;
+  --cream-dark: #e8dece;
+  --burgundy: #6b1d2a;
+  --burgundy-light: #8b2d3a;
+  --deep-green: #1a3a2a;
+  --deep-green-light: #2a5a3a;
+  --charcoal: #1a1a1a;
+  --charcoal-light: #2a2a2a;
+  --ink: #0d0d0d;
+  --text-light: #f5f0e8;
+  --text-dark: #1a1a1a;
+  --text-muted: #8a8070;
+  --shadow: rgba(0,0,0,0.4);
+  --radius: 8px;
+  --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-dark) var(--charcoal);
+}
+
+body {
+  font-family: 'Noto Serif', Georgia, serif;
+  background: var(--ink);
+  color: var(--text-light);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--charcoal); }
+::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 0 2rem;
+  background: rgba(13,13,13,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(201,168,76,0.15);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  height: 60px;
+}
+
+.nav.scrolled {
+  background: rgba(13,13,13,0.95);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+}
+
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.nav-links {
+  display: flex;
+  gap: 0.3rem;
+  list-style: none;
+  margin-left: auto;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.nav-links a {
+  color: var(--cream-dark);
+  text-decoration: none;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--gold);
+  background: rgba(201,168,76,0.1);
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 5px;
+}
+.hamburger span {
+  width: 25px;
+  height: 2px;
+  background: var(--gold);
+  transition: var(--transition);
+}
+
+@media (max-width: 900px) {
+  .hamburger { display: flex; }
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: rgba(13,13,13,0.97);
+    flex-direction: column;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a { padding: 0.8rem 1rem; font-size: 0.9rem; }
+}
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  padding: 2rem;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(107,29,42,0.3) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 50%, rgba(26,58,42,0.3) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 100%, rgba(201,168,76,0.15) 0%, transparent 50%),
+    linear-gradient(180deg, var(--ink) 0%, var(--charcoal) 50%, var(--ink) 100%);
+  z-index: 0;
+}
+
+.hero-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5L55 30L30 55L5 30z' fill='none' stroke='%23c9a84c' stroke-width='0.5'/%3E%3C/svg%3E");
+  z-index: 0;
+}
+
+/* Animated floating particles */
+.hero-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: var(--gold);
+  border-radius: 50%;
+  opacity: 0;
+  animation: floatParticle 8s infinite;
+}
+
+@keyframes floatParticle {
+  0% { opacity: 0; transform: translateY(100vh) scale(0); }
+  20% { opacity: 0.6; }
+  80% { opacity: 0.3; }
+  100% { opacity: 0; transform: translateY(-20vh) scale(1); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+}
+
+.hero-badge {
+  display: inline-block;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding: 0.5rem 1.5rem;
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 30px;
+  margin-bottom: 2rem;
+  animation: fadeInDown 1s ease-out 0.3s both;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--cream);
+  margin-bottom: 0.5rem;
+  animation: fadeInUp 1s ease-out 0.5s both;
+}
+
+.hero h1 .accent {
+  color: var(--gold);
+  display: block;
+  font-style: italic;
+  font-size: 0.65em;
+  margin-top: 0.2em;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  animation: fadeInUp 1s ease-out 0.7s both;
+}
+
+.hero-author {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--gold-light);
+  font-style: italic;
+  margin-bottom: 2.5rem;
+  animation: fadeInUp 1s ease-out 0.9s both;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+  animation: fadeInUp 1s ease-out 1.1s both;
+}
+
+.hero-stat {
+  text-align: center;
+}
+
+.hero-stat-num {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--gold);
+}
+
+.hero-stat-label {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: var(--ink);
+  text-decoration: none;
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  border-radius: 50px;
+  transition: var(--transition);
+  animation: fadeInUp 1s ease-out 1.3s both;
+}
+
+.hero-cta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 40px rgba(201,168,76,0.3);
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: bounce 2s infinite 2s;
+  z-index: 1;
+}
+
+.scroll-indicator span {
+  display: block;
+  width: 24px;
+  height: 38px;
+  border: 2px solid rgba(201,168,76,0.4);
+  border-radius: 12px;
+  position: relative;
+}
+
+.scroll-indicator span::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 8px;
+  background: var(--gold);
+  border-radius: 2px;
+  animation: scrollDot 2s infinite;
+}
+
+@keyframes bounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(10px); } }
+@keyframes scrollDot { 0% { opacity: 1; top: 6px; } 100% { opacity: 0; top: 20px; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ============================================
+   SECTION STYLES
+   ============================================ */
+
+.section {
+  padding: 5rem 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.section-label {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  color: var(--cream);
+  margin-bottom: 1rem;
+}
+
+.section-desc {
+  font-size: 1rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+  margin: 0 auto;
+}
+
+/* ============================================
+   RULERS SECTION
+   ============================================ */
+
+.rulers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.ruler-card {
+  background: linear-gradient(145deg, var(--charcoal-light), var(--charcoal));
+  border: 1px solid rgba(201,168,76,0.12);
+  border-radius: var(--radius);
+  padding: 2rem;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.ruler-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-dark));
+  transform: scaleX(0);
+  transition: var(--transition);
+}
+
+.ruler-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(201,168,76,0.3);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+}
+
+.ruler-card:hover::before { transform: scaleX(1); }
+
+.ruler-chapter {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+}
+
+.ruler-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--cream);
+  margin-bottom: 0.5rem;
+}
+
+.ruler-period {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.ruler-summary {
+  font-size: 0.88rem;
+  color: var(--cream-dark);
+  line-height: 1.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ruler-pages {
+  margin-top: 1rem;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   RULER DETAIL MODAL
+   ============================================ */
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(10px);
+  z-index: 2000;
+  overflow-y: auto;
+  padding: 2rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay.active { display: flex; justify-content: center; align-items: flex-start; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  background: var(--charcoal);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 12px;
+  max-width: 800px;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 3rem;
+  position: relative;
+  animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 50%;
+  color: var(--gold);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.modal-close:hover { background: rgba(201,168,76,0.2); }
+
+.modal h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.modal-meta {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+}
+
+.modal-meta strong { color: var(--cream); }
+
+.modal p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--cream-dark);
+  margin-bottom: 1.5rem;
+}
+
+.modal h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: var(--gold-light);
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(201,168,76,0.15);
+}
+
+.modal-section-list {
+  list-style: none;
+}
+
+.modal-section-list li {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 0.9rem;
+  color: var(--cream-dark);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-section-list li span.pages {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  margin-left: 1rem;
+}
+
+/* ============================================
+   TIMELINE SECTION
+   ============================================ */
+
+.timeline-controls {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.timeline-filter {
+  padding: 0.5rem 1.2rem;
+  background: transparent;
+  border: 1px solid rgba(201,168,76,0.2);
+  color: var(--cream-dark);
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.78rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.timeline-filter:hover,
+.timeline-filter.active {
+  background: rgba(201,168,76,0.15);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.timeline {
+  position: relative;
+  padding-left: 40px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--gold), rgba(201,168,76,0.1));
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2rem;
+  padding-left: 2rem;
+  animation: fadeInUp 0.5s ease both;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -32px;
+  top: 8px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 3px solid var(--ink);
+  box-shadow: 0 0 0 2px var(--gold-dark);
+  z-index: 1;
+}
+
+.timeline-item[data-type="battle"]::before { background: #c0392b; box-shadow: 0 0 0 2px #8b1a1a; }
+.timeline-item[data-type="conquest"]::before { background: #27ae60; box-shadow: 0 0 0 2px #1a6b3a; }
+.timeline-item[data-type="succession"]::before { background: var(--gold); }
+.timeline-item[data-type="institutional_reform"]::before { background: #2980b9; box-shadow: 0 0 0 2px #1a4a6b; }
+
+.timeline-date {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 1px;
+  margin-bottom: 0.3rem;
+}
+
+.timeline-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--cream);
+  margin-bottom: 0.3rem;
+}
+
+.timeline-ruler-tag {
+  display: inline-block;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 0.15rem 0.6rem;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  background: rgba(201,168,76,0.1);
+  color: var(--gold-light);
+  border: 1px solid rgba(201,168,76,0.2);
+}
+
+.timeline-summary {
+  font-size: 0.9rem;
+  color: var(--cream-dark);
+  line-height: 1.7;
+}
+
+.timeline-location {
+  margin-top: 0.4rem;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   PERSONS SECTION
+   ============================================ */
+
+.persons-search {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.persons-search input {
+  width: 100%;
+  max-width: 500px;
+  padding: 0.8rem 1.5rem;
+  background: var(--charcoal-light);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 30px;
+  color: var(--cream);
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+.persons-search input::placeholder { color: var(--text-muted); }
+.persons-search input:focus { border-color: var(--gold); box-shadow: 0 0 20px rgba(201,168,76,0.1); }
+
+.persons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.person-card {
+  background: var(--charcoal-light);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius);
+  padding: 1.3rem;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.person-card:hover {
+  border-color: rgba(201,168,76,0.25);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.person-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.person-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-dark), var(--burgundy));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 1rem;
+  color: var(--cream);
+  flex-shrink: 0;
+}
+
+.person-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--cream);
+}
+
+.person-role {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.72rem;
+  color: var(--gold);
+  margin-top: 2px;
+}
+
+.person-desc {
+  font-size: 0.85rem;
+  color: var(--cream-dark);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.person-context {
+  margin-top: 0.6rem;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   RELATIONSHIPS / NETWORK
+   ============================================ */
+
+.network-container {
+  background: var(--charcoal-light);
+  border: 1px solid rgba(201,168,76,0.1);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.rel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 0.8rem;
+}
+
+.rel-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1rem;
+  background: rgba(255,255,255,0.02);
+  border-radius: 6px;
+  transition: var(--transition);
+  font-size: 0.85rem;
+}
+
+.rel-item:hover { background: rgba(201,168,76,0.06); }
+
+.rel-source {
+  color: var(--gold-light);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rel-arrow {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.rel-target {
+  color: var(--cream);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rel-type {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.05);
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* Dynasty tree */
+.dynasty-tree {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.dynasty-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dynasty-node {
+  padding: 0.7rem 1.5rem;
+  background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(107,29,42,0.15));
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 8px;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  color: var(--gold);
+  position: relative;
+  transition: var(--transition);
+}
+
+.dynasty-node:hover {
+  background: linear-gradient(135deg, rgba(201,168,76,0.25), rgba(107,29,42,0.25));
+  transform: scale(1.05);
+}
+
+.dynasty-node.sultan {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  border-color: var(--gold);
+  background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(107,29,42,0.2));
+}
+
+.dynasty-connector {
+  width: 2px;
+  height: 30px;
+  background: rgba(201,168,76,0.3);
+}
+
+.dynasty-branch {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+/* ============================================
+   PLACES SECTION
+   ============================================ */
+
+.places-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.place-card {
+  background: var(--charcoal-light);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius);
+  padding: 1.3rem;
+  transition: var(--transition);
+}
+
+.place-card:hover {
+  border-color: rgba(26,58,42,0.5);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.place-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cream);
+  margin-bottom: 0.3rem;
+}
+
+.place-type {
+  display: inline-block;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--deep-green-light);
+  background: rgba(26,58,42,0.2);
+  padding: 0.2rem 0.6rem;
+  border-radius: 10px;
+  margin-bottom: 0.7rem;
+}
+
+.place-desc {
+  font-size: 0.85rem;
+  color: var(--cream-dark);
+  line-height: 1.6;
+}
+
+.place-pages {
+  margin-top: 0.5rem;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   CONCEPTS SECTION
+   ============================================ */
+
+.concepts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.2rem;
+}
+
+.concept-card {
+  background: linear-gradient(145deg, var(--charcoal-light), rgba(26,58,42,0.15));
+  border: 1px solid rgba(201,168,76,0.1);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: var(--transition);
+}
+
+.concept-card:hover {
+  border-color: rgba(201,168,76,0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.concept-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 0.3rem;
+  text-transform: capitalize;
+}
+
+.concept-type {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--burgundy-light);
+  margin-bottom: 0.8rem;
+}
+
+.concept-desc {
+  font-size: 0.88rem;
+  color: var(--cream-dark);
+  line-height: 1.7;
+}
+
+.concept-pages {
+  margin-top: 0.7rem;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   BOOK EXPLORER / TOC
+   ============================================ */
+
+.toc-chapters {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.toc-chapter {
+  background: var(--charcoal-light);
+  border: 1px solid rgba(201,168,76,0.1);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.toc-chapter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 1.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+  background: rgba(201,168,76,0.03);
+}
+
+.toc-chapter-header:hover { background: rgba(201,168,76,0.08); }
+
+.toc-chapter-info h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: var(--gold);
+}
+
+.toc-chapter-info .ruler-tag {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.toc-toggle {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  transition: var(--transition);
+  font-size: 1.2rem;
+}
+
+.toc-chapter.open .toc-toggle { transform: rotate(180deg); }
+
+.toc-sections {
+  display: none;
+  padding: 0 1.5rem 1rem;
+}
+
+.toc-chapter.open .toc-sections { display: block; }
+
+.toc-section-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  gap: 1rem;
+}
+
+.toc-section-title {
+  font-size: 0.9rem;
+  color: var(--cream-dark);
+}
+
+.toc-section-pages {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.toc-section-summary {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+  line-height: 1.5;
+  display: none;
+}
+
+.toc-section-item:hover .toc-section-summary { display: block; }
+.toc-section-item:hover { background: rgba(255,255,255,0.02); padding: 0.6rem 0.5rem; margin: 0 -0.5rem; border-radius: 4px; }
+
+/* ============================================
+   BIBLIOGRAPHY
+   ============================================ */
+
+.bib-grid {
+  columns: 2;
+  column-gap: 2rem;
+}
+
+@media (max-width: 768px) { .bib-grid { columns: 1; } }
+
+.bib-item {
+  break-inside: avoid;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-size: 0.85rem;
+  color: var(--cream-dark);
+  line-height: 1.5;
+}
+
+.bib-item .author {
+  color: var(--gold-light);
+  font-weight: 600;
+}
+
+.bib-item .year {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   INDEX SEARCH
+   ============================================ */
+
+.index-search-container {
+  max-width: 700px;
+  margin: 0 auto 2rem;
+}
+
+.index-search-input {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: var(--charcoal-light);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 12px;
+  color: var(--cream);
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 1rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+.index-search-input:focus { border-color: var(--gold); }
+
+.index-results {
+  max-width: 700px;
+  margin: 0 auto;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.index-result-item {
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-size: 0.88rem;
+  color: var(--cream-dark);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.index-result-item .ref-pages {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.75rem;
+  color: var(--gold);
+  white-space: nowrap;
+  margin-left: 1rem;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+.footer {
+  text-align: center;
+  padding: 3rem 2rem;
+  border-top: 1px solid rgba(201,168,76,0.1);
+  background: var(--ink);
+}
+
+.footer-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.footer-info {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+}
+
+.footer-note {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.25);
+}
+
+/* ============================================
+   ANIMATIONS ON SCROLL
+   ============================================ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================
+   BACK TO TOP
+   ============================================ */
+
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 44px;
+  height: 44px;
+  background: var(--gold-dark);
+  border: none;
+  border-radius: 50%;
+  color: var(--cream);
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-to-top.visible { opacity: 1; visibility: visible; }
+.back-to-top:hover { background: var(--gold); color: var(--ink); transform: translateY(-3px); }
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 600px) {
+  .section { padding: 3rem 1rem; }
+  .rulers-grid { grid-template-columns: 1fr; }
+  .persons-grid { grid-template-columns: 1fr; }
+  .places-grid { grid-template-columns: 1fr; }
+  .concepts-grid { grid-template-columns: 1fr; }
+  .hero-stats { gap: 1rem; }
+  .modal { padding: 1.5rem; margin: 1rem; }
+  .rel-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     NAVIGATION
+     ============================================ -->
+<nav class="nav" id="navbar">
+  <a href="#hero" class="nav-logo">KAYI</a>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#rulers">Padişahlar</a></li>
+    <li><a href="#timeline">Zaman Çizelgesi</a></li>
+    <li><a href="#persons">Kişiler</a></li>
+    <li><a href="#dynasty">Hanedan Ağacı</a></li>
+    <li><a href="#places">Coğrafya</a></li>
+    <li><a href="#concepts">Kavramlar</a></li>
+    <li><a href="#explorer">Bölümler</a></li>
+    <li><a href="#bibliography">Kaynakça</a></li>
+    <li><a href="#index-search">Dizin</a></li>
+  </ul>
+</nav>
+
+<!-- ============================================
+     HERO SECTION
+     ============================================ -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-pattern"></div>
+  <div class="hero-particles" id="particles"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">Osmanlı Tarihi Dizisi</div>
+    <h1>
+      Kayı I
+      <span class="accent">Ertuğrul'un Ocağı</span>
+    </h1>
+    <p class="hero-subtitle">Bir avuç Kayı yiğidinin cihan devleti kurma destanı</p>
+    <p class="hero-author">Prof. Dr. Ahmet Şimşirgil</p>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-num" id="statRulers">5</span>
+        <span class="hero-stat-label">Hükümdar</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num" id="statEvents">51</span>
+        <span class="hero-stat-label">Tarihi Olay</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num" id="statPersons">57</span>
+        <span class="hero-stat-label">Tarihi Şahsiyet</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num" id="statPlaces">40</span>
+        <span class="hero-stat-label">Mekân</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num" id="statYears">191</span>
+        <span class="hero-stat-label">Yıllık Tarih</span>
+      </div>
+    </div>
+
+    <a href="#rulers" class="hero-cta">Keşfetmeye Başla &#8595;</a>
+  </div>
+
+  <div class="scroll-indicator"><span></span></div>
+</section>
+
+<!-- ============================================
+     RULERS SECTION
+     ============================================ -->
+<div class="divider"></div>
+<section class="section" id="rulers">
+  <div class="section-header reveal">
+    <p class="section-label">Kurucu Hükümdarlar</p>
+    <h2 class="section-title">Beş Padişah, Bir Destan</h2>
+    <p class="section-desc">Kayı boyunun Söğüt'e yerleşmesinden Çelebi Mehmed'in vefatına kadar beş hükümdarın hikâyesi</p>
+  </div>
+  <div class="rulers-grid" id="rulersGrid"></div>
+</section>
+
+<!-- ============================================
+     TIMELINE SECTION
+     ============================================ -->
+<div class="divider"></div>
+<section class="section" id="timeline">
+  <div class="section-header reveal">
+    <p class="section-label">Kronoloji</p>
+    <h2 class="section-title">Zaman Çizelgesi</h2>
+    <p class="section-desc">1230'dan 1421'e — kuruluştan yükselişe, zaferlerden felaketlere</p>
+  </div>
+  <div class="timeline-controls" id="timelineControls"></div>
+  <div class="timeline" id="timelineContainer"></div>
+</section>
+
+<!-- ============================================
+     PERSONS SECTION
+     ============================================ -->
+<div class="divider"></div>
+<section class="section" id="persons">
+  <div class="section-header reveal">
+    <p class="section-label">Tarihî Şahsiyetler</p>
+    <h2 class="section-title">Kişiler</h2>
+    <p class="section-desc">Gazilerden alimlere, hatunlardan tekfurlara — kitaptaki 57 şahsiyet</p>
+  </div>
+  <div class="persons-search">
+    <input type="text" id="personSearch" placeholder="Kişi ara... (ör. Edebali, Evrenos, Timur)">
+  </div>
+  <div class="persons-grid" id="personsGrid"></div>
+</section>
+
+<!-- ============================================
+     DYNASTY / RELATIONSHIPS SECTION
+     ============================================ -->
+<div class="divider"></div>
+<section class="section" id="dynasty">
+  <div class="section-header reveal">
+    <p class="section-label">Hanedan & İlişkiler</p>
+    <h2 class="section-title">Soy Ağacı ve Bağlar</h2>
+    <p class="section-desc">Osmanlı hanedanının kuruluş silsilesi ve kişiler arası ilişki ağı</p>
+  </div>
+
+  <div class="dynasty-tree reveal" id="dynastyTree"></div>
+
+  <h3 style="text-align:center; font-family:'Playfair Display',serif; color:var(--gold); margin: 2rem 0 1.5rem; font-size:1.3rem;">İlişki Ağı</h3>
+
+  <div class="timeline-controls" id="relControls"></div>
+  <div class="rel-grid" id="relGrid"></div>
+</section>
+
+<!-- ============================================
+     PLACES SECTION
+     ============================================ -->
+<div class="divider"></div>
+<section class="section" id="places">
+  <div class="section-header reveal">
+    <p class="section-label">Coğrafya</p>
+    <h2 class="section-title">Fetih Mekânları</h2>
+    <p class="section-desc">Söğüt'ten Edirne'ye, Niğbolu'dan Semerkand'a — 40 önemli mekân</p>
+  </div>
+  <div class="places-grid" id="placesGrid"></div>
+</section>
+
+<!-- ============================================
+     CONCEPTS SECTION
+     ============================================ -->
+<div class="divider"></div>
+<section class="section" id="concepts">
+  <div class="section-header reveal">
+    <p class="section-label">Kavram Ansiklopedisi</p>
+    <h2 class="section-title">Temel Kavramlar</h2>
+    <p class="section-desc">Osmanlı kuruluş döneminin kurumları, ilkeleri ve medeniyetinin yapı taşları</p>
+  </div>
+  <div class="concepts-grid" id="conceptsGrid"></div>
+</section>
+
+<!-- ============================================
+     BOOK EXPLORER / TOC SECTION
+     ============================================ -->
+<div class="divider"></div>
+<section class="section" id="explorer">
+  <div class="section-header reveal">
+    <p class="section-label">Kitap Gezgini</p>
+    <h2 class="section-title">Bölüm Bölüm Keşfet</h2>
+    <p class="section-desc">88 bölüm ve alt başlık, özetleri ve sayfa aralıklarıyla</p>
+  </div>
+  <div class="toc-chapters" id="tocChapters"></div>
+</section>
+
+<!-- ============================================
+     BIBLIOGRAPHY SECTION
+     ============================================ -->
+<div class="divider"></div>
+<section class="section" id="bibliography">
+  <div class="section-header reveal">
+    <p class="section-label">Kaynakça</p>
+    <h2 class="section-title">Bibliyografya</h2>
+    <p class="section-desc">Osmanlı kroniklerinden modern incelemelere — 70 kaynak</p>
+  </div>
+  <div class="bib-grid" id="bibGrid"></div>
+</section>
+
+<!-- ============================================
+     INDEX SEARCH SECTION
+     ============================================ -->
+<div class="divider"></div>
+<section class="section" id="index-search">
+  <div class="section-header reveal">
+    <p class="section-label">Dizin Araması</p>
+    <h2 class="section-title">Kitap Dizini</h2>
+    <p class="section-desc">Kitaptaki 1176 dizin maddesinde arama yapın</p>
+  </div>
+  <div class="index-search-container">
+    <input type="text" class="index-search-input" id="indexSearchInput" placeholder="Dizinde ara... (ör. Bursa, yeniçeri, Kosova)">
+  </div>
+  <div class="index-results" id="indexResults"></div>
+</section>
+
+<!-- ============================================
+     FOOTER
+     ============================================ -->
+<footer class="footer">
+  <p class="footer-title">Kayı I — Ertuğrul'un Ocağı</p>
+  <p class="footer-info">
+    <strong>Prof. Dr. Ahmet Şimşirgil</strong><br>
+    Timaş Yayınları, Osmanlı Tarihi Dizisi<br>
+    15. Baskı, Şubat 2014, İstanbul
+  </p>
+  <p class="footer-note">Bu site kitabın tanıtımı amacıyla hazırlanmıştır. Tüm haklar yazara ve yayınevine aittir.</p>
+</footer>
+
+<!-- BACK TO TOP -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8593;</button>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- ============================================
+     DATA & SCRIPTS
+     ============================================ -->
+<script>
+// ============================================
+// EMBEDDED DATA
+// ============================================
+
+const RULERS = [
+  {id:"R1",name:"Osman Gazi",chapter:1,birth:"1258, Söğüt",accession:"1281, 23 yaşında aşiret başı",rule:"45 yıl hüküm sürdü",death:"Bursa'nın fethi sırasında vefat etti",parentage:"Baba: Ertuğrul Bey; Anne: Hayme Hatun",pages:"15-50",summary:"Kuruluş devrinin merkez şahsiyeti olarak aşireti beyliğe dönüştürür; adalet, gaza ve manevî rehberlik temaları üzerinden sunulur."},
+  {id:"R2",name:"Orhan Gazi",chapter:2,birth:"1281",accession:"1326",rule:"37 yıl saltanat sürdü",death:"Bursa'da vefat etti",parentage:"Baba: Osman Gazi; Anne: Bala Hatun",pages:"53-79",summary:"Beyliği kurumsallaştırır; İznik-İzmit hattını alır, Rumeli'ye geçişi başlatır ve askerî-idarî yenilikler devreye girer."},
+  {id:"R3",name:"Murad-ı Hüdavendigar",chapter:3,birth:"1326",accession:"1362",rule:"27 sene süren hükümdarlık",death:"1389, Kosova sonrası şehadet",parentage:"Baba: Orhan Gazi; Anne: Nilüfer Hatun",pages:"81-113",summary:"Rumeli'de Osmanlı hâkimiyetini kalıcılaştırır; Sırpsındığı ve Kosova gibi savaşlarla devlet ölçeğini büyütür, yeniçeri sistemi anlatıda merkezî yer tutar."},
+  {id:"R4",name:"Yıldırım Bayezid Han",chapter:4,birth:"1360, Bursa",accession:"1389, Kosova sonrası",rule:"Anadolu birliği ve Balkan cephesinde yoğun fetih dönemi",death:"8 Şubat 1403, Akşehir",parentage:"Baba: Murad-ı Hüdavendigar; Anne: Gülçiçek Hatun",pages:"115-161",summary:"Süratli fetihlerle Anadolu beyliklerini ve Balkan cephelerini toparlar; Niğbolu zaferi ile doruğa, Ankara bozgunu ile büyük kırılmaya ulaşır."},
+  {id:"R5",name:"Sultan Çelebi Mehmed",chapter:5,birth:"Çocuk yaşta Ankara sonrası sahneye çıkar",accession:"1413, bütün Osmanlı ülkesinin tek hükümdarı",rule:"Fetret devrini kapatan toparlayıcı iktidar",death:"1421, Edirne/Bursa geçişi öncesi",parentage:"Baba: Yıldırım Bayezid",pages:"163-202",summary:"Ankara bozgunu sonrası parçalanmış yapıyı yeniden toparlar; kardeş mücadelelerini, iç isyanları ve sınır sorunlarını aşarak devleti yeniden birleştirir."}
+];
+
+const TIMELINE_EVENTS = [
+  {id:"E001",name:"Kayıların Anadolu içlerine yönelmesi",ruler:"Ertuğrul Gazi",date:"1230 dolayları",year:1230,location:"Söğüt öncesi güzergâh",type:"migration_conflict",summary:"Ertuğrul idaresindeki Kayılar Selçuklu kuvvetlerine yardım eder; Söğüt ve Domaniç çevresine yerleşme zemini oluşur."},
+  {id:"E002",name:"Osman Gazi'nin doğumu ve müjde rüyası",ruler:"Osman Gazi",date:"Doğum anlatısı",year:1258,location:"Söğüt",type:"dynasty_sign",summary:"Osman'ın doğumu büyük şenliklerle anlatılır; Ertuğrul'un rüyası soyun büyüklüğüne işaret sayılır."},
+  {id:"E003",name:"Osman ile Edebali ailesi arasında evlilik",ruler:"Osman Gazi",date:"Gençlik dönemi",year:1280,location:"Bilecik/Söğüt",type:"marriage",summary:"Osman, Edebali'nin kızıyla evlenir; bu evlilik manevî meşruiyet anlatısının parçası olur."},
+  {id:"E004",name:"Osman Gazi'nin aşiret başına geçişi",ruler:"Osman Gazi",date:"Ertuğrul sonrası",year:1281,location:"Söğüt",type:"succession",summary:"Ertuğrul'un vefatı üzerine Osman'ın liderliği kabul görür ve Edebali'nin nasihati öne çıkar."},
+  {id:"E005",name:"Ermeni Derbendi çatışması ve Bayhoca'nın şehadeti",ruler:"Osman Gazi",date:"684 / 1285-86",year:1285,location:"İnegöl çevresi",type:"battle",summary:"İnegöl tekfuruyla ilk büyük hesaplaşma safhasında Bayhoca şehit düşer."},
+  {id:"E006",name:"İkizce çatışması ve Karacahisar'ın fethi",ruler:"Osman Gazi",date:"686-687 / 1287-88",year:1287,location:"Domaniç-İkizce / Karacahisar",type:"conquest",summary:"Osman Bey müttefik tekfurları yener ve Karacahisar'ı zapt eder."},
+  {id:"E007",name:"Aşiretten devlete geçiş işaretleri",ruler:"Osman Gazi",date:"1299",year:1299,location:"Karacahisar / Yenişehir",type:"state_formation",summary:"Hutbe, kadı tayini ve toprak dağıtımıyla Osmanlı siyasal yapılanması devlet karakteri kazanır."},
+  {id:"E008",name:"Koyunhisar (Bapheus) zaferi",ruler:"Osman Gazi",date:"27 Temmuz 1301",year:1301,location:"Koyunhisar",type:"battle",summary:"Bizans ve müttefik kuvvetler yenilir; Marmara hattı Osmanlı fetih sahasına açılır."},
+  {id:"E009",name:"Dinboz zaferi",ruler:"Osman Gazi",date:"26 Ağustos 1302",year:1302,location:"Dinboz",type:"battle",summary:"Tekfurlar birliği bozguna uğratılır; Bursa-İznik-İzmit havzası için yeni zemin oluşur."},
+  {id:"E010",name:"Köse Mihal'in Müslüman oluşu",ruler:"Osman Gazi",date:"1313",year:1313,location:"Harmankaya",type:"conversion_alliance",summary:"Köse Mihal İslam'ı kabul edip Osmanlı hizmetine girer."},
+  {id:"E011",name:"Mudanya'nın fethi ve Bursa ablukası",ruler:"Osman Gazi",date:"1321",year:1321,location:"Mudanya / Bursa",type:"conquest",summary:"Mudanya zapt edilerek Bursa'nın dış bağlantısı daha da kısıtlanır."},
+  {id:"E012",name:"Orhan'ın tahta geçişi",ruler:"Orhan Gazi",date:"1326",year:1326,location:"Bursa",type:"succession",summary:"Osman'ın ardından Orhan ve Alaaddin ülkeyi bölüşmeyip tek hâkimiyet ilkesini sürdürür."},
+  {id:"E013",name:"Aydos'un fethi",ruler:"Orhan Gazi",date:"Orhan devri",year:1328,location:"Aydos",type:"conquest",summary:"Aydos, Abdurrahman Gazi ve diğer gazilerin öncülüğünde alınır."},
+  {id:"E014",name:"Pelekanon muharebesi",ruler:"Orhan Gazi",date:"Orhan devri",year:1329,location:"Pelekanon",type:"battle",summary:"Bizans imparatorunun sevk ettiği ordu yenilir; İznik üzerindeki baskı artar."},
+  {id:"E015",name:"İznik'in teslimi",ruler:"Orhan Gazi",date:"Pelekanon sonrası",year:1331,location:"İznik",type:"conquest",summary:"Yardım umudu kırılan İznik teslim olur; Osmanlı idaresi şehirde kurumsallaşır."},
+  {id:"E016",name:"İzmit'in fethi",ruler:"Orhan Gazi",date:"1337",year:1337,location:"İzmit",type:"conquest",summary:"İzmit'in alınmasıyla Marmara havzasında Osmanlı hâkimiyeti güçlenir."},
+  {id:"E017",name:"İlk düzenli askerî ve malî reformlar",ruler:"Orhan Gazi",date:"Orhan devri",year:1335,location:"Bursa / Osmanlı merkezi",type:"institutional_reform",summary:"Akçe, yaya-müsellem teşkilatı ve kıyafet düzeniyle yeni devlet mekanizması kurulur."},
+  {id:"E018",name:"Rumeli'ye geçiş ve Çimpe'nin alınması",ruler:"Orhan Gazi",date:"1352",year:1352,location:"Çimpe / Gelibolu",type:"conquest",summary:"Süleyman Paşa ve gaziler karşı kıyıya geçerek Osmanlıların Rumeli'de kalıcı yer tutmasının ilk adımını atar."},
+  {id:"E019",name:"Gelibolu ve Rumeli fetih zinciri",ruler:"Orhan Gazi",date:"1350'ler",year:1354,location:"Gelibolu, Bolayır, Malkara",type:"conquest",summary:"Süleyman Paşa ve uç beyleri Rumeli içlerine doğru genişler."},
+  {id:"E020",name:"Süleyman Paşa'nın ölümü",ruler:"Orhan Gazi",date:"Rumeli fetihleri sırasında",year:1357,location:"Bolayır",type:"death",summary:"Şehzade Süleyman Paşa av esnasındaki kazayla ölür; bu olay anlatıda büyük keder kaynağıdır."},
+  {id:"E021",name:"Edirne'nin fethi",ruler:"Orhan Gazi / Murad",date:"Murad'ın Rumeli başbuğluğu",year:1361,location:"Edirne",type:"conquest",summary:"Murad Bey, Edirne'yi teslim alarak Osmanlıların Rumeli'deki ana merkezini kurar."},
+  {id:"E022",name:"Sırpsındığı zaferi",ruler:"Murad I",date:"1364",year:1364,location:"Meriç kıyısı",type:"battle",summary:"Lala Şahin Paşa komutasındaki Osmanlı kuvvetleri büyük Balkan-Haçlı topluluğunu baskınla bozguna uğratır."},
+  {id:"E023",name:"Yeniçeri sisteminin kuruluşu",ruler:"Murad I",date:"Murad devri",year:1365,location:"Osmanlı merkezi",type:"institutional_reform",summary:"Esirlerin beşte biri ve devşirme mantığı üzerinden yeniçeri ve Acemi Ocağı sistemi şekillenir."},
+  {id:"E024",name:"Bayezid-Devlet Hatun düğünü",ruler:"Murad I",date:"1381",year:1381,location:"Bursa / Kütahya",type:"marriage",summary:"Germiyan bağlantısı Osmanlıların Anadolu içlerinde toprak kazanmasına imkân verir."},
+  {id:"E025",name:"Karaman seferi (gaza-i ekber)",ruler:"Murad I",date:"1380'ler",year:1386,location:"Konya ovası",type:"battle",summary:"Murad, iç düzeni sağlamak için Karaman üzerine yürür ve zafer kazanır."},
+  {id:"E026",name:"Ploşnik bozgunu",ruler:"Murad I",date:"1387",year:1387,location:"Ploşnik Boğazı",type:"battle",summary:"Timurtaş Paşa kuvvetleri pusuya düşer; bu yenilgi büyük Balkan ittifakını cesaretlendirir."},
+  {id:"E027",name:"Kosova seferi ve savaş hazırlığı",ruler:"Murad I",date:"1389",year:1389,location:"Kosova",type:"battle",summary:"Murad, Balkan ittifakına karşı Kosova sahrasında düzenli ve meşveretli bir sefer hazırlar."},
+  {id:"E028",name:"I. Kosova zaferi ve Murad'ın şehadeti",ruler:"Murad I",date:"1389",year:1389,location:"Kosova",type:"battle",summary:"Osmanlılar savaşı kazanır; Murad, savaş sonrasında bir Sırp asilzadesinin saldırısıyla şehit olur."},
+  {id:"E029",name:"Bayezid'in Anadolu beyliklerini ilhakı",ruler:"Yıldırım Bayezid",date:"1389-1390",year:1389,location:"Batı Anadolu",type:"conquest",summary:"Bayezid tahta geçer geçmez Batı Anadolu'daki beylikleri Osmanlı eyaleti içine alır."},
+  {id:"E030",name:"İstanbul kuşatmaları dizisi",ruler:"Yıldırım Bayezid",date:"1391-1400",year:1391,location:"İstanbul",type:"siege",summary:"Bayezid, İstanbul'u dört kez kuşatır; siyasal tavizler alsa da kesin fetih başka cepheler yüzünden ertelenir."},
+  {id:"E031",name:"Eflak ve Bulgaristan hamleleri",ruler:"Yıldırım Bayezid",date:"1391-1393",year:1391,location:"Eflak / Tırnova / Niğbolu",type:"conquest",summary:"Mirçe seferi ve Bulgaristan'ın tümden Osmanlı hâkimiyetine alınışı anlatılır."},
+  {id:"E032",name:"Hundi Sultan ile Emir Sultan evliliği",ruler:"Yıldırım Bayezid",date:"Bayezid devri",year:1394,location:"Bursa",type:"marriage",summary:"Rüya ve keramet motifiyle anlatılan bu evlilik, Ulu Cami hikâyesine bağlanır."},
+  {id:"E033",name:"Büyük Haçlı ordusunun toplanması",ruler:"Yıldırım Bayezid",date:"1396",year:1396,location:"Budapeşte / Tuna hattı",type:"coalition",summary:"Papa ve Avrupa sarayları Bayezid'e karşı büyük bir Haçlı ordusu kurar."},
+  {id:"E034",name:"Niğbolu zaferi",ruler:"Yıldırım Bayezid",date:"25 Eylül 1396",year:1396,location:"Niğbolu",type:"battle",summary:"Bayezid, büyük Haçlı ittifakını Niğbolu'da bozguna uğratır."},
+  {id:"E035",name:"Ulu Cami açılışı",ruler:"Yıldırım Bayezid",date:"1400",year:1400,location:"Bursa",type:"religious_foundation",summary:"Emir Sultan'ın işaretiyle başlayan inşa, Somuncu Baba'nın hutbesiyle sembolleşir."},
+  {id:"E036",name:"Timur ile diplomatik gerilimin savaşa dönüşmesi",ruler:"Yıldırım Bayezid",date:"Ankara öncesi yıllar",year:1400,location:"Karabağ / Sivas / Erzincan",type:"diplomatic_breakdown",summary:"Sığınmacılar, tahtını kaybeden beyler ve karşılıklı mektuplar savaşın zeminini hazırlar."},
+  {id:"E037",name:"Ankara Savaşı",ruler:"Yıldırım Bayezid",date:"20 Temmuz 1402",year:1402,location:"Çubukova / Ankara",type:"battle",summary:"Timur ile Bayezid orduları savaşır; ihanetler ve çözülmeler sonunda Osmanlı tarafı yenilir."},
+  {id:"E038",name:"Bayezid'in esareti",ruler:"Yıldırım Bayezid",date:"1402 sonrası",year:1402,location:"Timur ordugâhı",type:"captivity",summary:"Savaş sonrasında iki hükümdar arasında nispeten yumuşak bir görüşme zemini oluşur."},
+  {id:"E039",name:"Bayezid'in ölümü",ruler:"Yıldırım Bayezid",date:"8 Şubat 1403",year:1403,location:"Akşehir",type:"death",summary:"Bayezid, esaret ve ülke felaketinin ağırlığı altında vefat eder."},
+  {id:"E040",name:"Timur'un Anadolu düzenlemesi ve çekilişi",ruler:"Çelebi Mehmed",date:"1403",year:1403,location:"Bursa / Kütahya",type:"repartition",summary:"Timur Anadolu beylerini yeniden yerleştirir ve Semerkand'a dönmek üzere çekilir."},
+  {id:"E041",name:"Çelebi Mehmed'in Amasya'da toparlanması",ruler:"Çelebi Mehmed",date:"1402-1404",year:1402,location:"Amasya-Tokat-Sivas",type:"consolidation",summary:"Mehmed, fırsatçı beyleri bastırarak Anadolu'nun orta kesiminde toparlanma merkezi kurar."},
+  {id:"E043",name:"Fetret Devri kardeş mücadeleleri",ruler:"Çelebi Mehmed",date:"1404-1413",year:1404,location:"Bursa, Edirne, Rumeli",type:"civil_war",summary:"İsa, Süleyman ve Musa ile yapılan mücadeleler Osmanlı birliğinin yeniden kurulacağı zemini oluşturur."},
+  {id:"E044",name:"Çamurlu Derbend zaferi ve tek hükümdarlık",ruler:"Çelebi Mehmed",date:"5 Temmuz 1413",year:1413,location:"Çamurlu Derbend / Edirne",type:"battle",summary:"Musa Çelebi yenilir; Mehmed bütün Osmanlı ülkesinin tek hükümdarı olur."},
+  {id:"E045",name:"İzmir seferi ve Cüneyd Bey meselesi",ruler:"Çelebi Mehmed",date:"1414",year:1414,location:"İzmir / Ayasuluğ",type:"conquest",summary:"Cüneyd Bey'in isyanı bastırılır; İzmir çevresinde merkezî otorite yeniden kurulur."},
+  {id:"E047",name:"Vakıf siyaseti ve surre geleneği",ruler:"Çelebi Mehmed",date:"Çelebi Mehmed devri",year:1415,location:"Osmanlı şehirleri / Haremeyn",type:"institutional_reform",summary:"Merhamet siyaseti, vakıf medeniyeti ve surre uygulaması toplumsal düzenin ana unsurları olarak tanımlanır."},
+  {id:"E048",name:"Eflak ve Kastamonu-Samsun seferleri",ruler:"Çelebi Mehmed",date:"1416-1418",year:1416,location:"Eflak, Kastamonu, Samsun",type:"conquest",summary:"Mehmed hem Eflak sorununu çözer hem de Candaroğulları çevresindeki dengeyi yeniden kurar."},
+  {id:"E050",name:"Bedreddin-Börklüce-Torlak isyanı",ruler:"Çelebi Mehmed",date:"1420",year:1420,location:"Aydın, Manisa, Deliorman",type:"revolt",summary:"Osmanlı tarihinin ilk büyük iç isyanı bastırılır; Bedreddin idam edilir."},
+  {id:"E051",name:"Çelebi Mehmed'in ölümü ve Murad'a geçiş",ruler:"Çelebi Mehmed",date:"1421",year:1421,location:"Edirne / Bursa",type:"succession",summary:"Mehmed, ölmeden önce Murad'a haber salınmasını ister; ölüm haberi geçici olarak gizlenir."}
+];
+
+const PERSONS = [
+  {id:"P001",name:"Gündüz Alp",role:"Ata figürü",context:"Osman Gazi",desc:"Osmanlıların atası olarak anılır; oğulları Sungur Tekin, Gündoğdu, Ertuğrul ve Dündar'ın babasıdır.",pages:"16"},
+  {id:"P002",name:"Ertuğrul Gazi",role:"Kurucu kuşak lideri",context:"Osman Gazi",desc:"Kayı topluluğunu Söğüt çevresine taşıyan ve Osmanlı kuruluş anlatısının başlangıcında yer alan liderdir.",pages:"16-20, 26"},
+  {id:"P006",name:"Osman Gazi",aliases:"Kara Osman",role:"Kurucu hükümdar",context:"Osman Gazi",desc:"Aşireti beyliğe, beyliği devlete dönüştüren kurucu hükümdar olarak merkezdedir.",pages:"15-50"},
+  {id:"P007",name:"Şeyh Edebali",role:"Alim, şeyh, ahi reisi",context:"Osman Gazi",desc:"Osman'ın terbiyesinde ve siyasî-manevî yönlendirilmesinde belirleyici rol oynayan şeyhtir.",pages:"20-27, 33-36"},
+  {id:"P008",name:"Dursun Fakih",role:"Alim / kadı / hatip",context:"Osman Gazi",desc:"Osman adına ilk hutbeyi okuyan ve erken Osmanlı ilmiyesinde öne çıkan isimdir.",pages:"21, 34-35"},
+  {id:"P009",name:"Akça Koca",role:"Gazi ve uç beyi",context:"Osman / Orhan",desc:"Osman'ın terbiyesinde görevli savaşçı, sonrasında ise fetihlerde öncü bir kumandandır.",pages:"20, 28, 44, 56, 58"},
+  {id:"P010",name:"Konur Alp",role:"Gazi ve uç beyi",context:"Osman / Orhan",desc:"İlk fetihlerden Rumeli öncesi uç savaşlarına kadar öne çıkan alp-gazilerden biridir.",pages:"20, 44"},
+  {id:"P011",name:"Abdurrahman Gazi",role:"Gazi ve komutan",context:"Osman / Orhan",desc:"Osman'ın savaş terbiyesi ve Aydos fethi gibi hadiselerde öne çıkan kumandandır.",pages:"20, 28, 56-57"},
+  {id:"P012",name:"Turgut Alp",role:"Gazi ve komutan",context:"Osman Gazi",desc:"Erken fetihlerde ve Osman ile Edebali ailesi arasındaki evlilik anlatısında yer alır.",pages:"20, 28, 43"},
+  {id:"P013",name:"Malhun Hatun",aliases:"Bala Hatun",role:"Osman Gazi'nin eşi",context:"Osman Gazi",desc:"Şeyh Edebali'nin kızı olarak anılır; kitapta Malhun/Bala adlandırmasıyla Osman'la evlenir.",pages:"22-25, 49"},
+  {id:"P014",name:"Köse Mihal",aliases:"Gazi Mihal",role:"Müttefik, sonradan Müslüman gazi",context:"Osman Gazi",desc:"Osman tarafından affedildikten sonra Osmanlılara bağlanan ve Müslüman olan eski tekfurdur.",pages:"23, 40-42"},
+  {id:"P016",name:"Orhan Gazi",role:"İkinci Osmanlı hükümdarı",context:"Orhan Gazi",desc:"Beyliği kurumsallaştıran, İznik-İzmit hattını alan ve Rumeli'ye geçişi başlatan hükümdardır.",pages:"53-79"},
+  {id:"P017",name:"Alaaddin Paşa",role:"Şehzade / danışman",context:"Orhan Gazi",desc:"Orhan'ın kardeşi olarak ülkenin bölünmezliği ve kurumsal düzenlemeler konusunda öne çıkar.",pages:"54-62"},
+  {id:"P018",name:"Nilüfer Hatun",aliases:"Holofira",role:"Orhan Gazi'nin eşi",context:"Orhan Gazi",desc:"Bilecik-Yarhisar hadisesinin ardından Orhan'la evlenen ve hayır eserleriyle anılan kişidir.",pages:"32-33, 78"},
+  {id:"P019",name:"Geyikli Baba",role:"Derviş",context:"Orhan Gazi",desc:"Orhan Gazi'nin hürmet gösterdiği erenlerden biri olarak anlatılır.",pages:"62-64"},
+  {id:"P020",name:"Süleyman Paşa",role:"Şehzade ve Rumeli fatihi",context:"Orhan Gazi",desc:"Rumeli'ye geçiş ve Gelibolu hattındaki fetihlerle öne çıkan Orhan Gazi oğludur.",pages:"64-73"},
+  {id:"P021",name:"Murad-ı Hüdavendigar",aliases:"I. Murad",role:"Üçüncü Osmanlı hükümdarı",context:"Murad I",desc:"Rumeli'de kalıcı genişleme sağlayan, Sırpsındığı ve Kosova ile özdeşleşen hükümdardır.",pages:"81-113"},
+  {id:"P022",name:"Lala Şahin Paşa",role:"Komutan",context:"Murad I",desc:"Sırpsındığı ve Filibe-Zağra hattındaki fetihlerin önde gelen kumandanıdır.",pages:"82-84, 96"},
+  {id:"P023",name:"Evrenos Bey",role:"Akıncı beyi",context:"Murad I / Orhan",desc:"Rumeli fetihlerinde sürekli öne çıkan tecrübeli uç kumandanıdır.",pages:"66, 68, 82, 102-108, 128"},
+  {id:"P024",name:"Hacı İlbeyi",role:"Akıncı beyi",context:"Murad I / Orhan",desc:"Rumeli fetih zincirinde ve Süleyman Paşa döneminde rol alan kumandandır.",pages:"66-69, 71"},
+  {id:"P027",name:"Devlet Hatun",role:"Bayezid'in eşi",context:"Murad I / Bayezid",desc:"Germiyan beyi Süleyman Şah'ın kızı olarak Bayezid'le evlenen kişidir.",pages:"93-95, 123"},
+  {id:"P029",name:"Yıldırım Bayezid",role:"Dördüncü Osmanlı hükümdarı",context:"Yıldırım Bayezid",desc:"Süratli fetihleri, Niğbolu zaferi, İstanbul kuşatmaları ve Ankara bozgunuyla anlatının merkezindedir.",pages:"115-161"},
+  {id:"P030",name:"Hundi Sultan",role:"Bayezid'in kızı",context:"Yıldırım Bayezid",desc:"Emir Sultan ile evliliği ve buna bağlı menkıbevî anlatılarla öne çıkar.",pages:"122-124"},
+  {id:"P031",name:"Emir Sultan",aliases:"Muhammed Buhari",role:"Alim ve damat",context:"Yıldırım Bayezid",desc:"Bayezid'in damadı ve Bursa'nın manevî hayatında önemli bir figür olarak anlatılır.",pages:"123-125, 153"},
+  {id:"P032",name:"Somuncu Baba",aliases:"Hamid-i Aksarayi",role:"Veli / alim",context:"Yıldırım Bayezid",desc:"Ulu Cami'nin açılışındaki hutbesi ve sonrasında gizlenişiyle meşhur manevî şahsiyettir.",pages:"133-134"},
+  {id:"P033",name:"Sigismund",role:"Macar kralı",context:"Yıldırım Bayezid",desc:"Niğbolu öncesi büyük Haçlı ittifakının baş aktörlerinden biridir.",pages:"125-131, 188-189"},
+  {id:"P034",name:"Korkusuz Jan",role:"Fransız asilzade",context:"Yıldırım Bayezid",desc:"Niğbolu seferindeki öne çıkan Haçlı kumandanı olarak anılır.",pages:"126, 129, 131"},
+  {id:"P035",name:"Doğan Bey",role:"Kale kumandanı",context:"Yıldırım Bayezid",desc:"Niğbolu Kalesi'nin savunmasında öne çıkar; Bayezid'in gece seslenişiyle meşhur olur.",pages:"127-129"},
+  {id:"P036",name:"Timur Han",role:"Doğu hükümdarı",context:"Yıldırım Bayezid",desc:"Bayezid'in en büyük rakibi olarak biyografisi, kudreti ve Anadolu siyaseti geniş biçimde verilir.",pages:"134-155"},
+  {id:"P041",name:"Çelebi Mehmed",aliases:"Sultan Mehmed I",role:"Beşinci Osmanlı hükümdarı",context:"Çelebi Mehmed",desc:"Fetret devrinde devleti yeniden birleştiren, toparlayıcı ve düzen kurucu hükümdardır.",pages:"163-202"},
+  {id:"P042",name:"Bayezid Paşa",role:"Vezir ve komutan",context:"Çelebi Mehmed",desc:"Mehmed'in en önemli askerî ve idarî yardımcılarından biri olarak çeşitli seferlerde öne çıkar.",pages:"183-185, 177"},
+  {id:"P044",name:"Cüneyd Bey",role:"Aydınoğlu beyi",context:"Çelebi Mehmed",desc:"Çelebi Mehmed dönemindeki isyan ve ittifak siyasetinin önemli aktörlerinden biridir.",pages:"176, 179-181"},
+  {id:"P045",name:"İsfendiyar Bey",role:"Candaroğlu hükümdarı",context:"Çelebi Mehmed",desc:"Kastamonu-Samsun hattında Osmanlılarla kimi zaman karşı karşıya gelen güçlü beydir.",pages:"165, 176, 189-191"},
+  {id:"P048",name:"Şeyh Bedreddin",role:"Alim / isyan önderi",context:"Çelebi Mehmed",desc:"İlmi geçmişi güçlü, fakat sonrasında siyasî-fikrî bir isyanın merkezine oturan şahsiyettir.",pages:"191-196"},
+  {id:"P049",name:"Börklüce Mustafa",aliases:"Dede Sultan",role:"İsyan önderi / halife",context:"Çelebi Mehmed",desc:"Bedreddin'in en meşhur takipçilerinden biri olarak Aydın çevresindeki isyanla anılır.",pages:"193-196"},
+  {id:"P051",name:"Musa Çelebi",role:"Rakip şehzade",context:"Çelebi Mehmed",desc:"Fetret Devri boyunca Mehmed'in en çetin rakiplerinden biri olarak Edirne'de hüküm sürer.",pages:"152, 174-177"},
+  {id:"P053",name:"Emir Süleyman",aliases:"Süleyman Çelebi",role:"Rakip şehzade",context:"Çelebi Mehmed",desc:"Rumeli'de hüküm sürerek Fetret Devri'nin belirleyici figürlerinden biri olur.",pages:"154, 175-176"},
+  {id:"P054",name:"II. Murad",aliases:"Murad Han",role:"Mehmed'in halefi",context:"Çelebi Mehmed",desc:"Mehmed'in vefatı üzerine haberdar edilmesi gereken varis olarak son bölümde belirir.",pages:"197-199"},
+  {id:"P055",name:"Mirçe",role:"Eflak prensi",context:"Bayezid / Mehmed",desc:"Osmanlılarla hem Bayezid hem Mehmed dönemlerinde ilişkisi olan Eflak voyvodasıdır.",pages:"120, 188-189"},
+  {id:"P056",name:"Lazar",role:"Sırp despotu",context:"Murad I",desc:"Kosova öncesi büyük Balkan ittifakının başındaki hükümdardır.",pages:"100-108"},
+  {id:"P057",name:"Tvartko",role:"Bosna kralı",context:"Murad I",desc:"Ploşnik ve sonraki ittifak bağlamında Osmanlı karşıtı güçlerin önde gelenlerindendir.",pages:"100-108"},
+  {id:"P038",name:"Mutahharten",aliases:"Taharten",role:"Erzincan emiri",context:"Yıldırım Bayezid",desc:"Bayezid-Timur gerilimini tırmandıran sınır aktörlerinden biridir.",pages:"137-139"},
+  {id:"P039",name:"Kara Yusuf",role:"Karakoyunlu hükümdarı",context:"Yıldırım Bayezid",desc:"Timur'un düşmanı olarak Bayezid'e sığınan ve diplomatik krizde adı geçen kişidir.",pages:"138-139"},
+  {id:"P050",name:"Torlak Kemal",role:"İsyan önderi / halife",context:"Çelebi Mehmed",desc:"Bedreddin çevresinde öne çıkan ve Kütahya-Manisa hattında etkili olan isimdir.",pages:"193-196"}
+];
+
+const PLACES = [
+  {id:"L001",name:"Söğüt",type:"yerleşim",desc:"Kuruluş menkıbesinin ana merkezidir; Kayıların kışlağı ve Osmanlı başlangıç mekânı olarak anlatılır.",pages:"16-20, 26, 45, 50"},
+  {id:"L002",name:"Domaniç",type:"yaylak / bölge",desc:"Söğüt ile birlikte Ertuğrul'a verilen yaylak bölgesidir.",pages:"17-18, 29"},
+  {id:"L005",name:"Bilecik",type:"şehir / kale",desc:"Edebali zaviyesi, düğün tuzağı ve erken Osmanlı merkezleşmesi bakımından önemlidir.",pages:"20-21, 27, 31-33, 36"},
+  {id:"L006",name:"İnegöl",type:"kale / şehir",desc:"Osman Gazi'nin ilk askerî hedeflerinden biri olarak anlatılır.",pages:"28-29, 33"},
+  {id:"L007",name:"Karacahisar",type:"kale / şehir",desc:"Fetih, hutbe ve kadı tayiniyle aşiretten devlete geçişte sembolik merkezdir.",pages:"29, 33-36"},
+  {id:"L009",name:"Bursa",type:"şehir",desc:"Osmanlıların ana merkezi, uzun kuşatmaların hedefi ve sonraki payitaht olarak öne çıkar.",pages:"33, 43-45, 49, 54, 76-79, 132-133, 177-178, 197-199"},
+  {id:"L010",name:"İznik",type:"şehir",desc:"Pelekanon sonrası teslim olan, medrese ve imaretle yeniden düzenlenen büyük Bizans merkezidir.",pages:"38, 41, 59-60"},
+  {id:"L011",name:"İzmit",type:"şehir",desc:"İznik'ten sonra fethedilen ve Marmara hâkimiyetini tamamlayan önemli merkezdir.",pages:"39, 58-61"},
+  {id:"L015",name:"Çimpe",type:"kale",desc:"Rumeli'ye ilk kalıcı geçişin sembolik ve stratejik noktasıdır.",pages:"66, 78"},
+  {id:"L016",name:"Gelibolu",type:"şehir / yarımada",desc:"Rumeli fetih zincirinin ana kapısı ve stratejik geçit noktasıdır.",pages:"67-69, 177"},
+  {id:"L017",name:"Edirne",type:"şehir",desc:"Murad devrinde fethedilen ve Osmanlı Rumeli siyasetinin merkezine dönüşen şehirdir.",pages:"74-76, 83-84, 111, 177, 197-199"},
+  {id:"L020",name:"Kosova",type:"ova / savaş alanı",desc:"Murad'ın duası, harp meclisi ve şehadetiyle birleşen büyük savaş mekânıdır.",pages:"101-110"},
+  {id:"L021",name:"Konya",type:"şehir",desc:"Karaman seferlerinin ve Mehmed dönemindeki siyasî hesaplaşmaların ana merkezidir.",pages:"96-100, 116-117, 183-185"},
+  {id:"L023",name:"Niğbolu",type:"kale / şehir",desc:"Haçlı seferinin odaklandığı, 1396 büyük zaferine adını veren merkezdir.",pages:"91, 125-132"},
+  {id:"L024",name:"İstanbul",type:"şehir",desc:"Fetih ideali, kuşatmalar, Türk mahallesi ve Bizans diplomasisiyle anlatının ana hedeflerinden biridir.",pages:"45-46, 118-120, 176, 198"},
+  {id:"L025",name:"Ankara",type:"şehir / ova",desc:"Bayezid-Timur savaşının adıyla özdeşleşen merkez ve sonrasında Mehmed çevresinde süren mücadelelerin düğüm noktasıdır.",pages:"82, 120, 143-148, 176, 180-182"},
+  {id:"L027",name:"Semerkand",type:"şehir",desc:"Timur hanedanının merkezidir; Bayezid için ileri sürülen sevk hedefi olarak da anılır.",pages:"134, 151, 154-155"},
+  {id:"L028",name:"Amasya",type:"şehir",desc:"Çelebi Mehmed'in Ankara sonrası toparlanma merkezi ve siyasi karargâhıdır.",pages:"164-175, 197"},
+  {id:"L030",name:"Sivas",type:"şehir",desc:"Orta Anadolu mücadelesi, Mutahharten meselesi ve Mehmed'in hâkimiyet alanı içinde önemlidir.",pages:"138-143, 165-170"},
+  {id:"L031",name:"Samsun",type:"şehir / kale",desc:"Çelebi Mehmed'in son fetihleri ve Candaroğlu dengeleri içinde belirleyici yer tutar.",pages:"188-191"},
+  {id:"L034",name:"Eflak",type:"voyvodalık / bölge",desc:"Hem Bayezid hem Mehmed devrinde Osmanlı-Macar rekabetinin kuzey cephesidir.",pages:"120, 188-189"},
+  {id:"L035",name:"Rumeli",type:"coğrafi bölge",desc:"Osmanlıların Avrupa kıtasındaki ilk kalıcı ilerleyiş sahasıdır.",pages:"64-76, 82-113, 176-177"},
+  {id:"L040",name:"Bolayır",type:"yerleşim",desc:"Süleyman Paşa'nın konağı, mezarı ve Rumeli'ye geçiş döneminin simgesel merkezidir.",pages:"66, 71-72"},
+  {id:"L032",name:"Kastamonu",type:"şehir / bölge",desc:"Candaroğlu-Osmanlı ilişkileri ve Kasım Bey meselesi bağlamında öne çıkar.",pages:"189-190"},
+  {id:"L022",name:"Kütahya",type:"şehir",desc:"Germiyan bağlantısı, Anadolu eyaleti ve Bayezid'in gençlik valiliği açısından önemlidir.",pages:"93-95, 116, 136"}
+];
+
+const CONCEPTS = [
+  {id:"C001",name:"Ahi Teşkilatı",type:"kurum",desc:"Şeyh Edebali'nin çevresiyle bağlantılı olarak ahilik, sosyal ve manevi örgütlenmenin bir unsuru şeklinde sunulur.",pages:"21, 63"},
+  {id:"C002",name:"Dergah Kültürü",type:"kavram",desc:"Osmanlı kuruluşunda savaşçı terbiyesi ile manevî eğitimi birleştiren zemin olarak anlatılır.",pages:"20-21"},
+  {id:"C003",name:"Gaza / Cihat",type:"kavram",desc:"Kuruluş anlatısından Murad ve Bayezid devrine kadar devlet meşruiyetinin ana dili olarak işlenir.",pages:"15, 43, 47-49, 69-71, 95, 136"},
+  {id:"C004",name:"Hutbe",type:"siyasi-dini işaret",desc:"Osman adına hutbe okunması, beylikten devlete geçişin önemli işaretlerinden biri kabul edilir.",pages:"34-35, 119"},
+  {id:"C005",name:"Sikke",type:"siyasi-mali işaret",desc:"Bayezid ve Orhan kısımlarında sikke basımı, bağımsızlık ve kurumsallaşmanın alameti olarak geçer.",pages:"35-36, 61-62"},
+  {id:"C006",name:"Timar",type:"idarî-askerî sistem",desc:"Osman Gazi'nin pazar ve dirlik düzeni anlatılarında erken prensipleri verilir.",pages:"37"},
+  {id:"C007",name:"Yaya ve Müsellem",type:"askerî teşkilat",desc:"Orhan devrinde daimi piyade ve atlı birlikler olarak teşkil edilip vergi muafiyetiyle tanımlanırlar.",pages:"61-62"},
+  {id:"C008",name:"Devşirme",type:"insan kaynağı sistemi",desc:"Yeniçeri ve saray için çocuk toplanması ve seçimi ayrıntılı şekilde anlatılır.",pages:"84-88"},
+  {id:"C009",name:"Acemi Ocağı",type:"askerî eğitim kurumu",desc:"Devşirilen çocukların eğitim ve terbiyesinin yürütüldüğü ilk aşama kurumu olarak anlatılır.",pages:"85-88"},
+  {id:"C010",name:"Yeniçeri",type:"askerî kurum",desc:"Disiplin, talim, sefer duası ve meydan savaşlarındaki rolüyle ele alınan merkezî piyade ocağıdır.",pages:"84-92"},
+  {id:"C011",name:"Enderun",type:"saray eğitim kurumu",desc:"Saray için ayrılan çocukların yüksek eğitim aldığı iç teşkilat olarak tanıtılır.",pages:"88"},
+  {id:"C012",name:"Meşveret",type:"yönetim ilkesi",desc:"Özellikle Kosova öncesi anlatıda sünnet ve akılcı yönetim prensibi olarak vurgulanır.",pages:"103-105, 139"},
+  {id:"C013",name:"Kızılelma / İstanbul İdeali",type:"siyasi-ideolojik hedef",desc:"İstanbul'un fethi, tarihî-millî şuur ve Osmanlı yürüyüşünün sembol hedefi olarak işlenir.",pages:"45-47"},
+  {id:"C014",name:"Vakıf",type:"sosyal kurum",desc:"Osmanlı şehir hayatını ayakta tutan hayır ve sosyal güvenlik mekanizması olarak uzun uzun açıklanır.",pages:"186-188"},
+  {id:"C015",name:"Surre",type:"dinî-sosyal uygulama",desc:"Haremeyn halkına ve görevlilerine her yıl yardım gönderen Osmanlı adeti olarak tanımlanır.",pages:"188"},
+  {id:"C016",name:"İmaret / Tabhane",type:"sosyal yardım yapısı",desc:"İznik, Bursa ve diğer şehirlerde yoksullar ile yolcular için kurulan hizmet kurumlarıdır.",pages:"60, 78, 111, 160, 187"},
+  {id:"C017",name:"Adalet",type:"siyasi-ahlaki ilke",desc:"Pazar düzeninden kadı-hükümdar ilişkisine kadar bütün anlatıya yayılan kurucu değerlerden biridir.",pages:"36-38, 47-49, 77, 99-100, 159-160"},
+  {id:"C018",name:"Vakıf Medeniyeti",type:"medeniyet tasavvuru",desc:"Osmanlı sosyal yapısının yardım, eğitim, ibadet ve şehircilik boyutlarını bir araya getiren çatı kavramdır.",pages:"186-188"}
+];
+
+const RELATIONSHIPS = [
+  {id:"REL001",source:"Gündüz Alp",type:"parent_of",target:"Ertuğrul Gazi",note:"Aile silsilesinin kuruluş tarafı"},
+  {id:"REL005",source:"Ertuğrul Gazi",type:"parent_of",target:"Osman Gazi",note:"Kurucu kuşağın babası-oğlu ilişkisi"},
+  {id:"REL006",source:"Şeyh Edebali",type:"mentor_of",target:"Osman Gazi",note:"Manevî ve ahlakî rehberlik"},
+  {id:"REL007",source:"Osman Gazi",type:"spouse_of",target:"Malhun Hatun",note:"Edebali ailesiyle evlilik bağı"},
+  {id:"REL008",source:"Osman Gazi",type:"ally_of",target:"Köse Mihal",note:"Affediliş sonrası ittifak"},
+  {id:"REL009",source:"Osman Gazi",type:"parent_of",target:"Orhan Gazi",note:"Hanedan silsilesi"},
+  {id:"REL011",source:"Orhan Gazi",type:"spouse_of",target:"Nilüfer Hatun",note:"Holofira/Nilüfer evliliği"},
+  {id:"REL012",source:"Orhan Gazi",type:"parent_of",target:"Süleyman Paşa",note:"Hanedan silsilesi"},
+  {id:"REL013",source:"Orhan Gazi",type:"parent_of",target:"Murad-ı Hüdavendigar",note:"Hanedan silsilesi"},
+  {id:"REL014",source:"Alaaddin Paşa",type:"advisor_of",target:"Orhan Gazi",note:"Sikke ve askerî düzen tavsiyesi"},
+  {id:"REL016",source:"Süleyman Paşa",type:"campaigns_in",target:"Rumeli",note:"Rumeli fatihi olarak anlatılır"},
+  {id:"REL017",source:"Murad-ı Hüdavendigar",type:"parent_of",target:"Yıldırım Bayezid",note:"Şehzade-baba ilişkisi ve vasiyet"},
+  {id:"REL021",source:"Yıldırım Bayezid",type:"spouse_of",target:"Devlet Hatun",note:"Germiyan akrabalığı"},
+  {id:"REL024",source:"Hundi Sultan",type:"spouse_of",target:"Emir Sultan",note:"Menkıbevî ve siyasi evlilik"},
+  {id:"REL026",source:"Yıldırım Bayezid",type:"adversary_of",target:"Sigismund",note:"Haçlı cephesi"},
+  {id:"REL028",source:"Yıldırım Bayezid",type:"adversary_of",target:"Timur Han",note:"Ankara'ya giden temel karşıtlık"},
+  {id:"REL032",source:"Çelebi Mehmed",type:"parent_of",target:"II. Murad",note:"Ölüm döşeğindeki veraset ilişkisi"},
+  {id:"REL033",source:"Çelebi Mehmed",type:"sibling_rivalry",target:"İsa Çelebi",note:"Fetret Devri"},
+  {id:"REL034",source:"Çelebi Mehmed",type:"sibling_rivalry",target:"Emir Süleyman",note:"Fetret Devri"},
+  {id:"REL035",source:"Çelebi Mehmed",type:"sibling_rivalry",target:"Musa Çelebi",note:"Fetret Devri"},
+  {id:"REL042",source:"Şeyh Bedreddin",type:"followed_by",target:"Börklüce Mustafa",note:"İsyan ağı"},
+  {id:"REL043",source:"Şeyh Bedreddin",type:"followed_by",target:"Torlak Kemal",note:"İsyan ağı"},
+  {id:"REL046",source:"Lazar",type:"adversary_of",target:"Murad-ı Hüdavendigar",note:"Kosova öncesi ve sırasında"},
+  {id:"REL019",source:"Lala Şahin Paşa",type:"serves",target:"Murad-ı Hüdavendigar",note:"Rumeli fetihlerinin başlıca kumandanı"},
+  {id:"REL020",source:"Evrenos Bey",type:"serves",target:"Murad-ı Hüdavendigar",note:"Akıncı lideri ve danışman"},
+  {id:"REL036",source:"Bayezid Paşa",type:"serves",target:"Çelebi Mehmed",note:"Başlıca komutan ve vezir"},
+  {id:"REL038",source:"Cüneyd Bey",type:"rebels_against",target:"Çelebi Mehmed",note:"İzmir merkezli isyan"},
+  {id:"REL031",source:"Mutahharten",type:"supports",target:"Timur Han",note:"Erzincan hattındaki destekçi"}
+];
+
+const SECTIONS = [
+  {id:"S001",ch:null,chName:null,ruler:null,title:"İÇİNDEKİLER",start:5,end:8,type:"front_matter",summary:"İçindekiler sayfaları kitabın bölüm, alt bölüm ve ek düzenini sayfa numaralarıyla verir."},
+  {id:"S002",ch:null,chName:null,ruler:null,title:"TAKDİM",start:9,end:10,type:"front_matter",summary:"Takdim, tarihin ibret verici ve eğitici değerini vurgular; KAYI serisinin Osmanlıyı ideolojik sapmalardan uzak ve ilmi ölçülerle anlatma iddiasını açıklar."},
+  {id:"S003",ch:null,chName:null,ruler:null,title:"ÖNSÖZ",start:11,end:14,type:"front_matter",summary:"Önsöz, Osmanlı tarihinin sıkça çarpıtıldığını savunur; eserin kaynaklara dayalı bir yaklaşım izleyeceğini belirtir."},
+  {id:"S004",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"OSMAN GAZİ",start:15,end:15,type:"chapter_heading",summary:"Bölüm açılışı."},
+  {id:"S005",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"KAYI YİĞİTLERİ SÖĞÜT YOLUNDA",start:16,end:16,type:"section",summary:"Ertuğrul Gazi idaresindeki Kayıların Selçuklulara yardım ederek Söğüt çevresine yerleşmesi."},
+  {id:"S006",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"KAYI BOYU VE OSMANLI AİLESİ",start:17,end:18,type:"section",summary:"Osmanlı ailesinin Kayı boyuna nisbeti, Kayı damgası ve Anadolu'ya geliş güzergâhları."},
+  {id:"S007",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"SÖĞÜTTE BAYRAM",start:19,end:19,type:"section",summary:"Osman'ın doğumu vesilesiyle yapılan şenlikler ve Ertuğrul'un rüyası."},
+  {id:"S008",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"DERGAH KÜLTÜRÜ",start:20,end:20,type:"section",summary:"Savaşçılık terbiyesi ile Şeyh Edebali çevresindeki manevî eğitim."},
+  {id:"S009",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"İLK AŞK",start:21,end:22,type:"section",summary:"Osman'ın Şeyh Edebali'nin kızını istemesi, talebin ertelenmesi."},
+  {id:"S010",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"İLAHİ İŞARETLER",start:23,end:25,type:"section",summary:"Osman'ın Kur'an'a hürmeti ve meşhur rüyası."},
+  {id:"S011",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"EDEBALİ",start:26,end:27,type:"section",summary:"Şeyh Edebali'nin hayatı, ilmi ve Osman üzerindeki etkisi."},
+  {id:"S012",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"İLK FETİHLER",start:28,end:29,type:"section",summary:"İnegöl, Kulacahisar ve Karacahisar çevresindeki ilk fetih hamleleri."},
+  {id:"S013",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"AVA GİDEN AVLANIR",start:30,end:32,type:"section",summary:"Bilecik ve Yarhisar tekfurlarının düğün tuzağının tersine çevrilmesi."},
+  {id:"S014",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"DEVLETE GİDEN YOL",start:33,end:35,type:"section",summary:"Hutbe, kadı tayini, toprak dağıtımı ile devlete geçiş işaretleri."},
+  {id:"S015",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"KAZANANDAN AL!",start:36,end:37,type:"section",summary:"Osman Gazi'nin pazar adaleti ve timar benzeri ilk hukukî prensipleri."},
+  {id:"S016",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"BİZANS ACİZ KALIYOR",start:38,end:39,type:"section",summary:"Koyunhisar ve Dinboz zaferleri sonrasında Bizans'ın çaresizliği."},
+  {id:"S017",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"KÖSE MİHAL, GAZİ MİHAL OLUYOR",start:40,end:42,type:"section",summary:"Köse Mihal'in Osmanlılarla yakınlaşarak Müslüman oluşu."},
+  {id:"S018",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"CİHAT KOLLARI",start:43,end:44,type:"section",summary:"Bursa, İznik çevresindeki kuşatma ve fetih faaliyetleri."},
+  {id:"S019",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"İSTANBUL'U AÇ GÜLZAR YAP!",start:45,end:46,type:"section",summary:"İstanbul ideali ve Oğuz-Kayı soyu vurgusu."},
+  {id:"S020",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"NASİHAT MI, ANAYASA MI?",start:47,end:48,type:"section",summary:"Osman Gazi'nin Orhan'a bıraktığı vasiyet."},
+  {id:"S021",ch:1,chName:"Osman Gazi",ruler:"Osman Gazi",title:"OSMAN GAZİ'NİN ŞAHSİYETİ",start:49,end:52,type:"section",summary:"Osman Gazi'nin ailesi, karakteri ve devlet kuruculuğu."},
+  {id:"S022",ch:2,chName:"Orhan Gazi",ruler:"Orhan Gazi",title:"ORHAN GAZİ",start:53,end:53,type:"chapter_heading",summary:"Bölüm açılışı."},
+  {id:"S023",ch:2,chName:"Orhan Gazi",ruler:"Orhan Gazi",title:"BABAMIZIN DUASI SENİNLEDİR",start:54,end:55,type:"section",summary:"Orhan ile Alaaddin arasında ülkenin bölüşülmemesi kararı."},
+  {id:"S024",ch:2,chName:"Orhan Gazi",ruler:"Orhan Gazi",title:"AYDOS'UN FETHİ",start:56,end:57,type:"section",summary:"Samandıra ve Aydos çevresindeki fetihler."},
+  {id:"S025",ch:2,chName:"Orhan Gazi",ruler:"Orhan Gazi",title:"PELEKANON SAVAŞI",start:58,end:58,type:"section",summary:"İznik ve İzmit yolunu açan Pelekanon muharebesi."},
+  {id:"S026",ch:2,chName:"Orhan Gazi",ruler:"Orhan Gazi",title:"BUNLAR BİZE BEY OLAYDI!",start:59,end:60,type:"section",summary:"İznik halkının Osmanlı idaresini benimsemesi."},
+  {id:"S027",ch:2,chName:"Orhan Gazi",ruler:"Orhan Gazi",title:"ALAADDİN PAŞA'NIN TAVSİYELERİ",start:61,end:61,type:"section",summary:"Sikke basımı, yaya-müsellem teşkilatı."},
+  {id:"S028",ch:2,chName:"Orhan Gazi",ruler:"Orhan Gazi",title:"İNCİTME GEL DERVİŞLERİ",start:62,end:63,type:"section",summary:"Geyikli Baba ve dervişlere gösterilen saygı."},
+  {id:"S029",ch:2,chName:"Orhan Gazi",ruler:"Orhan Gazi",title:"SUYA SECCADE SALANLAR!",start:64,end:66,type:"section",summary:"Çimpe Kalesi'nin ele geçirilmesi ve Rumeli'ye geçiş."},
+  {id:"S030",ch:2,chName:"Orhan Gazi",ruler:"Orhan Gazi",title:"GAZİ SÜLEYMAN PAŞA'NIN FETİHLERİ",start:67,end:68,type:"section",summary:"Süleyman Paşa'nın Gelibolu çevresindeki fetihleri."},
+  {id:"S031",ch:2,chName:"Orhan Gazi",ruler:"Orhan Gazi",title:"YAŞAMAKTAN MAKSAT NE?",start:69,end:70,type:"section",summary:"Süleyman Paşa'nın ibretli sözleri."},
+  {id:"S032",ch:2,chName:"Orhan Gazi",ruler:"Orhan Gazi",title:"HAYAT EMANET BİR ELBİSEDİR!",start:71,end:73,type:"section",summary:"Süleyman Paşa'nın ani ölümü."},
+  {id:"S033",ch:2,chName:"Orhan Gazi",ruler:"Orhan Gazi",title:"RUMELİ'NİN YENİ BAŞBUĞU",start:74,end:75,type:"section",summary:"Murad'ın yükselişi ve Edirne'nin fethi."},
+  {id:"S034",ch:2,chName:"Orhan Gazi",ruler:"Orhan Gazi",title:"OĞUL! BİZ YOLUN SONUNA GELDİK",start:76,end:76,type:"section",summary:"Orhan Gazi'nin Murad'a son nasihatleri."},
+  {id:"S035",ch:2,chName:"Orhan Gazi",ruler:"Orhan Gazi",title:"ORHAN GAZİ'NİN ŞAHSİYETİ",start:77,end:80,type:"section",summary:"Orhan Gazi'nin mizacı, fetihleri ve hayır eserleri."},
+  {id:"S036",ch:3,chName:"Murad-ı Hüdavendigar",ruler:"Murad I",title:"MURAD-I HÜDAVENDİGAR",start:81,end:81,type:"chapter_heading",summary:"Bölüm açılışı."},
+  {id:"S037",ch:3,chName:"Murad-ı Hüdavendigar",ruler:"Murad I",title:"FETİHLER VE SIRPSINDIĞI",start:82,end:83,type:"section",summary:"Murad devrinin ilk Balkan fetihleri ve Sırpsındığı zaferi."},
+  {id:"S038",ch:3,chName:"Murad-ı Hüdavendigar",ruler:"Murad I",title:"YENİÇERİLER",start:84,end:92,type:"section",summary:"Devşirme, Acemi Ocağı, yeniçeri talimi, disiplini ve savaş düzeni."},
+  {id:"S039",ch:3,chName:"Murad-ı Hüdavendigar",ruler:"Murad I",title:"DÜĞÜN",start:93,end:94,type:"section",summary:"Bayezid ile Devlet Hatun'un düğünü."},
+  {id:"S040",ch:3,chName:"Murad-ı Hüdavendigar",ruler:"Murad I",title:"GAZA-İ EKBER",start:95,end:98,type:"section",summary:"Karaman seferi ve dinî-siyasi meşruiyet."},
+  {id:"S041",ch:3,chName:"Murad-ı Hüdavendigar",ruler:"Murad I",title:"İHSAN VE ADALET ÖRNEKLERİ",start:99,end:99,type:"section",summary:"Murad'ın disiplin, merhamet ve adalet örnekleri."},
+  {id:"S042",ch:3,chName:"Murad-ı Hüdavendigar",ruler:"Murad I",title:"CENK NASIL OLUR GÖRSÜN!",start:100,end:102,type:"section",summary:"Ploşnik bozgunu ve büyük Balkan ittifakı."},
+  {id:"S043",ch:3,chName:"Murad-ı Hüdavendigar",ruler:"Murad I",title:"MEŞVERET SÜNNET-İ RESUL'DÜR",start:103,end:104,type:"section",summary:"Kosova öncesi harp meclisi ve meşveret kültürü."},
+  {id:"S044",ch:3,chName:"Murad-ı Hüdavendigar",ruler:"Murad I",title:"AŞKINLA AĞLAYAN GÖZLER HÜRMETİNE",start:105,end:107,type:"section",summary:"Murad'ın Kosova arifesinde yaptığı dua."},
+  {id:"S045",ch:3,chName:"Murad-ı Hüdavendigar",ruler:"Murad I",title:"GAZİ-İ MUTLAK İDİ, ŞEHİT-İ MUHAKKAK OLDU",start:108,end:109,type:"section",summary:"Kosova zaferi ve Murad'ın şehadeti."},
+  {id:"S046",ch:3,chName:"Murad-ı Hüdavendigar",ruler:"Murad I",title:"MURAD-I HÜDAVENDİGAR'IN ŞAHSİYETİ",start:110,end:114,type:"section",summary:"Murad'ın fetihleri, kişiliği, hayır eserleri."},
+  {id:"S047",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"YILDIRIM BAYEZİD HAN",start:115,end:115,type:"chapter_heading",summary:"Bölüm açılışı."},
+  {id:"S048",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"ANADOLU'DA BİRLİK MÜCADELESİ",start:116,end:117,type:"section",summary:"Bayezid'in Batı Anadolu beyliklerini ilhakı."},
+  {id:"S049",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"İSTANBUL KUŞATMALARI",start:118,end:119,type:"section",summary:"Bayezid'in İstanbul kuşatma siyaseti."},
+  {id:"S050",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"ŞANLI FETİHLER",start:120,end:121,type:"section",summary:"Eflak, Karaman ve Bulgaristan genişlemesi."},
+  {id:"S051",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"HUNDİ SULTAN",start:122,end:124,type:"section",summary:"Hundi Sultan ile Emir Sultan evliliği."},
+  {id:"S052",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"BÜYÜK HAÇLI İTTİFAKI",start:125,end:127,type:"section",summary:"Niğbolu öncesinde Haçlı ordusu oluşumu."},
+  {id:"S053",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"BRE DOĞAN!",start:128,end:129,type:"section",summary:"Bayezid'in Doğan Bey'e seslenişi."},
+  {id:"S054",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"NİĞBOLU SAVAŞI",start:130,end:130,type:"section",summary:"1396 Niğbolu Muharebesi."},
+  {id:"S055",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"YEMİNİNİ İADE EDİYORUM!",start:131,end:131,type:"section",summary:"Bayezid'in esir düşen asilzadelere söylediği söz."},
+  {id:"S056",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"ULU CAMİ'NİN AÇILIŞI",start:132,end:133,type:"section",summary:"Bursa Ulu Cami'nin açılışı ve Somuncu Baba."},
+  {id:"S057",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"YAKLAŞAN TEHLİKE: TİMUR",start:134,end:135,type:"section",summary:"Timur'un kökeni ve siyasî yükselişi."},
+  {id:"S058",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"VE YILDIRIM",start:136,end:136,type:"section",summary:"Bayezid'in cihatçı hükümdarlık profili."},
+  {id:"S059",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"SAVAŞ KIŞKIRTICILARI",start:137,end:139,type:"section",summary:"Bayezid-Timur geriliminin tırmanması."},
+  {id:"S060",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"ALİMLERİN GAYRETİ",start:140,end:142,type:"section",summary:"Savaşı önleme çabaları."},
+  {id:"S061",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"ANKARA SAVAŞI",start:143,end:147,type:"section",summary:"Ankara Muharebesi ve Bayezid'in esareti."},
+  {id:"S062",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"İKİ HAKAN BİR SEDİRDE",start:148,end:149,type:"section",summary:"Timur ile Bayezid arasındaki temaslar."},
+  {id:"S063",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"CİHANA VEDA KILDI",start:150,end:151,type:"section",summary:"Bayezid'in esaret altındaki kederi ve ölümü."},
+  {id:"S064",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"TİMUR ANADOLU'DA",start:152,end:154,type:"section",summary:"Timur'un Anadolu beylerini yeniden düzenleyişi."},
+  {id:"S065",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"DÜZME HABERLER!",start:155,end:157,type:"section",summary:"Demir kafes ve intihar rivayetlerinin reddi."},
+  {id:"S066",ch:4,chName:"Yıldırım Bayezid Han",ruler:"Yıldırım Bayezid",title:"YILDIRIM BAYEZİD HAN'IN ŞAHSİYETİ",start:158,end:162,type:"section",summary:"Bayezid'in eğitimi, karakteri ve eserleri."},
+  {id:"S067",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"SULTAN ÇELEBİ MEHMED",start:163,end:163,type:"chapter_heading",summary:"Bölüm açılışı."},
+  {id:"S068",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"AMASYA YOLUNDA",start:164,end:164,type:"section",summary:"Ankara bozgunundan çıkan Mehmed'in Amasya'ya yönelişi."},
+  {id:"S069",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"FIRSAT DÜŞKÜNLERİ",start:165,end:169,type:"section",summary:"Fırsatçıların bastırılması ve bölgesel otorite."},
+  {id:"S070",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"TİMUR HAN'IN ENDİŞESİ",start:170,end:171,type:"section",summary:"Timur'un Mehmed'den duyduğu tedirginlik."},
+  {id:"S071",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"ACI HABER",start:172,end:172,type:"section",summary:"Bayezid Han'ın ölüm haberi."},
+  {id:"S072",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"TACI TAHTI TERK EDELİM!",start:173,end:174,type:"section",summary:"Mehmed'in kardeş kanından kaçınmak istemesi."},
+  {id:"S073",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"KARDEŞLER MÜCADELESİ",start:175,end:176,type:"section",summary:"Fetret Devri kardeş mücadeleleri."},
+  {id:"S074",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"YA DİRİSİ GELSEYDİ!",start:177,end:178,type:"section",summary:"Karamanoğlu'nun Bursa kuşatması."},
+  {id:"S075",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"BİR İSYAN VE BİR İHANET!",start:179,end:182,type:"section",summary:"Cüneyd Bey isyanı ve İzmir seferi."},
+  {id:"S076",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"YEMİNİNİ BOZMANIN SONU!",start:183,end:185,type:"section",summary:"Karaman cephesi ve Karamanoğlu'nun sözünden dönmesi."},
+  {id:"S077",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"VAKIF MEDENİYETİNE DOĞRU",start:186,end:187,type:"section",summary:"Vakıf medeniyetinin sosyal güvenlik ve hayır boyutu."},
+  {id:"S078",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"BAZI FETİHLER",start:188,end:189,type:"section",summary:"Eflak, Macar ve Candaroğulları çevresindeki gelişmeler."},
+  {id:"S079",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"OSMANLI VEREN ELDİR",start:190,end:190,type:"section",summary:"Osmanlıların cömertlik ve himaye siyaseti."},
+  {id:"S080",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"SİMAVNA KADISI OĞLU ŞEYH BEDREDDİN",start:191,end:192,type:"section",summary:"Şeyh Bedreddin'in kökeni ve fikrî nüfuzu."},
+  {id:"S081",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"İLK BÜYÜK İÇ İSYAN",start:193,end:196,type:"section",summary:"Bedreddin-Börklüce-Torlak isyanı."},
+  {id:"S082",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"MURAD'IMA HABER SALIN",start:197,end:197,type:"section",summary:"Mehmed'in son hastalığı ve ölümü."},
+  {id:"S083",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"SULTAN ÇELEBİ MEHMED'İN ŞAHSİYETİ",start:198,end:199,type:"section",summary:"Çelebi Mehmed'in portresi."},
+  {id:"S084",ch:5,chName:"Sultan Çelebi Mehmed",ruler:"Çelebi Mehmed",title:"HAKKINDA NE DEDİLER",start:200,end:202,type:"section",summary:"Tarihçilerin değerlendirmeleri."}
+];
+
+const BIBLIOGRAPHY = [
+  {id:"B001",entry:"Ahmed b. Hanbel, Müsned, Kahire 1313.",author:"Ahmed b. Hanbel",year:"1313"},
+  {id:"B002",entry:"Ahmed Cevdet Paşa, Kısas-ı Enbiya ve Tevarih-i Hulefa, c. 2, İstanbul 1977.",author:"Ahmed Cevdet Paşa",year:"1977"},
+  {id:"B009",entry:"Aşık Paşazade, Tevarih-i Al-i Osman, Ali Bey neşri, İstanbul 1332.",author:"Aşık Paşazade",year:"1332"},
+  {id:"B016",entry:"İ. Hami Danişmend, İzahlı Osmanlı Tarihi Kronolojisi, 1, İstanbul 1971.",author:"İ. Hami Danişmend",year:"1971"},
+  {id:"B017",entry:"Dukas, Bizans Tarihi, trc. Mırmıroğlu, İstanbul 1956.",author:"Dukas",year:"1956"},
+  {id:"B020",entry:"H. A. Gibbons, Osmanlı İmparatorluğu'nun Kuruluşu, trc. R. Hulusi, İstanbul 1928.",author:"H. A. Gibbons",year:"1928"},
+  {id:"B023",entry:"Hammer, Devlet-i Osmaniye Tarihi, I, trc. Ata Bey.",author:"Hammer",year:""},
+  {id:"B025",entry:"Hoca Sadeddin Efendi, Tacü't-Tevarih, c. I, II, V, haz. İ. Parmaksızoğlu, Ankara 1992.",author:"Hoca Sadeddin Efendi",year:"1992"},
+  {id:"B026",entry:"İbni Kemal, Tevarih-i Al-i Osman, 1. Defter, haz. Ş. Turan, Ankara 1970.",author:"İbni Kemal",year:"1970"},
+  {id:"B032",entry:"M. Fuad Köprülü, Osmanlı İmparatorluğu'nun Kuruluşu, Ankara 1972.",author:"M. Fuad Köprülü",year:"1972"},
+  {id:"B040",entry:"Mehmed Neşri, Kitab-ı Cihan-nüma (Neşri Tarihi), haz. F. R. Unat-M. A. Köymen, Ankara 1987.",author:"Mehmed Neşri",year:"1987"},
+  {id:"B044",entry:"Müneccimbaşı Ahmed b. Lütfullah, Camiü'l-Düvel, haz. A. Ağırakça, İstanbul 1995.",author:"Müneccimbaşı",year:"1995"},
+  {id:"B045",entry:"Nizameddin Şami, Zafername, çev. N. Lugal, Ankara 1949.",author:"Nizameddin Şami",year:"1949"},
+  {id:"B046",entry:"Oruç b. Adil, Tevarih-i Al-i Osman, nşr. Babinger, 1925.",author:"Oruç b. Adil",year:"1925"},
+  {id:"B049",entry:"Peçevi İbrahim Efendi, Peçevi Tarihi, II, haz. B. Sıtkı Baykal, Ankara 1992.",author:"Peçevi İbrahim Efendi",year:"1992"},
+  {id:"B053",entry:"Faruk Sümer, Oğuzlar (Türkmenler) — Tarihleri - Boy Teşkilatı - Destanları, İstanbul 1992.",author:"Faruk Sümer",year:"1992"},
+  {id:"B057",entry:"Ahmet Şimşirgil, 'Kosova'da verilen kurban', Tarih ve Medeniyet, Mayıs 1998, sy. 50.",author:"Ahmet Şimşirgil",year:"1998"},
+  {id:"B058",entry:"Ahmet Şimşirgil, 'Söğüt'te doğan güneş', Tarih ve Medeniyet, Ocak 1999, sy. 58.",author:"Ahmet Şimşirgil",year:"1999"},
+  {id:"B059",entry:"Şükrullah, Behcetü't-Tevarih, çev. N. Atsız, Osmanlı Tarihleri 1.",author:"Şükrullah",year:""},
+  {id:"B064",entry:"İ. H. Uzunçarşılı, Kapıkulu Ocakları, I, Ankara 1984.",author:"İ. H. Uzunçarşılı",year:"1984"},
+  {id:"B066",entry:"İ. H. Uzunçarşılı, Osmanlı Tarihi, I, Ankara 1972.",author:"İ. H. Uzunçarşılı",year:"1972"},
+  {id:"B070",entry:"Yaşar Yücel, Timur'un Dış Politikasında Türkiye ve Yakın Doğu, 1393-1402, Ankara 1980.",author:"Yaşar Yücel",year:"1980"}
+];
+
+// ============================================
+// RENDER FUNCTIONS
+// ============================================
+
+function renderRulers() {
+  const grid = document.getElementById('rulersGrid');
+  grid.innerHTML = RULERS.map(r => `
+    <div class="ruler-card reveal" onclick="showRulerDetail('${r.id}')">
+      <div class="ruler-chapter">${r.chapter}. Bölüm</div>
+      <div class="ruler-name">${r.name}</div>
+      <div class="ruler-period">${r.rule}</div>
+      <div class="ruler-summary">${r.summary}</div>
+      <div class="ruler-pages">s. ${r.pages}</div>
+    </div>
+  `).join('');
+}
+
+function showRulerDetail(id) {
+  const r = RULERS.find(x => x.id === id);
+  const sections = SECTIONS.filter(s => s.ch === r.chapter && s.type === 'section');
+  const events = TIMELINE_EVENTS.filter(e => e.ruler.includes(r.name.split(' ')[0]) || e.ruler.includes(r.name));
+  const persons = PERSONS.filter(p => p.context && p.context.includes(r.name.split(' ')[0]));
+
+  document.getElementById('modalContent').innerHTML = `
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h2>${r.name}</h2>
+    <div class="modal-meta">
+      <strong>Doğum:</strong> ${r.birth}<br>
+      <strong>Tahta geçiş:</strong> ${r.accession}<br>
+      <strong>Hüküm:</strong> ${r.rule}<br>
+      <strong>Vefat:</strong> ${r.death}<br>
+      <strong>Soy:</strong> ${r.parentage}
+    </div>
+    <p>${r.summary}</p>
+
+    <h3>Bölüm Alt Başlıkları (${sections.length})</h3>
+    <ul class="modal-section-list">
+      ${sections.map(s => `<li>
+        <span>${s.title}</span>
+        <span class="pages">s. ${s.start}${s.end !== s.start ? '-'+s.end : ''}</span>
+      </li>`).join('')}
+    </ul>
+
+    ${events.length ? `<h3>Önemli Olaylar (${events.length})</h3>
+    <ul class="modal-section-list">
+      ${events.map(e => `<li>
+        <span>${e.name} <small style="color:var(--text-muted)">(${e.date})</small></span>
+      </li>`).join('')}
+    </ul>` : ''}
+
+    ${persons.length ? `<h3>İlgili Kişiler (${persons.length})</h3>
+    <ul class="modal-section-list">
+      ${persons.slice(0,15).map(p => `<li>
+        <span><strong style="color:var(--gold-light)">${p.name}</strong> — ${p.role}</span>
+      </li>`).join('')}
+    </ul>` : ''}
+  `;
+
+  document.getElementById('modalOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function renderTimeline() {
+  // Controls
+  const rulers = [...new Set(TIMELINE_EVENTS.map(e => e.ruler))];
+  const controls = document.getElementById('timelineControls');
+  controls.innerHTML = `<button class="timeline-filter active" data-ruler="all">Tümü</button>` +
+    rulers.map(r => `<button class="timeline-filter" data-ruler="${r}">${r}</button>`).join('');
+
+  controls.addEventListener('click', e => {
+    if (!e.target.classList.contains('timeline-filter')) return;
+    controls.querySelectorAll('.timeline-filter').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    const ruler = e.target.dataset.ruler;
+    renderTimelineItems(ruler === 'all' ? null : ruler);
+  });
+
+  renderTimelineItems();
+}
+
+function renderTimelineItems(filterRuler) {
+  let events = [...TIMELINE_EVENTS].sort((a,b) => (a.year||0) - (b.year||0));
+  if (filterRuler) events = events.filter(e => e.ruler === filterRuler);
+
+  document.getElementById('timelineContainer').innerHTML = events.map(e => `
+    <div class="timeline-item" data-type="${e.type}">
+      <div class="timeline-date">${e.date}</div>
+      <div class="timeline-ruler-tag">${e.ruler}</div>
+      <div class="timeline-title">${e.name}</div>
+      <div class="timeline-summary">${e.summary}</div>
+      ${e.location ? `<div class="timeline-location">&#9673; ${e.location}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function renderPersons() {
+  renderPersonCards(PERSONS);
+
+  document.getElementById('personSearch').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    const filtered = PERSONS.filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      p.role.toLowerCase().includes(q) ||
+      p.desc.toLowerCase().includes(q) ||
+      (p.aliases && p.aliases.toLowerCase().includes(q))
+    );
+    renderPersonCards(filtered);
+  });
+}
+
+function renderPersonCards(list) {
+  document.getElementById('personsGrid').innerHTML = list.map(p => `
+    <div class="person-card" onclick="showPersonDetail('${p.id}')">
+      <div class="person-card-header">
+        <div class="person-avatar">${p.name.charAt(0)}</div>
+        <div>
+          <div class="person-name">${p.name}</div>
+          <div class="person-role">${p.role}</div>
+        </div>
+      </div>
+      <div class="person-desc">${p.desc}</div>
+      <div class="person-context">${p.context} dönemi &middot; s. ${p.pages}</div>
+    </div>
+  `).join('');
+}
+
+function showPersonDetail(id) {
+  const p = PERSONS.find(x => x.id === id);
+  const rels = RELATIONSHIPS.filter(r => r.source === p.name || r.target === p.name);
+
+  document.getElementById('modalContent').innerHTML = `
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h2>${p.name}</h2>
+    ${p.aliases ? `<p style="color:var(--text-muted);font-style:italic;margin-bottom:0.5rem;">Diğer adları: ${p.aliases}</p>` : ''}
+    <div class="modal-meta">
+      <strong>Rol:</strong> ${p.role}<br>
+      <strong>Dönem:</strong> ${p.context}<br>
+      <strong>Sayfalar:</strong> ${p.pages}
+    </div>
+    <p>${p.desc}</p>
+
+    ${rels.length ? `<h3>İlişkiler</h3>
+    <ul class="modal-section-list">
+      ${rels.map(r => `<li>
+        <span><strong style="color:var(--gold-light)">${r.source}</strong>
+        <span style="color:var(--text-muted);margin:0 0.5rem;">&#8594;</span>
+        <strong>${r.target}</strong></span>
+        <span class="pages">${formatRelType(r.type)}</span>
+      </li>`).join('')}
+    </ul>` : ''}
+  `;
+
+  document.getElementById('modalOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function formatRelType(type) {
+  const map = {
+    parent_of: 'Baba / Anne',
+    spouse_of: 'Eş',
+    mentor_of: 'Hoca',
+    ally_of: 'Müttefik',
+    adversary_of: 'Rakip',
+    serves: 'Hizmet eder',
+    campaigns_in: 'Sefer yapar',
+    sibling_rivalry: 'Kardeş rekabeti',
+    followed_by: 'Takipçisi',
+    rebels_against: 'İsyan eder',
+    supports: 'Destekler',
+    advisor_of: 'Danışman'
+  };
+  return map[type] || type;
+}
+
+function renderDynasty() {
+  document.getElementById('dynastyTree').innerHTML = `
+    <div class="dynasty-node">Gündüz Alp</div>
+    <div class="dynasty-connector"></div>
+    <div class="dynasty-node">Ertuğrul Gazi</div>
+    <div class="dynasty-connector"></div>
+    <div class="dynasty-node sultan">Osman Gazi <small style="display:block;font-size:0.65em;color:var(--cream-dark);font-weight:400">1281 – 1326</small></div>
+    <div class="dynasty-connector"></div>
+    <div class="dynasty-branch">
+      <div style="text-align:center">
+        <div class="dynasty-node">Alaaddin Paşa</div>
+      </div>
+      <div style="text-align:center">
+        <div class="dynasty-node sultan">Orhan Gazi <small style="display:block;font-size:0.65em;color:var(--cream-dark);font-weight:400">1326 – 1362</small></div>
+        <div class="dynasty-connector" style="margin:0 auto"></div>
+        <div class="dynasty-branch" style="justify-content:center">
+          <div style="text-align:center">
+            <div class="dynasty-node">Süleyman Paşa</div>
+          </div>
+          <div style="text-align:center">
+            <div class="dynasty-node sultan">Murad-ı Hüdavendigar <small style="display:block;font-size:0.65em;color:var(--cream-dark);font-weight:400">1362 – 1389</small></div>
+            <div class="dynasty-connector" style="margin:0 auto"></div>
+            <div class="dynasty-node sultan">Yıldırım Bayezid <small style="display:block;font-size:0.65em;color:var(--cream-dark);font-weight:400">1389 – 1402</small></div>
+            <div class="dynasty-connector" style="margin:0 auto"></div>
+            <div class="dynasty-branch" style="justify-content:center;flex-wrap:wrap">
+              <div class="dynasty-node">Emir Süleyman</div>
+              <div class="dynasty-node">İsa Çelebi</div>
+              <div class="dynasty-node">Musa Çelebi</div>
+              <div class="dynasty-node sultan">Çelebi Mehmed <small style="display:block;font-size:0.65em;color:var(--cream-dark);font-weight:400">1413 – 1421</small></div>
+            </div>
+            <div class="dynasty-connector" style="margin:0.5rem auto"></div>
+            <div class="dynasty-node sultan">II. Murad <small style="display:block;font-size:0.65em;color:var(--cream-dark);font-weight:400">1421 –</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderRelationships() {
+  const types = [...new Set(RELATIONSHIPS.map(r => r.type))];
+  const controls = document.getElementById('relControls');
+  controls.innerHTML = `<button class="timeline-filter active" data-type="all">Tümü</button>` +
+    types.map(t => `<button class="timeline-filter" data-type="${t}">${formatRelType(t)}</button>`).join('');
+
+  controls.addEventListener('click', e => {
+    if (!e.target.classList.contains('timeline-filter')) return;
+    controls.querySelectorAll('.timeline-filter').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    const type = e.target.dataset.type;
+    renderRelItems(type === 'all' ? null : type);
+  });
+
+  renderRelItems();
+}
+
+function renderRelItems(filterType) {
+  let rels = [...RELATIONSHIPS];
+  if (filterType) rels = rels.filter(r => r.type === filterType);
+
+  document.getElementById('relGrid').innerHTML = rels.map(r => `
+    <div class="rel-item">
+      <span class="rel-source">${r.source}</span>
+      <span class="rel-arrow">&#8594;</span>
+      <span class="rel-target">${r.target}</span>
+      <span class="rel-type">${formatRelType(r.type)}</span>
+    </div>
+  `).join('');
+}
+
+function renderPlaces() {
+  document.getElementById('placesGrid').innerHTML = PLACES.map(p => `
+    <div class="place-card reveal">
+      <div class="place-name">${p.name}</div>
+      <div class="place-type">${p.type}</div>
+      <div class="place-desc">${p.desc}</div>
+      <div class="place-pages">s. ${p.pages}</div>
+    </div>
+  `).join('');
+}
+
+function renderConcepts() {
+  document.getElementById('conceptsGrid').innerHTML = CONCEPTS.map(c => `
+    <div class="concept-card reveal">
+      <div class="concept-name">${c.name}</div>
+      <div class="concept-type">${c.type}</div>
+      <div class="concept-desc">${c.desc}</div>
+      <div class="concept-pages">s. ${c.pages}</div>
+    </div>
+  `).join('');
+}
+
+function renderTOC() {
+  // Group sections by chapter
+  const chapters = {};
+  const frontMatter = [];
+
+  SECTIONS.forEach(s => {
+    if (s.ch === null) {
+      frontMatter.push(s);
+    } else {
+      if (!chapters[s.ch]) chapters[s.ch] = { name: s.chName, ruler: s.ruler, sections: [] };
+      chapters[s.ch].sections.push(s);
+    }
+  });
+
+  let html = '';
+
+  // Front matter
+  if (frontMatter.length) {
+    html += `<div class="toc-chapter">
+      <div class="toc-chapter-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="toc-chapter-info">
+          <h3>Ön Kısım</h3>
+          <span class="ruler-tag">Takdim, Önsöz</span>
+        </div>
+        <div class="toc-toggle">&#9662;</div>
+      </div>
+      <div class="toc-sections">
+        ${frontMatter.map(s => `
+          <div class="toc-section-item">
+            <div>
+              <div class="toc-section-title">${s.title}</div>
+              <div class="toc-section-summary">${s.summary}</div>
+            </div>
+            <div class="toc-section-pages">s. ${s.start}-${s.end}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  }
+
+  // Chapters
+  Object.entries(chapters).forEach(([ch, data]) => {
+    html += `<div class="toc-chapter">
+      <div class="toc-chapter-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="toc-chapter-info">
+          <h3>${ch}. Bölüm — ${data.name}</h3>
+          <span class="ruler-tag">${data.ruler} &middot; ${data.sections.length} alt başlık</span>
+        </div>
+        <div class="toc-toggle">&#9662;</div>
+      </div>
+      <div class="toc-sections">
+        ${data.sections.map(s => `
+          <div class="toc-section-item">
+            <div>
+              <div class="toc-section-title">${s.title}</div>
+              <div class="toc-section-summary">${s.summary}</div>
+            </div>
+            <div class="toc-section-pages">s. ${s.start}${s.end !== s.start ? '-'+s.end : ''}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('tocChapters').innerHTML = html;
+}
+
+function renderBibliography() {
+  document.getElementById('bibGrid').innerHTML = BIBLIOGRAPHY.map(b => `
+    <div class="bib-item">
+      <span class="author">${b.author}</span>${b.year ? ` <span class="year">(${b.year})</span>` : ''}<br>
+      ${b.entry}
+    </div>
+  `).join('');
+}
+
+function renderIndexSearch() {
+  // We'll use a simplified index for search
+  const indexInput = document.getElementById('indexSearchInput');
+  const indexResults = document.getElementById('indexResults');
+
+  // Build a simple searchable index from persons, places, concepts
+  const searchIndex = [];
+
+  PERSONS.forEach(p => searchIndex.push({ term: p.name, pages: p.pages, type: 'Kişi' }));
+  PLACES.forEach(p => searchIndex.push({ term: p.name, pages: p.pages, type: 'Mekân' }));
+  CONCEPTS.forEach(c => searchIndex.push({ term: c.name, pages: c.pages, type: 'Kavram' }));
+
+  // Add some extra index entries from the raw data
+  const extraEntries = [
+    {term:"Abbasi halifesi",pages:"132",type:"Dizin"},{term:"Acemi Ocağı",pages:"86",type:"Dizin"},
+    {term:"ahi teşkilatı",pages:"21",type:"Dizin"},{term:"akçe",pages:"16, 37, 62, 111, 193",type:"Dizin"},
+    {term:"Akdeniz",pages:"134",type:"Dizin"},{term:"Anadolu",pages:"16, 19, 27, 35, 39, 40, 46, 50, 66...",type:"Dizin"},
+    {term:"anayasa",pages:"47",type:"Dizin"},{term:"Arnavutluk",pages:"96, 122",type:"Dizin"},
+    {term:"aşevleri",pages:"187",type:"Dizin"},{term:"Atilla",pages:"51",type:"Dizin"},
+    {term:"Avrupa",pages:"23, 47, 50, 91, 93, 112, 126...",type:"Dizin"},
+    {term:"bayrak",pages:"29, 61, 91, 185",type:"Dizin"},{term:"bedesten",pages:"160",type:"Dizin"},
+    {term:"biat",pages:"54, 197",type:"Dizin"},{term:"Bizans",pages:"Birçok sayfa",type:"Dizin"},
+    {term:"cami",pages:"Birçok sayfa",type:"Dizin"},{term:"cihat",pages:"43, 47-49, 69, 95",type:"Dizin"},
+    {term:"darüşşifa",pages:"78, 111, 160",type:"Dizin"},{term:"devşirme",pages:"84-88",type:"Dizin"},
+    {term:"divan",pages:"61, 99, 159",type:"Dizin"},{term:"Enderun",pages:"88",type:"Dizin"},
+    {term:"fetihname",pages:"96, 130",type:"Dizin"},{term:"gazi",pages:"Birçok sayfa",type:"Dizin"},
+    {term:"Haçlılar",pages:"91, 125-131",type:"Dizin"},{term:"hamam",pages:"78, 111, 160",type:"Dizin"},
+    {term:"han (kervansaray)",pages:"78, 111, 187",type:"Dizin"},{term:"hutbe",pages:"34-35, 119, 132-133",type:"Dizin"},
+    {term:"imaret",pages:"60, 78, 111, 160, 187",type:"Dizin"},{term:"kadı",pages:"34, 99, 159",type:"Dizin"},
+    {term:"Kayı boyu",pages:"15-20, 45",type:"Dizin"},{term:"Kızılelma",pages:"45-47",type:"Dizin"},
+    {term:"kılıç kuşanma",pages:"54, 115",type:"Dizin"},{term:"medrese",pages:"60, 78, 111, 160",type:"Dizin"},
+    {term:"meşveret",pages:"103-105, 139",type:"Dizin"},{term:"Oğuz",pages:"15, 17, 45, 51",type:"Dizin"},
+    {term:"pazar",pages:"36-37",type:"Dizin"},{term:"Rum",pages:"Birçok sayfa",type:"Dizin"},
+    {term:"sadrazam",pages:"61, 159",type:"Dizin"},{term:"Selçuklu",pages:"17-18, 34",type:"Dizin"},
+    {term:"sikke",pages:"35-36, 61-62",type:"Dizin"},{term:"surre",pages:"188",type:"Dizin"},
+    {term:"timar",pages:"37",type:"Dizin"},{term:"tuğ",pages:"29, 61",type:"Dizin"},
+    {term:"uç beyi",pages:"33, 82",type:"Dizin"},{term:"vakıf",pages:"186-188",type:"Dizin"},
+    {term:"vasiyet",pages:"47-49, 76",type:"Dizin"},{term:"yeniçeri",pages:"84-92",type:"Dizin"},
+    {term:"zaviye",pages:"20, 160",type:"Dizin"}
+  ];
+
+  searchIndex.push(...extraEntries);
+
+  indexInput.addEventListener('input', e => {
+    const q = e.target.value.toLowerCase().trim();
+    if (q.length < 2) {
+      indexResults.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:1rem;">En az 2 harf yazın...</p>';
+      return;
+    }
+    const results = searchIndex.filter(item =>
+      item.term.toLowerCase().includes(q)
+    ).sort((a,b) => a.term.localeCompare(b.term, 'tr'));
+
+    if (results.length === 0) {
+      indexResults.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:1rem;">Sonuç bulunamadı.</p>';
+      return;
+    }
+
+    indexResults.innerHTML = results.map(r => `
+      <div class="index-result-item">
+        <span><strong>${r.term}</strong> <small style="color:var(--text-muted)">[${r.type}]</small></span>
+        <span class="ref-pages">s. ${r.pages}</span>
+      </div>
+    `).join('');
+  });
+
+  // Initial state
+  indexResults.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:1rem;">Yukarıdaki kutuya aramak istediğiniz terimi yazın.</p>';
+}
+
+// ============================================
+// UI INTERACTIONS
+// ============================================
+
+// Navbar scroll effect
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  const btn = document.getElementById('backToTop');
+
+  if (window.scrollY > 100) {
+    nav.classList.add('scrolled');
+  } else {
+    nav.classList.remove('scrolled');
+  }
+
+  if (window.scrollY > 600) {
+    btn.classList.add('visible');
+  } else {
+    btn.classList.remove('visible');
+  }
+});
+
+// Mobile menu toggle
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+// Close modal on overlay click
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+});
+
+// Close modal on escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// Scroll reveal animation
+function initReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+
+// Create particles
+function createParticles() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDelay = Math.random() * 8 + 's';
+    p.style.animationDuration = (6 + Math.random() * 6) + 's';
+    container.appendChild(p);
+  }
+}
+
+// Counter animation
+function animateCounters() {
+  const counters = document.querySelectorAll('.hero-stat-num');
+  counters.forEach(counter => {
+    const target = parseInt(counter.textContent);
+    let current = 0;
+    const increment = target / 50;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        counter.textContent = target;
+        clearInterval(timer);
+      } else {
+        counter.textContent = Math.floor(current);
+      }
+    }, 30);
+  });
+}
+
+// ============================================
+// INITIALIZATION
+// ============================================
+
+document.addEventListener('DOMContentLoaded', () => {
+  createParticles();
+  renderRulers();
+  renderTimeline();
+  renderPersons();
+  renderDynasty();
+  renderRelationships();
+  renderPlaces();
+  renderConcepts();
+  renderTOC();
+  renderBibliography();
+  renderIndexSearch();
+
+  // Delay reveal init to allow DOM to settle
+  setTimeout(() => {
+    initReveal();
+    animateCounters();
+  }, 100);
+});
+
+// Active nav link highlighting
+window.addEventListener('scroll', () => {
+  const sections = ['rulers','timeline','persons','dynasty','places','concepts','explorer','bibliography','index-search'];
+  let current = '';
+
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 200) current = id;
+  });
+
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+
+</body>
+</html>
