@@ -1,108 +1,18 @@
-/* ===== Firebase Setup ===== */
-let auth, googleProvider;
-let currentUser = null;
-let userRole = null;
+/* ===== Firebase Modular SDK ===== */
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, collection, doc, setDoc, addDoc, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-const FIRESTORE_DB_ID = 'ai-studio-ac5d1b43-b908-42e1-8974-579e8d9328bb';
-const FIRESTORE_BASE = `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/${FIRESTORE_DB_ID}/documents`;
-const API_KEY = FIREBASE_CONFIG.apiKey;
+const NAMED_DB = 'ai-studio-ac5d1b43-b908-42e1-8974-579e8d9328bb';
 
-function initFirebase() {
-  firebase.initializeApp(FIREBASE_CONFIG);
-  auth = firebase.auth();
-  googleProvider = new firebase.auth.GoogleAuthProvider();
-}
-
-/* ===== Firestore REST API helpers ===== */
-async function getToken() {
-  if (!currentUser) return null;
-  return await currentUser.getIdToken();
-}
-
-function toFirestoreValue(v) {
-  if (v === null || v === undefined) return { nullValue: null };
-  if (typeof v === 'string') return { stringValue: v };
-  if (typeof v === 'number') return Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
-  if (typeof v === 'boolean') return { booleanValue: v };
-  if (v instanceof Date) return { timestampValue: v.toISOString() };
-  if (v === '__SERVER_TIMESTAMP__') return { timestampValue: new Date().toISOString() };
-  return { stringValue: String(v) };
-}
-
-function fromFirestoreValue(v) {
-  if (!v) return null;
-  if ('stringValue' in v) return v.stringValue;
-  if ('integerValue' in v) return parseInt(v.integerValue);
-  if ('doubleValue' in v) return v.doubleValue;
-  if ('booleanValue' in v) return v.booleanValue;
-  if ('timestampValue' in v) return new Date(v.timestampValue);
-  if ('nullValue' in v) return null;
-  if ('mapValue' in v) return fromFirestoreDoc(v.mapValue);
-  if ('arrayValue' in v) return (v.arrayValue.values || []).map(fromFirestoreValue);
-  return null;
-}
-
-function fromFirestoreDoc(doc) {
-  if (!doc || !doc.fields) return {};
-  const obj = {};
-  for (const [k, v] of Object.entries(doc.fields)) {
-    obj[k] = fromFirestoreValue(v);
-  }
-  return obj;
-}
-
-async function fsSet(collection, docId, data) {
-  const fields = {};
-  for (const [k, v] of Object.entries(data)) {
-    fields[k] = toFirestoreValue(v);
-  }
-  const url = `${FIRESTORE_BASE}/${collection}/${docId}?key=${API_KEY}`;
-  const res = await fetch(url, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fields })
-  });
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Firestore set error (${res.status}): ${errText}`);
-  }
-  return await res.json();
-}
-
-async function fsAdd(collection, data) {
-  const fields = {};
-  for (const [k, v] of Object.entries(data)) {
-    fields[k] = toFirestoreValue(v);
-  }
-  const url = `${FIRESTORE_BASE}/${collection}?key=${API_KEY}`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fields })
-  });
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Firestore add error (${res.status}): ${errText}`);
-  }
-  return await res.json();
-}
-
-async function fsGetAll(collection) {
-  const url = `${FIRESTORE_BASE}/${collection}?key=${API_KEY}`;
-  const res = await fetch(url);
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Firestore getAll error (${res.status}): ${errText}`);
-  }
-  const data = await res.json();
-  if (!data.documents) return [];
-  return data.documents.map(doc => {
-    const id = doc.name.split('/').pop();
-    return { id, ...fromFirestoreDoc(doc) };
-  });
-}
+const app = initializeApp(FIREBASE_CONFIG);
+const auth = getAuth(app);
+const db = getFirestore(app, NAMED_DB);
+const googleProvider = new GoogleAuthProvider();
 
 /* ===== State ===== */
+let currentUser = null;
+let userRole = null;
 let currentPage = 'loading';
 let currentLesson = null;
 let lessonStep = 'intro';
@@ -117,29 +27,29 @@ const $$ = (sel) => document.querySelectorAll(sel);
 
 /* ===== Router ===== */
 function render() {
-  const app = $('#app');
+  const appEl = $('#app');
   switch (currentPage) {
     case 'loading':
-      app.innerHTML = '<div class="loading-page"><div class="spinner"></div><div class="loading-text">Yükleniyor...</div></div>';
+      appEl.innerHTML = '<div class="loading-page"><div class="spinner"></div><div class="loading-text">Yükleniyor...</div></div>';
       break;
     case 'login':
-      renderLogin(app);
+      renderLogin(appEl);
       break;
     case 'dashboard':
-      renderDashboard(app);
+      renderDashboard(appEl);
       break;
     case 'lesson':
-      renderLesson(app);
+      renderLesson(appEl);
       break;
     case 'admin':
-      renderAdmin(app);
+      renderAdmin(appEl);
       break;
   }
 }
 
 /* ===== LOGIN ===== */
-function renderLogin(app) {
-  app.innerHTML = `
+function renderLogin(appEl) {
+  appEl.innerHTML = `
     <div class="login-page">
       <div class="login-pattern"></div>
       <div class="login-card">
@@ -148,7 +58,7 @@ function renderLogin(app) {
         <h1 class="login-title">İslami Öğrenim Platformu</h1>
         <p class="login-subtitle">Etkileşimli dersler, testler ve içeriklerle öğrenin</p>
         <div class="login-divider"></div>
-        <button class="login-btn" onclick="loginWithGoogle()">
+        <button class="login-btn" id="login-btn">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/></svg>
           Google ile Giriş Yap
         </button>
@@ -156,15 +66,16 @@ function renderLogin(app) {
       </div>
     </div>
   `;
+  $('#login-btn').addEventListener('click', loginWithGoogle);
 }
 
 async function loginWithGoogle() {
   try {
-    await auth.signInWithPopup(googleProvider);
+    await signInWithPopup(auth, googleProvider);
   } catch (e) {
     console.error('Login error:', e);
     if (e.code === 'auth/popup-blocked') {
-      auth.signInWithRedirect(googleProvider);
+      signInWithRedirect(auth, googleProvider);
     } else if (e.code !== 'auth/popup-closed-by-user') {
       alert('Giriş hatası: ' + (e.message || e.code));
     }
@@ -174,7 +85,7 @@ async function loginWithGoogle() {
 /* ===== NAV ===== */
 function buildNav() {
   const adminBtn = userRole === 'admin'
-    ? `<button class="nav-btn nav-btn-admin" onclick="goAdmin()">Yönetici Paneli</button>`
+    ? `<button class="nav-btn nav-btn-admin" id="nav-admin">Yönetici Paneli</button>`
     : '';
   const name = currentUser?.displayName || currentUser?.email || '';
   return `
@@ -186,16 +97,23 @@ function buildNav() {
       <div class="nav-right">
         <span class="nav-user">${esc(name)}</span>
         ${adminBtn}
-        <button class="nav-btn nav-btn-logout" onclick="doLogout()">Çıkış</button>
+        <button class="nav-btn nav-btn-logout" id="nav-logout">Çıkış</button>
       </div>
     </nav>
   `;
 }
 
+function attachNavListeners() {
+  const adminBtn = $('#nav-admin');
+  if (adminBtn) adminBtn.addEventListener('click', goAdmin);
+  const logoutBtn = $('#nav-logout');
+  if (logoutBtn) logoutBtn.addEventListener('click', doLogout);
+}
+
 /* ===== DASHBOARD ===== */
-function renderDashboard(app) {
+function renderDashboard(appEl) {
   const cards = LESSONS.map(l => `
-    <div class="lesson-card" onclick="openLesson('${l.id}')">
+    <div class="lesson-card" data-lesson="${l.id}">
       <div class="lesson-thumb">
         <img src="${l.thumbnail}" alt="${esc(l.title)}" referrerpolicy="no-referrer">
         <div class="lesson-thumb-overlay"></div>
@@ -211,7 +129,7 @@ function renderDashboard(app) {
     </div>
   `).join('');
 
-  app.innerHTML = `
+  appEl.innerHTML = `
     ${buildNav()}
     <div class="dashboard">
       <div class="dash-header">
@@ -221,6 +139,10 @@ function renderDashboard(app) {
       <div class="lesson-grid">${cards}</div>
     </div>
   `;
+  attachNavListeners();
+  $$('.lesson-card').forEach(card => {
+    card.addEventListener('click', () => openLesson(card.dataset.lesson));
+  });
 }
 
 function openLesson(id) {
@@ -236,7 +158,7 @@ function openLesson(id) {
 }
 
 /* ===== LESSON PLAYER ===== */
-function renderLesson(app) {
+function renderLesson(appEl) {
   let body = '';
   switch (lessonStep) {
     case 'intro': body = renderIntro(); break;
@@ -245,7 +167,31 @@ function renderLesson(app) {
     case 'post-test': body = renderQuiz(currentLesson.postTest, 'Son Test', 'Neler öğrendiğimizi değerlendirelim'); break;
     case 'completed': body = renderCompleted(); break;
   }
-  app.innerHTML = `${buildNav()}<div class="player-page">${body}</div>`;
+  appEl.innerHTML = `${buildNav()}<div class="player-page">${body}</div>`;
+  attachNavListeners();
+  attachLessonListeners();
+}
+
+function attachLessonListeners() {
+  const startBtn = $('#start-btn');
+  if (startBtn) startBtn.addEventListener('click', startPreTest);
+
+  $$('.quiz-option').forEach((btn, i) => {
+    btn.addEventListener('click', () => answerQuiz(i));
+  });
+
+  const prevBtn = $('#prev-content');
+  if (prevBtn) prevBtn.addEventListener('click', prevContent);
+  const nextBtn = $('#next-content');
+  if (nextBtn) nextBtn.addEventListener('click', nextContent);
+
+  const prevSwipe = $('#swipe-prev');
+  if (prevSwipe) prevSwipe.addEventListener('click', () => swipe(-1));
+  const nextSwipe = $('#swipe-next');
+  if (nextSwipe) nextSwipe.addEventListener('click', () => swipe(1));
+
+  const backBtn = $('#back-btn');
+  if (backBtn) backBtn.addEventListener('click', goHome);
 }
 
 function renderIntro() {
@@ -261,7 +207,7 @@ function renderIntro() {
           <li><span class="step-num">2</span> Etkileşimli İçerik</li>
           <li><span class="step-num">3</span> Son Test (Değerlendirme)</li>
         </ul>
-        <button class="start-btn" onclick="startPreTest()">▶ Derse Başla</button>
+        <button class="start-btn" id="start-btn">▶ Derse Başla</button>
       </div>
     </div>
   `;
@@ -277,7 +223,7 @@ function startPreTest() {
 function renderQuiz(questions, title, subtitle) {
   const q = questions[quizIndex];
   const opts = q.options.map((o, i) => `
-    <button class="quiz-option" onclick="answerQuiz(${i})">${esc(o)}</button>
+    <button class="quiz-option">${esc(o)}</button>
   `).join('');
 
   return `
@@ -338,8 +284,8 @@ function renderContent() {
     media = `
       <div class="swiper-container" id="swiper">
         <img class="swiper-img" id="swiper-img" src="${c.images[0]}" referrerpolicy="no-referrer">
-        <button class="swiper-btn swiper-btn-prev" onclick="swipe(-1)">‹</button>
-        <button class="swiper-btn swiper-btn-next" onclick="swipe(1)">›</button>
+        <button class="swiper-btn swiper-btn-prev" id="swipe-prev">‹</button>
+        <button class="swiper-btn swiper-btn-next" id="swipe-next">›</button>
         <div class="swiper-dots" id="swiper-dots">${dots}</div>
       </div>`;
   }
@@ -355,9 +301,9 @@ function renderContent() {
       <div class="content-header"><h2>${esc(c.title)}</h2></div>
       <div class="content-body">${media}${textHtml}</div>
       <div class="content-nav">
-        <button class="nav-arrow nav-arrow-prev" onclick="prevContent()" ${contentIndex === 0 ? 'disabled' : ''}>← Önceki</button>
+        <button class="nav-arrow nav-arrow-prev" id="prev-content" ${contentIndex === 0 ? 'disabled' : ''}>← Önceki</button>
         <div class="content-dots">${dots}</div>
-        <button class="nav-arrow nav-arrow-next" onclick="nextContent()">${isLast ? 'Son Teste Geç →' : 'Sonraki →'}</button>
+        <button class="nav-arrow nav-arrow-next" id="next-content">${isLast ? 'Son Teste Geç →' : 'Sonraki →'}</button>
       </div>
     </div>`;
 }
@@ -393,11 +339,11 @@ function calcScore(answers, questions) {
 }
 
 function showToast(msg, isError) {
-  const errDiv = document.createElement('div');
-  errDiv.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:${isError ? '#c0392b' : '#27ae60'};color:#fff;padding:12px 24px;border-radius:8px;z-index:9999;font-size:14px;max-width:90vw;text-align:center`;
-  errDiv.textContent = msg;
-  document.body.appendChild(errDiv);
-  setTimeout(() => errDiv.remove(), 6000);
+  const div = document.createElement('div');
+  div.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:${isError ? '#c0392b' : '#27ae60'};color:#fff;padding:12px 24px;border-radius:8px;z-index:9999;font-size:14px;max-width:90vw;text-align:center`;
+  div.textContent = msg;
+  document.body.appendChild(div);
+  setTimeout(() => div.remove(), 6000);
 }
 
 async function finishLesson() {
@@ -409,12 +355,12 @@ async function finishLesson() {
 
   if (currentUser) {
     try {
-      await fsAdd('progress', {
+      await addDoc(collection(db, 'progress'), {
         userId: currentUser.uid,
         lessonId: currentLesson.id,
         preTestScore: preScore,
         postTestScore: postScore,
-        completedAt: '__SERVER_TIMESTAMP__'
+        completedAt: serverTimestamp()
       });
       showToast('Sonuç kaydedildi!', false);
     } catch (e) {
@@ -443,32 +389,37 @@ function renderCompleted() {
           <div class="score-value">%${postScore}</div>
         </div>
       </div>
-      <button class="back-btn" onclick="goHome()">Ana Sayfaya Dön</button>
+      <button class="back-btn" id="back-btn">Ana Sayfaya Dön</button>
     </div>`;
 }
 
 /* ===== ADMIN ===== */
-async function renderAdmin(app) {
-  app.innerHTML = `
+async function renderAdmin(appEl) {
+  appEl.innerHTML = `
     ${buildNav()}
     <div class="admin-page">
       <div class="admin-header">
         <h1 class="dash-title" style="font-size:22px">Yönetici Paneli</h1>
-        <button class="nav-btn nav-btn-admin" onclick="goHome()">← Derslere Dön</button>
+        <button class="nav-btn nav-btn-admin" id="admin-back">← Derslere Dön</button>
       </div>
       <div id="admin-content"><div class="loading-page" style="min-height:200px"><div class="spinner"></div></div></div>
     </div>`;
+  attachNavListeners();
+  $('#admin-back').addEventListener('click', goHome);
 
   try {
-    const [users, progress] = await Promise.all([
-      fsGetAll('users'),
-      fsGetAll('progress')
+    const [usersSnap, progressSnap] = await Promise.all([
+      getDocs(collection(db, 'users')),
+      getDocs(collection(db, 'progress'))
     ]);
 
-    // Sort progress by completedAt descending
+    const users = usersSnap.docs.map(d => d.data());
+    const progress = progressSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // Sort by completedAt descending
     progress.sort((a, b) => {
-      const da = a.completedAt instanceof Date ? a.completedAt : new Date(0);
-      const db2 = b.completedAt instanceof Date ? b.completedAt : new Date(0);
+      const da = a.completedAt?.toDate ? a.completedAt.toDate() : new Date(0);
+      const db2 = b.completedAt?.toDate ? b.completedAt.toDate() : new Date(0);
       return db2 - da;
     });
 
@@ -482,7 +433,7 @@ async function renderAdmin(app) {
       : progress.map(r => {
           const userName = users.find(u => u.uid === r.userId)?.displayName || r.userId;
           const lessonName = LESSONS.find(l => l.id === r.lessonId)?.title || r.lessonId;
-          const date = r.completedAt instanceof Date ? r.completedAt.toLocaleDateString('tr-TR') : '—';
+          const date = r.completedAt?.toDate ? r.completedAt.toDate().toLocaleDateString('tr-TR') : '—';
           return `<tr>
             <td style="font-weight:600">${esc(userName)}</td>
             <td>${esc(lessonName)}</td>
@@ -529,7 +480,7 @@ function goAdmin() { currentPage = 'admin'; render(); }
 function goHome() { currentPage = 'dashboard'; currentLesson = null; render(); }
 
 async function doLogout() {
-  try { await auth.signOut(); } catch (e) { console.error('Logout:', e); }
+  try { await signOut(auth); } catch (e) { console.error('Logout:', e); }
 }
 
 function esc(str) {
@@ -540,41 +491,35 @@ function esc(str) {
 }
 
 /* ===== INIT ===== */
-function init() {
-  initFirebase();
+getRedirectResult(auth).catch(e => {
+  if (e.code !== 'auth/popup-closed-by-user') {
+    console.error('Redirect error:', e);
+  }
+});
 
-  auth.getRedirectResult().catch(e => {
-    if (e.code !== 'auth/popup-closed-by-user') {
-      console.error('Redirect error:', e);
-    }
-  });
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+  if (user) {
+    userRole = user.email === 'raufenc@gmail.com' ? 'admin' : 'student';
+    currentPage = 'dashboard';
+    render();
 
-  auth.onAuthStateChanged(async (user) => {
-    currentUser = user;
-    if (user) {
-      userRole = user.email === 'raufenc@gmail.com' ? 'admin' : 'student';
-      currentPage = 'dashboard';
-      render();
-
-      // Save user doc via REST API (non-blocking)
-      fsSet('users', user.uid, {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName || '',
-        role: userRole,
-        lastLogin: '__SERVER_TIMESTAMP__'
-      }).then(() => {
-        console.log('User doc saved OK');
-      }).catch(e => {
-        console.error('User doc error:', e);
-        showToast('Firestore hatası: ' + e.message, true);
-      });
-    } else {
-      userRole = null;
-      currentPage = 'login';
-      render();
-    }
-  });
-}
-
-document.addEventListener('DOMContentLoaded', init);
+    // Save user doc (non-blocking)
+    setDoc(doc(db, 'users', user.uid), {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || '',
+      role: userRole,
+      lastLogin: serverTimestamp()
+    }, { merge: true }).then(() => {
+      console.log('User doc saved OK');
+    }).catch(e => {
+      console.error('User doc error:', e);
+      showToast('Firestore hatası: ' + e.message, true);
+    });
+  } else {
+    userRole = null;
+    currentPage = 'login';
+    render();
+  }
+});
