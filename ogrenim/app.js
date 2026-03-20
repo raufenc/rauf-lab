@@ -229,7 +229,9 @@ function renderContent() {
   const c = currentLesson.content[contentIndex];
   let media = '';
 
-  if (c.type === 'video' && c.contentUrl) {
+  if (c.type === 'youtube' && c.youtubeId) {
+    media = `<div class="content-video"><iframe src="https://www.youtube.com/embed/${c.youtubeId}?rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width:100%;height:100%;border-radius:12px"></iframe></div>`;
+  } else if (c.type === 'video' && c.contentUrl) {
     media = `<div class="content-video"><video controls src="${c.contentUrl}"></video></div>`;
   } else if (c.type === 'audio' && c.contentUrl) {
     media = `
