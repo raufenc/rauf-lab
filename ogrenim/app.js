@@ -67,10 +67,11 @@ function renderLogin(app) {
 
 async function loginWithGoogle() {
   try {
-    await auth.signInWithPopup(googleProvider);
+    // Use redirect instead of popup (more reliable, no popup blocker issues)
+    await auth.signInWithRedirect(googleProvider);
   } catch (e) {
     console.error('Login failed:', e);
-    alert('Giriş başarısız oldu. Lütfen tekrar deneyin.');
+    alert('Giriş başarısız oldu: ' + (e.message || e.code || 'Bilinmeyen hata'));
   }
 }
 
@@ -472,6 +473,14 @@ function esc(str) {
 function init() {
   initFirebase();
 
+  // Catch redirect result errors
+  auth.getRedirectResult().then(result => {
+    if (result.user) console.log('Redirect login successful');
+  }).catch(e => {
+    console.error('Redirect error:', e);
+    alert('Giriş hatası: ' + (e.message || e.code));
+  });
+
   auth.onAuthStateChanged(async (user) => {
     currentUser = user;
     if (user) {
@@ -499,7 +508,8 @@ function init() {
         }
       } catch (e) {
         console.error('User doc error:', e);
-        userRole = 'student';
+        // Firestore may fail (named DB, permissions) - continue anyway
+        userRole = user.email === 'raufenc@gmail.com' ? 'admin' : 'student';
       }
       currentPage = 'dashboard';
     } else {
